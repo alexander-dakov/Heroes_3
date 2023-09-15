@@ -2,8 +2,8 @@
 #define SPELL_H
 
 #include <iostream>
-#include "types.h"
-#include "Skill_level.h"
+#include "utilities/types.h"
+#include "Skills/Skill_level.h"
 
 enum School_of_magic
 {

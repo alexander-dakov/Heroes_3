@@ -2,9 +2,9 @@
 #define BATTLE_H
 
 #include <iostream>
-#include "types.h"
-#include "Terrains.h" 
-#include "Hero.h"
+#include "utilities/types.h"
+#include "Adventure_Map/Terrains.h" 
+#include "Heroes/Hero.h"
 
 
 class Battle

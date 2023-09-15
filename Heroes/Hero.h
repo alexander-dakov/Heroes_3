@@ -2,14 +2,14 @@
 #define HERO_H
 
 #include <iostream>
-#include "types.h"
-#include "Specialty_List.h"
-#include "Morale_Luck.h"
-#include "Secondary_Skill_List.h"
-#include "Item.h"
-#include "Spellbook.h"
-#include "Creature_stack.h"
-#include "Faction.h"
+#include "utilities/types.h"
+#include "Skills/Specialty_List.h"
+#include "Skills/Secondary_Skill_List.h"
+#include "Heroes/Morale_Luck.h"
+#include "Items/Item.h"
+#include "Spells/Spellbook.h"
+#include "Creature/Creature_stack.h"
+#include "Towns/Faction.h"
 
 #define MAX_SECONDARY_SKILLS (8)
 

@@ -2,7 +2,7 @@
 #define ITEM_H
 
 #include <iostream>
-#include "types.h"
+#include "utilities/types.h"
 
 enum Placement
 {

@@ -1,7 +1,7 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
-#include "types.h"
+#include "utilities/types.h"
 
 struct Resources
 {

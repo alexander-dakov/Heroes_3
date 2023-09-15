@@ -2,7 +2,7 @@
 #define SPECIALTY_H
 
 #include <iostream>
-#include "types.h"
+#include "utilities/types.h"
 
 
 struct Specialty

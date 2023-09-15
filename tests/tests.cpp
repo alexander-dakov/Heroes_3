@@ -1,8 +1,8 @@
 #include <iostream>
-#include "types.h"
-#include "Creature_Stack.h"
-#include "Creature_List.h"
-#include "Hero_List.h"
+#include "utilities/types.h"
+#include "Creatures/Creature_Stack.h"
+#include "Creatures/Creature_List.h"
+#include "Heroes/Hero_List.h"
 
 void print_before_testing_output()
 {
