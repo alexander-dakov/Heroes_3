@@ -3,10 +3,10 @@
 
 #include <iostream>
 #include "../utilities/types.h"
-#include "../Players/Team.h"
+#include "Team.h"
 #include "Creature.h"
-#include "../Heroes/Hero.h"
-#include "../Battle/Position.h"
+#include "Hero.h"
+#include "Position.h"
 
 // get hero's special abilities form creature and place in creature_stack
 // allow creature to hold up to 3 buffs/debuffs and reduce their duration on each turn with 1

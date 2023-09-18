@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include "../utilities/types.h"
-#include "../Heroes/Skill_level.h"
+#include "Skill_level.h"
 
 enum School_of_magic
 {

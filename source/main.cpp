@@ -1,8 +1,8 @@
 #include <iostream>
 #include "../utilities/types.h"
-#include "../Creatures/Creature_Stack.cpp"
-#include "../Creatures/Creature_List.cpp"
-#include "../Heroes/Hero_List.cpp"
+#include "Creature_Stack.cpp"
+#include "Creature_List.cpp"
+#include "Hero_List.cpp"
 
 #include "../tests/tests.cpp"
 

@@ -6,11 +6,11 @@
 #include "Specialty_List.cpp"
 #include "Secondary_Skill_List.cpp"
 #include "Morale_Luck.h"
-#include "../Items/Item.h"
-#include "../Spells/Spellbook.h"
-#include "../Creatures/Creature_stack.h"
-#include "../Towns/Faction.h"
-#include "../Battle/Position.h"
+#include "Item.h"
+#include "Spellbook.h"
+#include "Creature_stack.h"
+#include "Faction.h"
+#include "Position.h"
 
 #define MAX_SECONDARY_SKILLS (8)
 

@@ -1,8 +1,8 @@
 #include <iostream>
 #include "../utilities/types.h"
-#include "../Creatures/Creature_Stack.h"
-#include "../Creatures/Creature_List.cpp"
-#include "../Heroes/Hero_List.cpp"
+#include "../source/Creature_Stack.h"
+#include "../source/Creature_List.cpp"
+#include "../source/Hero_List.cpp"
 
 void print_before_testing_output()
 {
@@ -52,8 +52,8 @@ void test_create_creature()
     Creature& ref = Skellies;
     Creature* ptr = &Skellies;
 
-    Creature Bonie_Bois(ref);
-    if(Bonie_Bois.get_name() != Skellies.get_name())
+    Creature Boney_Bois(ref);
+    if(Boney_Bois.get_name() != Skellies.get_name())
     {
         std::cout << "Constructing by reference does not work!"<< std::endl;
         abort();
