@@ -1,4 +1,5 @@
 {
+    "json.schemaDownload.enable": true,
     "cmake.configureOnOpen": true,
     "files.associations": {
         "iostream": "cpp",
@@ -47,5 +48,7 @@
         "cinttypes": "cpp",
         "typeinfo": "cpp"
     },
-    "C_Cpp.errorSquiggles": "disabled"
+    "C_Cpp.errorSquiggles": "disabled",
+    "cmake.sourceDirectory": "C:/Users/Alexander/projects/Heroes3",
+    // "cmake.cmakePath": "C:/Program Files/CMake/bin/"
 }

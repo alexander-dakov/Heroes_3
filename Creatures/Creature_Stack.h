@@ -2,11 +2,11 @@
 #define CREATURE_STACK_H
 
 #include <iostream>
-#include "utilities/types.h"
-#include "Players/Team.h"
+#include "../utilities/types.h"
+#include "../Players/Team.h"
 #include "Creature.h"
-#include "Heroes/Hero.h"
-#include "Battle/Position.h"
+#include "../Heroes/Hero.h"
+#include "../Battle/Position.h"
 
 // get hero's special abilities form creature and place in creature_stack
 // allow creature to hold up to 3 buffs/debuffs and reduce their duration on each turn with 1
@@ -26,7 +26,7 @@ enum Stack_Action
 class Stack
 {
     private:
-        Hero& _hero;
+        // Hero& _hero;
         Team _team = Team::None; // MUST BE INHERITED
         Creature _creature;
 
@@ -53,21 +53,21 @@ class Stack
                 _luck = _creature.get_luck();
             };
 
-            battle_stats(Creature _creature, Hero& _hero)
-            {
-                _att = _creature.get_att() + _hero.get_attack();
-                _def = _creature.get_def() + _hero.get_defence();
-                _shots_left = _creature.get_shots();
-                _hp = _creature.get_hp();
-                _hp_left = _hp;
-                _speed = _creature.get_speed();
-                _morale = static_cast<Morale>( std::min( std::max( static_cast<int8_t>(_creature.get_morale()) + static_cast<int8_t>(_hero.get_morale()), -3), 3) );
-                _luck   = static_cast<Luck>  ( std::min( std::max( static_cast<int8_t>(_creature.get_luck())   + static_cast<int8_t>(_hero.get_luck()),   -3), 3) );
-            };
+            // battle_stats(Creature _creature, Hero& _hero)
+            // {
+            //     _att = _creature.get_att() + _hero.get_attack();
+            //     _def = _creature.get_def() + _hero.get_defence();
+            //     _shots_left = _creature.get_shots();
+            //     _hp = _creature.get_hp();
+            //     _hp_left = _hp;
+            //     _speed = _creature.get_speed();
+            //     _morale = static_cast<Morale>( std::min( std::max( static_cast<int8_t>(_creature.get_morale()) + static_cast<int8_t>(_hero.get_morale()), -3), 3) );
+            //     _luck   = static_cast<Luck>  ( std::min( std::max( static_cast<int8_t>(_creature.get_luck())   + static_cast<int8_t>(_hero.get_luck()),   -3), 3) );
+            // };
         }battle_stats;
 
         uint32_t _number;
-        Position _pos;
+        Position _pos = Position(0, 0);
         bool _has_perished = false;
         Stack_Action _action = Stack_Action::Attack;
 
@@ -95,24 +95,24 @@ class Stack
                 _level_of_luck       = Skill_level::None;
             };
 
-            hero_specialty_and_secondary_skills(Hero& _hero) // not called when no hero is available
-            {
-                _hero_specialty_name = _hero.get_specialty().get_name();
+            // hero_specialty_and_secondary_skills(Hero& _hero) // not called when no hero is available
+            // {
+            //     _hero_specialty_name = _hero.get_specialty().get_name();
 
-                for(uint8_t i = 0; i < MAX_SECONDARY_SKILLS; i++)
-                {
-                    if     ( _hero.get_secondary_skill(i)->get_name() == "Archery")    { _level_of_archery    = _hero.get_secondary_skill(i)->get_level(); }
-                    else if( _hero.get_secondary_skill(i)->get_name() == "Offence")    { _level_of_offence    = _hero.get_secondary_skill(i)->get_level(); }
-                    else if( _hero.get_secondary_skill(i)->get_name() == "Armorer")    { _level_of_armorer    = _hero.get_secondary_skill(i)->get_level(); }
-                    else if( _hero.get_secondary_skill(i)->get_name() == "Resistance") { _level_of_resistance = _hero.get_secondary_skill(i)->get_level(); }
-                    else if( _hero.get_secondary_skill(i)->get_name() == "Leadership") { _level_of_leadership = _hero.get_secondary_skill(i)->get_level(); }
-                    else if( _hero.get_secondary_skill(i)->get_name() == "Luck")       { _level_of_luck       = _hero.get_secondary_skill(i)->get_level(); }
-                }
-            };
+            //     for(uint8_t i = 0; i < MAX_SECONDARY_SKILLS; i++)
+            //     {
+            //         if     ( _hero.get_secondary_skill(i)->get_name() == "Archery")    { _level_of_archery    = _hero.get_secondary_skill(i)->get_level(); }
+            //         else if( _hero.get_secondary_skill(i)->get_name() == "Offence")    { _level_of_offence    = _hero.get_secondary_skill(i)->get_level(); }
+            //         else if( _hero.get_secondary_skill(i)->get_name() == "Armorer")    { _level_of_armorer    = _hero.get_secondary_skill(i)->get_level(); }
+            //         else if( _hero.get_secondary_skill(i)->get_name() == "Resistance") { _level_of_resistance = _hero.get_secondary_skill(i)->get_level(); }
+            //         else if( _hero.get_secondary_skill(i)->get_name() == "Leadership") { _level_of_leadership = _hero.get_secondary_skill(i)->get_level(); }
+            //         else if( _hero.get_secondary_skill(i)->get_name() == "Luck")       { _level_of_luck       = _hero.get_secondary_skill(i)->get_level(); }
+            //     }
+            // };
         }hero_specialty_and_secondary_skills;
 
     public:
-        Stack(const Hero& hero, const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y); // hero should be fixed 
+        // Stack(const Hero& hero, const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y); // hero should be fixed 
 
         Stack(const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y);
         

@@ -3,11 +3,11 @@
 
 #include <iostream>
 #include <algorithm>
-#include "utilities/types.h"
-#include "Towns/Faction.h"
-#include "Heroes/Morale_Luck.h"
-#include "Players/Resources.h"
-#include "Skills/Skill_level.h"
+#include "../utilities/types.h"
+#include "../Towns/Faction.h"
+#include "../Heroes/Morale_Luck.h"
+#include "../Players/Resources.h"
+#include "../Heroes/Skill_level.h"
 
 
 struct Creature

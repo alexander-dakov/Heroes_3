@@ -1,12 +1,12 @@
 #include "Creature_Stack.h"
 
-Stack::Stack(const Hero& hero, const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y) :
-             _hero(hero), _creature(creature), _number(number), _pos(pos_x, pos_y),
-             battle_stats(creature, hero),
-             hero_specialty_and_secondary_skills(hero)
-             {
-                _team = _hero.get_team();
-             };
+// Stack::Stack(const Hero& hero, const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y) :
+//              _hero(hero), _creature(creature), _number(number), _pos(pos_x, pos_y),
+//              battle_stats(creature, hero),
+//              hero_specialty_and_secondary_skills(hero)
+//              {
+//                 _team = _hero.get_team();
+//              };
 
 Stack::Stack(const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y) :
              _creature(creature), _number(number), _pos(pos_x, pos_y),
@@ -38,7 +38,14 @@ void Stack::new_turn()
     else
         set_action(Stack_Action::Attack); // default value for normal turns
 
+    // reduce spell duration acting on stacks
 }
+
+void Stack::take_action()
+{
+    // call the functions in the correct order
+}
+
 
 void Stack::recieve_damage(uint32_t damage)
 {
@@ -241,7 +248,27 @@ void Stack::attack(Stack& defender)
     final_damage = static_cast<int32_t>( base_damage * (1 + I1 + I2 + I3 + I4 + I5) * (1 - R1) * (1 - R2 - R3) * (1 - R4) * (1 - R5) * (1 - R6) * (1 - R7) * (1 - R8) );
 
     defender.recieve_damage(final_damage);
+
+    //if defender is efreet sultan or has pell fire shield attacker and attacker is not immuned - attacker shoudl recieve dmg
 }
+
+bool Stack::can_shoot()
+{
+    // if archer has arrows and no active enemy is in the way
+    return false;
+}
+
+bool Stack::target(Stack& stack)
+{
+    // if attacker can reach defender
+    return false;
+}
+
+void Stack::retaliate(Stack& attacker)
+{
+    // if not endless retaliation or spell check if already retaliated
+}
+
 
 void Stack::print_full_info()
 {

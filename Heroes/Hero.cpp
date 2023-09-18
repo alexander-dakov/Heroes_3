@@ -17,10 +17,13 @@ Hero::Hero( const std::string name, const Gender gender, const Class class_, con
 {
       _mana = knowledge*10;
       _mana_left = _mana;
-      _moving_points = 1560;
+      _movement_points = 1560;
 };
 
-
+Hero::~Hero()
+{
+      // std::cout << "Hero " << this->get_name() << " destroyed!" << std::endl;
+}
 
 void Hero::add_level(const uint8_t level)
 {
@@ -40,4 +43,18 @@ void Hero::add_level(const uint8_t level)
 void Hero::add_experience(const uint32_t experience)
 {
       // according to add_level
+}
+
+// this is not accurate representation of the hero movement in the game
+// path to location should be calculated in days
+// each tile across the path should be visited for step-on effects
+void Hero::move(uint8_t x, uint8_t y)
+{
+    uint8_t distance = std::abs(x - _position.x) + std::abs(y - _position.y);
+    while(get_movement_points() < distance)
+    {
+        printf("%s have only %i speed and can't move that far. Pick a new position!", get_name());
+    }
+    _position.x = x;
+    _position.y = y;
 }

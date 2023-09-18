@@ -9,11 +9,10 @@
             "name": "C++ Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/main-exe/main.cpp",
-            // "program":"${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "program": "C:/Users/Alexander/projects/Heroes3/main-exe/main.cpp",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${fileDirname}",
+            "cwd": "C:/Users/Alexander/projects/Heroes3",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -34,5 +33,3 @@
         }
     ]
 }
-
-// D:\Programs\Engineering\Python 3.8\Scripts\;D:\Programs\Engineering\Python 3.8\;%PyCharm Community Edition%;D:\Programs\Engineering\VS Code\Microsoft VS Code\bin

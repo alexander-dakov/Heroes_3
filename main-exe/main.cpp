@@ -1,10 +1,10 @@
 #include <iostream>
-#include "utilities/types.h"
-#include "Creature/Creature_Stack.h"
-#include "Creature/Creature_List.h"
-#include "Heroes/Hero_List.h"
+#include "../utilities/types.h"
+#include "../Creatures/Creature_Stack.cpp"
+#include "../Creatures/Creature_List.cpp"
+#include "../Heroes/Hero_List.cpp"
 
-#include "tests/tests.cpp"
+#include "../tests/tests.cpp"
 
 
 /* Thought processes that influence the development :
@@ -16,7 +16,7 @@
 1. Creatures :
 1) Since creatures in the game a influenced by the hero leading them (if they have one) they get to be treated as structures of data (no setters, only getters),
 that are constructed thanks to Creature.h.
-2) A library of all in-game creatures, with their basic stats, is kept in a namespace called Creature_List (created in Creature_List.h)
+2) A library of all in-game creatures, with their basic stats, is kept in a namespace called Creature_List (created in Creature_List.cpp)
 3) Creature stacks are the interactable objects forming the armies, used in battles, which COPY an instance of a creature from Creature_List. It should not be a reference or a pointer
 as the object will suffer changes and there may be many instances of the same creature on the battle field.
 4) Those stacks should have constructors for both hero-lead and non-hero-lead armies. When there is no hero - the basic stats of the creatures will be used in battle.
@@ -27,7 +27,7 @@ When there is a hero - the stack of creatures should get bonuses from the hero's
 
 2. Heroes :
 1) Heroes should be interactable objects that hold and army of up to 8 creature stacks.
-2) A library of all in-game heroes, with in-game up-to-date stats, is kept in a namespace called Hero_List (created in Hero_List.h). Since a hero could exist only once 
+2) A library of all in-game heroes, with in-game up-to-date stats, is kept in a namespace called Hero_List (created in Hero_List.cpp). Since a hero could exist only once 
 in a game, they will be directly referenced for each player.
 3) Special abilities, secondary skills, items and war machines should aslo be treated as structs of data. All of them should have their own namespace of instances, which will
 be referenced by a hero.

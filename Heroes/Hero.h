@@ -2,14 +2,15 @@
 #define HERO_H
 
 #include <iostream>
-#include "utilities/types.h"
-#include "Skills/Specialty_List.h"
-#include "Skills/Secondary_Skill_List.h"
-#include "Heroes/Morale_Luck.h"
-#include "Items/Item.h"
-#include "Spells/Spellbook.h"
-#include "Creature/Creature_stack.h"
-#include "Towns/Faction.h"
+#include "../utilities/types.h"
+#include "Specialty_List.cpp"
+#include "Secondary_Skill_List.cpp"
+#include "Morale_Luck.h"
+#include "../Items/Item.h"
+#include "../Spells/Spellbook.h"
+#include "../Creatures/Creature_stack.h"
+#include "../Towns/Faction.h"
+#include "../Battle/Position.h"
 
 #define MAX_SECONDARY_SKILLS (8)
 
@@ -56,11 +57,11 @@ class Hero
             uint16_t _mana;
             uint16_t _mana_left;
             
+            uint16_t _movement_points;
+
             Secondary_Skill* _secondary_skills[MAX_SECONDARY_SKILLS];
             // for(uint8_t i = 0; i < MAX_SECONDARY_SKILLS; i++)
             //      _secondary_skills[i] = &Secondary_Skill_List::None;
-            
-            uint16_t _moving_points;
 
             //items
 
@@ -85,6 +86,8 @@ class Hero
                   Creature creature;
                   uint8_t number;
             };
+
+            Position _position = Position(0, 0);
 
       public:
             Hero( const std::string name, const Gender gender, const Class class_, const Faction faction, const Team team, const uint8_t level, const uint32_t experience, 
@@ -139,8 +142,15 @@ class Hero
             void set_mana_left(const uint16_t mana_left) { _mana_left = mana_left; };
             uint16_t get_mana_left() { return _mana_left; };
 
+            void set_movement_points(const uint16_t movement_points) { _movement_points = movement_points; };
+            void add_movement_points(const uint16_t movement_points) { _movement_points += movement_points; };
+            uint16_t get_movement_points() { return _movement_points; };
+
             void set_secondary_skill(uint8_t i, Secondary_Skill skill) { _secondary_skills[i] = &skill; };
             Secondary_Skill* get_secondary_skill(uint8_t i) { return _secondary_skills[i]; };
+
+            void set_position(Position position) { _position = position; };
+            Position get_position() { return _position; };
 
             void move(uint8_t x, uint8_t y); // if map object - interact = take resources item, flag mine, fight monster/hero, enter castle
 

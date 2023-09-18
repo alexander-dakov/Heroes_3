@@ -2,7 +2,7 @@
 #define SPELLBOOK_H
 
 #include <iostream>
-#include "utilities/types.h"
+#include "../utilities/types.h"
 #include "Spell.h"
 
 

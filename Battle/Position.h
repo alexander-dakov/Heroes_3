@@ -1,7 +1,7 @@
 #ifndef POSITION_H
 #define POSITION_H
 
-#include "utilities/types.h"
+#include "../utilities/types.h"
 
 // coords of point on the adventure map or on the battle field
 struct Position

@@ -1,8 +1,8 @@
 #include <iostream>
-#include "utilities/types.h"
-#include "Creatures/Creature_Stack.h"
-#include "Creatures/Creature_List.h"
-#include "Heroes/Hero_List.h"
+#include "../utilities/types.h"
+#include "../Creatures/Creature_Stack.h"
+#include "../Creatures/Creature_List.cpp"
+#include "../Heroes/Hero_List.cpp"
 
 void print_before_testing_output()
 {
@@ -27,13 +27,13 @@ void test_create_creature()
     uint8_t max_dmg = 3;
     uint8_t hp = 6;
     uint8_t speed = 4;
-    uint8_t fight_value = 75;
-    uint8_t ai_value = 60;
-    uint8_t gold = 60;
-    uint8_t mercury = 0;
-    uint8_t sulfur = 0; 
-    uint8_t crystal = 0;
-    uint8_t gems = 0;
+    uint16_t fight_value = 75;
+    uint16_t ai_value = 60;
+    uint32_t gold = 60;
+    uint32_t mercury = 0;
+    uint32_t sulfur = 0; 
+    uint32_t crystal = 0;
+    uint32_t gems = 0;
     bool is_undead = true;  
     bool is_unliving = false;
     bool is_flying = false;

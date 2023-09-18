@@ -2,7 +2,7 @@
 #define SECONDARY_SKILL_H
 
 #include <iostream>
-#include "utilities/types.h"
+#include "../utilities/types.h"
 #include "Skill_level.h"
 
 

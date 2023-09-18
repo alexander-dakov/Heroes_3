@@ -85,7 +85,7 @@ void Creature::Logical_Limitations_When_Constructing()
             abort();
       }
 
-      if(battle_stats._gold == 0)
+      if(cost._gold == 0)
       {
             std::cout<< "Creture must have a price including gold!" << std::endl;
             abort();
@@ -103,7 +103,6 @@ void Creature::Logical_Limitations_When_Constructing()
       if(!special_abilities._is_ranged)
       {
             battle_stats._shots = 0;
-            battle_stats._shots_left = 0;
       }
 }
 
