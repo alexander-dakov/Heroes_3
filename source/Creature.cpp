@@ -110,18 +110,18 @@ std::string Creature::get_faction_as_string()
 {
       std::string faction;
 
-      switch (get_faction())
+      switch(get_faction())
       {
-      case Faction::Neutral    : faction = "Neutral";    break;
-      case Faction::Castle     : faction = "Castle";     break;
-      case Faction::Rampart    : faction = "Rampart";    break;
-      case Faction::Tower      : faction = "Tower";      break;
-      case Faction::Inferno    : faction = "Inferno";    break;
-      case Faction::Necropolis : faction = "Necropolis"; break;
-      case Faction::Fortress   : faction = "Fortress";   break;
-      case Faction::Stronghold : faction = "Stronghold"; break;
-      case Faction::Conflux    : faction = "Conflux";    break;
-      case Faction::Cove       : faction = "Cove";       break;
+            case Faction::Neutral    : faction = "Neutral";    break;
+            case Faction::Castle     : faction = "Castle";     break;
+            case Faction::Rampart    : faction = "Rampart";    break;
+            case Faction::Tower      : faction = "Tower";      break;
+            case Faction::Inferno    : faction = "Inferno";    break;
+            case Faction::Necropolis : faction = "Necropolis"; break;
+            case Faction::Fortress   : faction = "Fortress";   break;
+            case Faction::Stronghold : faction = "Stronghold"; break;
+            case Faction::Conflux    : faction = "Conflux";    break;
+            case Faction::Cove       : faction = "Cove";       break;
       }
 
       return faction;

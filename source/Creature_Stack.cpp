@@ -94,7 +94,7 @@ bool Stack::roll_negative_morale()
 {
     uint16_t probability;
 
-    switch (get_morale())
+    switch(get_morale())
     {
         case Morale::Terrible : probability = 250; break;
         case Morale::Awful    : probability = 167; break;
@@ -111,7 +111,7 @@ bool Stack::roll_positive_morale()
 {
     uint16_t probability;
 
-    switch (get_morale())
+    switch(get_morale())
     {
         case Morale::Terrible : probability =   0; break; // written because of compiler warnings (I prefer not to silence them as errors might be missed)
         case Morale::Awful    : probability =   0; break; // written because of compiler warnings (I prefer not to silence them as errors might be missed)
@@ -129,7 +129,7 @@ int8_t Stack::roll_luck()
     uint16_t probability;
     int8_t sign;
 
-    switch (get_morale())
+    switch(get_morale())
     {
         case Morale::Terrible : probability = 250; sign = -1; break;
         case Morale::Awful    : probability = 167; sign = -1; break;
@@ -186,7 +186,7 @@ void Stack::attack(Stack& defender)
     if(_creature.get_is_ranged() && can_shoot())
     {
         // implement positioning, distance to target and adjacency
-        switch (get_level_of_archery())
+        switch(get_level_of_archery())
         {
                 case Skill_level::None :     I2 = 0.00f; break;
                 case Skill_level::Basic :    I2 = 0.10f; break;
@@ -200,7 +200,7 @@ void Stack::attack(Stack& defender)
     {
         if(_creature.get_is_ranged() && !can_shoot())
             melee_penalty = true;
-        switch (get_level_of_offence())
+        switch(get_level_of_offence())
         {
                 case Skill_level::None :     I2 = 0.0f; break;
                 case Skill_level::Basic :    I2 = 0.1f; break;
