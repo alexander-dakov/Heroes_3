@@ -15,7 +15,7 @@
 // make creature a struct to be used as a library (could be added in a namespace) and leave only getters in it. all setters and modifiers should be in creature stack.
 // Stack should be constructed with the help of a copy constructor when it comes to creatures
 
-enum Stack_Action
+enum Stack_Action // Used on every turn of a stack during battle
 {
     Attack,
     Defend,
@@ -41,6 +41,7 @@ class Stack
             Morale _morale; // modified by hero's morale
             Luck _luck; // modified by hero's luck
 
+            // Constructs a private structure containing data used during battles when no hero is leading the army.
             battle_stats(Creature _creature)
             {
                 _att = _creature.get_att();
@@ -53,6 +54,7 @@ class Stack
                 _luck = _creature.get_luck();
             };
 
+            // Constructs a private structure containing data used during battles when a hero is leading the army.
             // battle_stats(Creature _creature, Hero& _hero)
             // {
             //     _att = _creature.get_att() + _hero.get_attack();
@@ -83,6 +85,7 @@ class Stack
             Skill_level _level_of_leadership = Skill_level::None;
             Skill_level _level_of_luck       = Skill_level::None;
 
+            // Constructs a private structure containing data affecting battles when no hero is leading the army.
             hero_specialty_and_secondary_skills()
             {
                 _hero_specialty_name = "";
@@ -95,6 +98,7 @@ class Stack
                 _level_of_luck       = Skill_level::None;
             };
 
+            // Constructs a private structure containing data affecting battles when a hero is leading the army.
             // hero_specialty_and_secondary_skills(Hero& _hero) // not called when no hero is available
             // {
             //     _hero_specialty_name = _hero.get_specialty().get_name();
@@ -114,10 +118,13 @@ class Stack
     public:
         // Stack(const Hero& hero, const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y); // hero should be fixed 
 
+        // Parametrized constructor used during battle.
         Stack(const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y);
         
+        // Parametrized constructor used in when purchasing a stack, moving it from one army to another or seperating it into smaller stacks.
         Stack(const Creature creature, const uint32_t number);
         
+        // Destructor
         ~Stack();
 
         Team get_team() { return _team; };
@@ -166,10 +173,11 @@ class Stack
         Skill_level get_level_of_armorer()    { return hero_specialty_and_secondary_skills._level_of_armorer;    };
         Skill_level get_level_of_resistance() { return hero_specialty_and_secondary_skills._level_of_resistance; };
 
+        // Stack's number and/or remaining health of last units get affected.
         void recieve_damage(uint32_t damage);
         
-
-        void new_turn(); // called simultaiously for every creature on the battle field in the beggining of the new turn, in order to reset attributes, buffs and debuffs
+        // Updates attributes, buffs and debuffs in the beggning of each new turn.
+        void new_turn(); // should be called simultaiously for every creature on the battle field
 
         // On stack's turn:
         // 1. Roll for negative morale - if negative => skip
@@ -177,22 +185,41 @@ class Stack
         // 3. Roll for positive morale - if positive => do 2 again
         void take_action(); // do any of the following functions
 
+        // Decides if stack will act upon its turn during battle.
         bool roll_negative_morale(); // before initial action in turn
-        bool roll_positive_morale(); // after initial action in turn
-        int8_t roll_luck(); // before attack; returns -1/0/1 for unlucky/non-lucky/lucky strike
 
-        void wait() { set_action(Stack_Action::Wait); }; // skip creature's turn and return to it later during the same turn
+        // Decides if stack will act again in the end its turn during battle.
+        bool roll_positive_morale(); // after initial action in turn
+
+        // Returns -1/0/1, refering to the type of attack (unlucky/non-lucky/lucky strike) a stack will perform on its turn.
+        int8_t roll_luck();
+
+        // Skip stack's action and return to it later during the same battle turn.
+        void wait() { set_action(Stack_Action::Wait); };
+
+        // Stack does nothing, but gains bonus defence skill during the battle turn. 
         void defend() { set_action(Stack_Action::Defend); };
-        void move(uint8_t x, uint8_t y); // position stack on the battle field according to stack speed
+
+        // Reposition stack on the battle field according to stack speed and objects.
+        void move(uint8_t x, uint8_t y);
+
+        // Stack attacks another stack (defender), causing the defender to take damage and occasionaly retaliate.
         void attack(Stack& defender);
 
+        // Checks if a ranged stack can shoot = has ammo and is not obstructed by an active enemy.
         bool can_shoot();
+
+        // Checks if target is reachable for melee attack.
         bool target(Stack& stack);
 
+        // Returns a unlucky/non-lucky/lucky strike to the initial attacker.
         void retaliate(Stack& attacker);
 
-        void print_full_info(); // full creature info + hp left + shots left + stack number, stack position, buffs and defbuffs
-        // void print_full_info(Stack& stack); // for battle field
+        // Prints information of the stack during battle = creature forming the stack + hp left + shots left + stack number, stack position, buffs and defbuffs
+        void print_battle_info();
+
+        // Prints information of the stack outide battle = creature forming the stack + hp left + shots left + stack number, stack position, buffs and defbuffs
+        void print_full_info();
 };
 
 #endif

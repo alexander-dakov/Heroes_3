@@ -269,6 +269,27 @@ void Stack::retaliate(Stack& attacker)
     // if not endless retaliation or spell check if already retaliated
 }
 
+void Stack::print_battle_info()
+{
+    auto s = stack._creature;
+    printf("Name : %s\n", s.get_name().c_str());
+    printf("Faction : %s\n", s.get_faction_as_string().c_str());
+    printf("Level : %d\n", s.get_level());
+    printf("Upgraded : %d\n", s.get_is_upgraded());
+    printf("Attack : %d(%d)\n", s.get_att());
+    printf("Defence : %d(%d)\n", s.get_def());
+
+    if(s.get_is_ranged())
+        printf("Shots : %d(%d)\n", s.get_shots(), stack.get_shots_left());
+    
+    printf("Damage : %d - %d\n", s.get_min_dmg(), s.get_max_dmg());
+    printf("Health : %d(%d)\n", s.get_hp(), stack.get_hp_left());
+    printf("Morale : %d\n", s.get_morale());
+    printf("Luck : %d\n", s.get_luck());
+
+    if(s.get_special_abilities().length() != 0)
+        printf("Special abilities : %s\n", s.get_special_abilities().c_str());
+}
 
 void Stack::print_full_info()
 {
@@ -282,10 +303,10 @@ void Stack::print_full_info()
     printf("Defence : %d(%d)\n", c.get_def());
 
     if(c.get_is_ranged())
-        printf("Shots : %d(%d)\n", c.get_shots(), get_shots_left());
+        printf("Shots : %d\n", c.get_shots());
     
     printf("Damage : %d - %d\n", c.get_min_dmg(), c.get_max_dmg());
-    printf("Health : %d(%d)\n", c.get_hp(), get_hp_left());
+    printf("Health : %d\n", c.get_hp());
     printf("Morale : %d\n", c.get_morale());
     printf("Luck : %d\n", c.get_luck());
     printf("Fight value : %d\n", c.get_fight_value());
@@ -295,29 +316,3 @@ void Stack::print_full_info()
     if(c.get_special_abilities().length() != 0)
         printf("Special abilities : %s\n", c.get_special_abilities().c_str());
 }
-
-// void Stack::print_full_info(Stack& stack)
-// {
-//     auto s = stack._creature;
-//     printf("Name : %s\n", s.get_name().c_str());
-//     printf("Faction : %s\n", s.get_faction_as_string().c_str());
-//     printf("Level : %d\n", s.get_level());
-//     printf("Upgraded : %d\n", s.get_is_upgraded());
-//     printf("Growth per week : %d\n", s.get_growth());
-//     printf("Attack : %d(%d)\n", s.get_att());
-//     printf("Defence : %d(%d)\n", s.get_def());
-
-//     if(s.get_is_ranged())
-//         printf("Shots : %d(%d)\n", s.get_shots(), stack.get_shots_left());
-    
-//     printf("Damage : %d - %d\n", s.get_min_dmg(), s.get_max_dmg());
-//     printf("Health : %d(%d)\n", s.get_hp(), stack.get_hp_left());
-//     printf("Morale : %d\n", s.get_morale());
-//     printf("Luck : %d\n", s.get_luck());
-//     printf("Fight value : %d\n", s.get_fight_value());
-//     printf("AI value : %d\n", s.get_ai_value());
-//     printf("%s", s.get_cost().c_str());
-
-//     if(s.get_special_abilities().length() != 0)
-//         printf("Special abilities : %s\n", s.get_special_abilities().c_str());
-// }

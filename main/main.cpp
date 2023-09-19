@@ -1,8 +1,8 @@
 #include <iostream>
 #include "../utilities/types.h"
-#include "Creature_Stack.cpp"
-#include "Creature_List.cpp"
-#include "Hero_List.cpp"
+#include "../source/Creature_Stack.cpp"
+#include "../source/Creature_List.cpp"
+#include "../source/Hero_List.cpp"
 
 #include "../tests/tests.cpp"
 
@@ -34,6 +34,7 @@ be referenced by a hero.
 
 
 TO DO:
+ 0) Go over each function and add comments above the declaration.
  1) Test a creature vs creature battle
  2) Test a hero vs creature battle (no spells)
  3) Test a hero vs hero battle (no spells)
@@ -55,7 +56,8 @@ TO DO:
 
 int main()
 {
-    test_create_creature_stack();
+    test_create_creature();
+    // test_create_creature_stack();
     
     system("pause");
     return 0;

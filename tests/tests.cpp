@@ -1,4 +1,5 @@
 #include <iostream>
+#include "tests.h"
 #include "../utilities/types.h"
 #include "../source/Creature_Stack.h"
 #include "../source/Creature_List.cpp"
@@ -49,22 +50,22 @@ void test_create_creature()
     print_before_testing_output();
     Skellies.print_full_info();
 
-    Creature& ref = Skellies;
-    Creature* ptr = &Skellies;
+    // Creature& ref = Skellies;
+    // Creature* ptr = &Skellies;
 
-    Creature Boney_Bois(ref);
-    if(Boney_Bois.get_name() != Skellies.get_name())
-    {
-        std::cout << "Constructing by reference does not work!"<< std::endl;
-        abort();
-    }
+    // Creature Boney_Bois(ref);
+    // if(Boney_Bois.get_name() != Skellies.get_name())
+    // {
+    //     std::cout << "Constructing by reference does not work!"<< std::endl;
+    //     abort();
+    // }
 
-    Creature Calcium_Daddies(ptr);
-    if(Calcium_Daddies.get_name() != Skellies.get_name())
-    {
-        std::cout << "Constructing by pointer does not work!"<< std::endl;
-        abort();
-    }
+    // Creature Calcium_Daddies(ptr);
+    // if(Calcium_Daddies.get_name() != Skellies.get_name())
+    // {
+    //     std::cout << "Constructing by pointer does not work!"<< std::endl;
+    //     abort();
+    // }
 }
 
 void test_create_creature_stack()

@@ -21,10 +21,11 @@ struct Creature
                   uint8_t _level;
                   bool _is_upgraded;
                   uint8_t _growth;
-                  Morale _morale;
-                  Luck _luck;
+                  Morale _morale;   // move this in battle_stats
+                  Luck _luck;       // move this in battle_stats
                   bool _needs_2_hexes_in_battle;
 
+                  // Constructs a private structure containing data used for overview
                   unit_info( std::string name, Faction faction, uint8_t level, bool is_upgraded, uint8_t growth, Morale morale, Luck luck, bool needs_2_hexes_in_battle ) :
                              _name(name), _faction(faction), _level(level), _is_upgraded(is_upgraded), _growth(growth), _needs_2_hexes_in_battle(needs_2_hexes_in_battle) 
                              {};
@@ -42,6 +43,7 @@ struct Creature
                   uint16_t _fight_value;
                   uint16_t _ai_value;
 
+                  // Constructs a private structure containing data used during battles
                   battle_stats( const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, 
                                 const uint8_t hp, const uint8_t speed, const uint16_t fight_value, const uint16_t ai_value ) : 
                                 _att(att), _def(def), _shots(shots), _min_dmg(min_dmg), _max_dmg(max_dmg),
@@ -57,6 +59,7 @@ struct Creature
                   uint16_t _crystals;
                   uint16_t _gems;
 
+                  // Constructs a private structure containing data used when purchasing a unit
                   cost( const Resources resources ) : _gold(resources.Gold), _mercury(resources.Mercury), _sulfur(resources.Sulfur), _crystals(resources.Crystals), _gems(resources.Gems)
                   {};
             }cost;
@@ -70,6 +73,7 @@ struct Creature
                   bool _has_dragon_breath;
                   bool _has_attack_adjacent;
 
+                  // Constructs a private structure containing data which affects behaviour during battle
                   special_abilities( const bool is_undead, const bool is_unliving, const bool is_flying, const bool is_ranged, const bool has_dragon_breath, const bool has_attack_adjacent ) :
                                      _is_undead(is_undead),
                                      _is_unliving(is_unliving),
@@ -81,23 +85,25 @@ struct Creature
             }special_abilities;
          
       public:
-            // Constructors and Destructor
-            // no default constructor, only parametrized and copy constructors
+            // Parametrized constructor (no default constructor allowed). Calls Logical_Limitations_When_Constructing().
             Creature( const std::string name, const Faction faction, const uint8_t level, const bool is_upgraded, const uint8_t growth, const Morale morale, const Luck luck, const bool needs_2_hexes_in_battle,
                       const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, const uint8_t hp, const uint8_t speed, const uint16_t fight_value, const uint16_t ai_value, 
                       const Resources resources, 
                       const bool is_undead, const bool is_unliving, const bool is_flying, const bool is_ranged, const bool has_dragon_breath, const bool has_attack_adjacent );
-
+            
+            // Copy constructors by reference. Calls Logical_Limitations_When_Constructing().
             Creature(const Creature& creature);
 
+            // Copy constructors by pointer. Calls Logical_Limitations_When_Constructing().
             Creature(const Creature* creature);
 
+            // Destructor
             ~Creature();
 
-            // straight-forward logical limits just in case
+            // Straight-forward logical limits that need to be set when constructing.
             void Logical_Limitations_When_Constructing();
 
-            // getters
+
             std::string get_name() { return unit_info._name; };
 
             Faction get_faction() { return unit_info._faction; };
@@ -155,15 +161,13 @@ struct Creature
 
             bool get_has_attack_adjacent() { return special_abilities._has_attack_adjacent; };
 
-            // recieve buffs or debuffs
-            // recieve magic dmg
-            // do_dmg + get_dmg function
-            // get battle info function
-
+            // Returns a string with the cost of a creature.
             std::string get_cost();
 
+            // Returns a string with the special abilities of a creature.
             std::string get_special_abilities();
 
+            // Prints the full information of a creature.
             void print_full_info();
 };
 

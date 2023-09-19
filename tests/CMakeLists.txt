@@ -1,5 +1,6 @@
 add_library(
     tests
+    tests.h
     tests.cpp
     )
 
