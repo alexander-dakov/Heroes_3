@@ -2,6 +2,8 @@
 #define HERO_LIST_CPP
 
 #include "Hero.h"
+#include "Specialty_List.cpp"
+#include "Secondary_Skill_List.cpp"
 
 namespace Hero_List
 {

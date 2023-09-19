@@ -3,8 +3,8 @@
 
 #include <iostream>
 #include "../utilities/types.h"
-#include "Specialty_List.cpp"
-#include "Secondary_Skill_List.cpp"
+#include "Specialty.h"
+#include "Secondary_Skill.h"
 #include "Morale_Luck.h"
 #include "Item.h"
 #include "Spellbook.h"

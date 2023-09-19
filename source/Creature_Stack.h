@@ -5,7 +5,7 @@
 #include "../utilities/types.h"
 #include "Team.h"
 #include "Creature.h"
-#include "Hero.h"
+// #include "Hero.h"
 #include "Position.h"
 
 // get hero's special abilities form creature and place in creature_stack
