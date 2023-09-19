@@ -9,7 +9,7 @@
 void print_before_testing_output()
 {
     std::cout << std::endl;
-    std::cout << "============================== Welcome to the Heroes 3 testing grounds ==============================" << std::endl;
+    std::cout << "=================== Welcome to the Heroes 3 testing grounds =================== " << std::endl;
 }
 
 void test_create_creature()
@@ -19,8 +19,6 @@ void test_create_creature()
     uint8_t level = 1;
     bool is_upgraded = false;
     uint8_t growth = 12;
-    Morale morale = Morale::Neutral;
-    Luck luck = Luck::Neutral;
     bool needs_2_hexes_in_battle = false;
     uint8_t att = 5;
     uint8_t def = 4;
@@ -29,6 +27,8 @@ void test_create_creature()
     uint8_t max_dmg = 3;
     uint8_t hp = 6;
     uint8_t speed = 4;
+    Morale morale = Morale::Neutral;
+    Luck luck = Luck::Neutral;
     uint16_t fight_value = 75;
     uint16_t ai_value = 60;
     uint32_t gold = 60;
@@ -43,8 +43,8 @@ void test_create_creature()
     bool has_dragon_breath = false;
     bool has_attack_adjacent = false;
     
-    Creature Skellies ( name, faction, level, is_upgraded, growth, morale, luck, needs_2_hexes_in_battle,
-                        att, def, shots, min_dmg, max_dmg, hp, speed, fight_value, ai_value, 
+    Creature Skellies ( name, faction, level, is_upgraded, growth, needs_2_hexes_in_battle,
+                        att, def, shots, min_dmg, max_dmg, hp, speed, morale, luck, fight_value, ai_value, 
                         { gold, mercury, sulfur, crystal, gems },
                         is_undead, is_unliving, is_flying, is_ranged, has_dragon_breath, has_attack_adjacent );
 

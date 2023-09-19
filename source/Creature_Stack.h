@@ -86,17 +86,21 @@ class Stack
             Skill_level _level_of_luck       = Skill_level::None;
 
             // Constructs a private structure containing data affecting battles when no hero is leading the army.
-            hero_specialty_and_secondary_skills()
-            {
-                _hero_specialty_name = "";
-
-                _level_of_archery    = Skill_level::None;
-                _level_of_offence    = Skill_level::None;
-                _level_of_armorer    = Skill_level::None;
-                _level_of_resistance = Skill_level::None;
-                _level_of_leadership = Skill_level::None;
-                _level_of_luck       = Skill_level::None;
-            };
+            hero_specialty_and_secondary_skills(std::string hero_specialty_name = "", 
+                                                Skill_level level_of_archery = Skill_level::None, 
+                                                Skill_level level_of_offence = Skill_level::None, 
+                                                Skill_level level_of_armorer = Skill_level::None, 
+                                                Skill_level level_of_resistance = Skill_level::None,
+                                                Skill_level level_of_leadership = Skill_level::None, 
+                                                Skill_level level_of_luck = Skill_level::None) :
+                                                _hero_specialty_name(hero_specialty_name),
+                                                _level_of_archery(level_of_archery),
+                                                _level_of_offence(level_of_offence),
+                                                _level_of_armorer(level_of_armorer),
+                                                _level_of_resistance(level_of_resistance),
+                                                _level_of_leadership(level_of_leadership),
+                                                _level_of_luck(level_of_luck)
+                                                {};
 
             // Constructs a private structure containing data affecting battles when a hero is leading the army.
             // hero_specialty_and_secondary_skills(Hero& _hero) // not called when no hero is available

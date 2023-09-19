@@ -21,12 +21,10 @@ struct Creature
                   uint8_t _level;
                   bool _is_upgraded;
                   uint8_t _growth;
-                  Morale _morale;   // move this in battle_stats
-                  Luck _luck;       // move this in battle_stats
                   bool _needs_2_hexes_in_battle;
 
                   // Constructs a private structure containing data used for overview
-                  unit_info( std::string name, Faction faction, uint8_t level, bool is_upgraded, uint8_t growth, Morale morale, Luck luck, bool needs_2_hexes_in_battle ) :
+                  unit_info( std::string name, Faction faction, uint8_t level, bool is_upgraded, uint8_t growth, bool needs_2_hexes_in_battle ) :
                              _name(name), _faction(faction), _level(level), _is_upgraded(is_upgraded), _growth(growth), _needs_2_hexes_in_battle(needs_2_hexes_in_battle) 
                              {};
             }unit_info;
@@ -40,14 +38,16 @@ struct Creature
                   uint8_t _max_dmg;
                   uint8_t _hp;
                   uint8_t _speed;
+                  Morale _morale;
+                  Luck _luck;
                   uint16_t _fight_value;
                   uint16_t _ai_value;
 
                   // Constructs a private structure containing data used during battles
                   battle_stats( const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, 
-                                const uint8_t hp, const uint8_t speed, const uint16_t fight_value, const uint16_t ai_value ) : 
-                                _att(att), _def(def), _shots(shots), _min_dmg(min_dmg), _max_dmg(max_dmg),
-                                _hp(hp), _speed(speed), _fight_value(fight_value), _ai_value(ai_value)
+                                const uint8_t hp, const uint8_t speed, Morale morale, Luck luck, const uint16_t fight_value, const uint16_t ai_value ) : 
+                                _att(att), _def(def), _shots(shots), _min_dmg(min_dmg), _max_dmg(max_dmg), _hp(hp), _speed(speed),
+                                _morale(morale), _luck(luck) ,_fight_value(fight_value), _ai_value(ai_value)
                                 {};
             }battle_stats;
 
@@ -86,8 +86,8 @@ struct Creature
          
       public:
             // Parametrized constructor (no default constructor allowed). Calls Logical_Limitations_When_Constructing().
-            Creature( const std::string name, const Faction faction, const uint8_t level, const bool is_upgraded, const uint8_t growth, const Morale morale, const Luck luck, const bool needs_2_hexes_in_battle,
-                      const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, const uint8_t hp, const uint8_t speed, const uint16_t fight_value, const uint16_t ai_value, 
+            Creature( const std::string name, const Faction faction, const uint8_t level, const bool is_upgraded, const uint8_t growth, const bool needs_2_hexes_in_battle,
+                      const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, const uint8_t hp, const uint8_t speed, const Morale morale, const Luck luck, const uint16_t fight_value, const uint16_t ai_value, 
                       const Resources resources, 
                       const bool is_undead, const bool is_unliving, const bool is_flying, const bool is_ranged, const bool has_dragon_breath, const bool has_attack_adjacent );
             
@@ -115,10 +115,6 @@ struct Creature
 
             uint8_t get_growth() { return unit_info._growth; };
 
-            Morale get_morale() { return unit_info._morale; };
-
-            Luck get_luck() { return unit_info._luck; };
-
             bool get_needs_2_hexes_in_battle() { return unit_info._needs_2_hexes_in_battle; };
 
             uint8_t get_att() { return battle_stats._att; };
@@ -134,6 +130,10 @@ struct Creature
             uint8_t get_hp() { return battle_stats._hp; };
 
             uint8_t get_speed() { return battle_stats._speed; };
+
+            Morale get_morale() { return battle_stats._morale; };
+
+            Luck get_luck() { return battle_stats._luck; };
 
             uint16_t get_fight_value() { return battle_stats._fight_value; };
 

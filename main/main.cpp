@@ -56,6 +56,7 @@ TO DO:
 
 int main()
 {
+    test_create_creature();
     test_create_creature_stack();
     
     system("pause");
