@@ -271,24 +271,24 @@ void Stack::retaliate(Stack& attacker)
 
 void Stack::print_battle_info()
 {
-    auto s = stack._creature;
-    printf("Name : %s\n", s.get_name().c_str());
-    printf("Faction : %s\n", s.get_faction_as_string().c_str());
-    printf("Level : %d\n", s.get_level());
-    printf("Upgraded : %d\n", s.get_is_upgraded());
-    printf("Attack : %d(%d)\n", s.get_att());
-    printf("Defence : %d(%d)\n", s.get_def());
+    auto c = _creature;
+    printf("Name : %s\n", c.get_name().c_str());
+    printf("Faction : %s\n", c.get_faction_as_string().c_str());
+    printf("Level : %d\n", c.get_level());
+    printf("Upgraded : %d\n", c.get_is_upgraded());
+    printf("Attack : %d(%d)\n", c.get_att());
+    printf("Defence : %d(%d)\n", c.get_def());
 
-    if(s.get_is_ranged())
-        printf("Shots : %d(%d)\n", s.get_shots(), stack.get_shots_left());
+    if(c.get_is_ranged())
+        printf("Shots : %d(%d)\n", c.get_shots(), get_shots_left());
     
-    printf("Damage : %d - %d\n", s.get_min_dmg(), s.get_max_dmg());
-    printf("Health : %d(%d)\n", s.get_hp(), stack.get_hp_left());
-    printf("Morale : %d\n", s.get_morale());
-    printf("Luck : %d\n", s.get_luck());
+    printf("Damage : %d - %d\n", c.get_min_dmg(), c.get_max_dmg());
+    printf("Health : %d(%d)\n", c.get_hp(), get_hp_left());
+    printf("Morale : %d\n", c.get_morale());
+    printf("Luck : %d\n", c.get_luck());
 
-    if(s.get_special_abilities().length() != 0)
-        printf("Special abilities : %s\n", s.get_special_abilities().c_str());
+    if(c.get_special_abilities().length() != 0)
+        printf("Special abilities : %s\n", c.get_special_abilities().c_str());
 }
 
 void Stack::print_full_info()
