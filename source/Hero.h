@@ -13,6 +13,7 @@
 #include "Position.h"
 
 #define MAX_SECONDARY_SKILLS (8)
+#define ARMY_SLOTS (7)
 
 enum Gender
 {

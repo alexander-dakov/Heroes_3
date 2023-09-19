@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include "tests.h"
 #include "../utilities/types.h"
 #include "../source/Creature_Stack.h"
@@ -50,34 +51,34 @@ void test_create_creature()
     print_before_testing_output();
     Skellies.print_full_info();
 
-    // Creature& ref = Skellies;
-    // Creature* ptr = &Skellies;
+    Creature& ref = Skellies;
+    Creature* ptr = &Skellies;
 
-    // Creature Boney_Bois(ref);
-    // if(Boney_Bois.get_name() != Skellies.get_name())
-    // {
-    //     std::cout << "Constructing by reference does not work!"<< std::endl;
-    //     abort();
-    // }
+    Creature Boney_Bois(ref);
+    if(Boney_Bois.get_name() != Skellies.get_name())
+    {
+        std::cout << "Constructing by reference does not work!"<< std::endl;
+        abort();
+    }
 
-    // Creature Calcium_Daddies(ptr);
-    // if(Calcium_Daddies.get_name() != Skellies.get_name())
-    // {
-    //     std::cout << "Constructing by pointer does not work!"<< std::endl;
-    //     abort();
-    // }
+    Creature Calcium_Daddies(ptr);
+    if(Calcium_Daddies.get_name() != Skellies.get_name())
+    {
+        std::cout << "Constructing by pointer does not work!"<< std::endl;
+        abort();
+    }
 }
 
 void test_create_creature_stack()
 {
     print_before_testing_output();
 
-    #define CONCAT(id1, id2) id1##id2
+    Stack* army[ARMY_SLOTS] = {nullptr};
 
-    for(int i = 0; i < 8; i++)
+    for(int i = 0; i < ARMY_SLOTS; i++)
     {
-        Stack CONCAT(stack_, i)(Creature_List::Skeleton_Warrior, 50 + i);
-        CONCAT(stack_, i).get_number();
-        std::cout << std::endl;
+        army[i] = new Stack(Creature_List::Skeleton_Warrior, 50 + i);
+        std::cout << "Stack " << i << " name is : " << army[i]->get_creature().get_name() << std::endl;
+        std::cout << "Stack " << i << " number is : " << army[i]->get_number() << std::endl;
     }
 }

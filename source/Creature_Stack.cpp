@@ -20,6 +20,18 @@ Stack::Stack(const Creature creature, const uint32_t number) :
              hero_specialty_and_secondary_skills()
              {};
 
+Stack::Stack(const Stack& stack, const uint32_t number) :
+             _creature(stack._creature), _number(stack._number),
+             battle_stats(stack._creature),
+             hero_specialty_and_secondary_skills(stack.hero_specialty_and_secondary_skills)
+             {};
+
+Stack::Stack(const Stack* stack, const uint32_t number) :
+             _creature(stack->_creature), _number(stack->_number),
+             battle_stats(stack->_creature),
+             hero_specialty_and_secondary_skills(stack.hero_specialty_and_secondary_skills)
+             {};
+
 Stack::~Stack()
 {
     // std::cout << "Stack destroyed!" << std::endl;

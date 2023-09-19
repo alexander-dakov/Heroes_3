@@ -123,11 +123,19 @@ class Stack
         
         // Parametrized constructor used in when purchasing a stack, moving it from one army to another or seperating it into smaller stacks.
         Stack(const Creature creature, const uint32_t number);
+
+        // Copy constructors by reference. Used when moving a stack from one army to another or seperating it into smaller stacks.
+        Stack(const Stack& stack, const uint32_t number);
+
+        // Copy constructors by pointer. Used when moving a stack from one army to another or seperating it into smaller stacks.
+        Stack(const Stack* stack, const uint32_t number);
         
         // Destructor
         ~Stack();
 
         Team get_team() { return _team; };
+
+        Creature get_creature() { return _creature; };
 
         void set_att(const uint8_t att) { battle_stats._att = att; };
         uint8_t get_att() { return battle_stats._att; };
