@@ -7,7 +7,7 @@
 
 namespace Hero_List
 {
-    Hero None("None", Gender::Male, Class::Might, Faction::Neutral, Team::None, 0, 0, 0, 0, 0, 0, Specialty_List::None, Morale::Neutral, Luck::Neutral, false, false, false, false,  false);
+    Hero None("None", Gender::Male, Class::Might, Faction::Neutral, Team::Neutral, 0, 0, 0, 0, 0, 0, Specialty_List::None, Morale::Neutral, Luck::Neutral, false, false, false, false, false);
 }
 
 #endif

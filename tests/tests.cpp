@@ -2,7 +2,7 @@
 #include <vector>
 #include "tests.h"
 #include "../utilities/types.h"
-#include "../source/Creature_Stack.h"
+#include "../source/Creature_Stack.cpp"
 #include "../source/Creature_List.cpp"
 #include "../source/Hero_List.cpp"
 
@@ -25,7 +25,7 @@ void test_create_creature()
     uint8_t shots = 20;
     uint8_t min_dmg = 1;
     uint8_t max_dmg = 3;
-    uint8_t hp = 6;
+    uint16_t hp = 6;
     uint8_t speed = 4;
     Morale morale = Morale::Neutral;
     Luck luck = Luck::Neutral;
@@ -81,4 +81,19 @@ void test_create_creature_stack()
         std::cout << "Stack " << i << " name is : " << army[i]->get_creature().get_name() << std::endl;
         std::cout << "Stack " << i << " number is : " << army[i]->get_number() << std::endl;
     }
+}
+
+void test_creature_stack_vs_creature_stack()
+{
+    print_before_testing_output();
+
+    Stack attacker(Creature_List::Lich, 10, Team::Red);
+    // Stack attacker(Creature_List::Ghost_Dragon, 1, Team::Red);
+    std::cout << attacker.get_team_as_string() << " stack is comprised of : " << attacker.get_number() << " " << attacker.get_creature().get_name() << std::endl;
+
+    // Stack defender(Creature_List::Skeleton, 1, Team::Blue);
+    Stack defender(Creature_List::Ghost_Dragon, 1, Team::Blue);
+    std::cout << defender.get_team_as_string() << " stack is comprised of : " << defender.get_number() << " " << defender.get_creature().get_name() << std::endl;
+
+    attacker.attack(defender);
 }

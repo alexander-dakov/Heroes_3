@@ -36,7 +36,7 @@ struct Creature
                   uint8_t _shots;
                   uint8_t _min_dmg;
                   uint8_t _max_dmg;
-                  uint8_t _hp;
+                  uint16_t _hp;
                   uint8_t _speed;
                   Morale _morale;
                   Luck _luck;
@@ -45,7 +45,7 @@ struct Creature
 
                   // Constructs a private structure containing data used during battles
                   battle_stats( const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, 
-                                const uint8_t hp, const uint8_t speed, Morale morale, Luck luck, const uint16_t fight_value, const uint16_t ai_value ) : 
+                                const uint16_t hp, const uint8_t speed, Morale morale, Luck luck, const uint16_t fight_value, const uint16_t ai_value ) : 
                                 _att(att), _def(def), _shots(shots), _min_dmg(min_dmg), _max_dmg(max_dmg), _hp(hp), _speed(speed),
                                 _morale(morale), _luck(luck) ,_fight_value(fight_value), _ai_value(ai_value)
                                 {};
@@ -73,6 +73,44 @@ struct Creature
                   bool _has_dragon_breath;
                   bool _has_attack_adjacent;
 
+                  // bool _is_undead;
+                  // bool _is_unliving;
+
+                  // bool _is_flying;
+                  // bool _is_ranged;
+                  
+                  // bool _has_two_retaliations;
+                  // bool _has_unlimited_retaliations;
+                  // bool _no_enemy_retaliation;
+                  // bool _no_melee_penalty;
+                  // bool _no_obstacle_penalty;
+
+                  // bool _double_attack;
+                  // bool _has_jousting;
+                  // bool _has_death_blow;
+                  // bool _has_dragon_breath;
+
+                  // bool _has_dragon_breath;
+                  
+                  // bool _has_attack_adjacent;
+                  // bool _has_cloud_attack;
+                  
+                  // bool _increases_alias_morale;
+                  // bool _decreases_enemy_morale;
+
+                  // bool _casts_disease;
+                  // bool _casts_regeneration;
+                  // bool _casts_mana_drain;
+                  // bool _casts_drain_life;
+                  // bool _casts_weaken;
+                  // bool _casts_curse;
+                  // bool _casts_aging;
+
+                  // bool _casts_binding;
+                  // bool _casts_lightning_strike;
+
+                  // bool _is_immune_to_jousting;
+
                   // Constructs a private structure containing data which affects behaviour during battle
                   special_abilities( const bool is_undead, const bool is_unliving, const bool is_flying, const bool is_ranged, const bool has_dragon_breath, const bool has_attack_adjacent ) :
                                      _is_undead(is_undead),
@@ -87,7 +125,7 @@ struct Creature
       public:
             // Parametrized constructor (no default constructor allowed). Calls Logical_Limitations_When_Constructing().
             Creature( const std::string name, const Faction faction, const uint8_t level, const bool is_upgraded, const uint8_t growth, const bool needs_2_hexes_in_battle,
-                      const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, const uint8_t hp, const uint8_t speed, const Morale morale, const Luck luck, const uint16_t fight_value, const uint16_t ai_value, 
+                      const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, const uint16_t hp, const uint8_t speed, const Morale morale, const Luck luck, const uint16_t fight_value, const uint16_t ai_value, 
                       const Resources resources, 
                       const bool is_undead, const bool is_unliving, const bool is_flying, const bool is_ranged, const bool has_dragon_breath, const bool has_attack_adjacent );
             
@@ -127,7 +165,7 @@ struct Creature
 
             uint8_t get_max_dmg() { return battle_stats._max_dmg; };
 
-            uint8_t get_hp() { return battle_stats._hp; };
+            uint16_t get_hp() { return battle_stats._hp; };
 
             uint8_t get_speed() { return battle_stats._speed; };
 

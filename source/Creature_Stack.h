@@ -27,19 +27,19 @@ class Stack
 {
     private:
         // Hero& _hero;
-        Team _team = Team::None; // MUST BE INHERITED
+        Team _team = Team::Neutral; // MUST BE INHERITED
         Creature _creature;
 
         struct battle_stats
         {
-            uint8_t _att; // modified by hero's attack skill
-            uint8_t _def; // modified by hero's defence skill
-            uint8_t _shots_left; // modified battle and ammo cart
-            uint8_t _hp; // modified by hero's items
-            uint8_t _hp_left; // modified battle and hero's items
-            uint8_t _speed; // modified by hero's items
-            Morale _morale; // modified by hero's morale
-            Luck _luck; // modified by hero's luck
+            uint8_t _att;           // modified by hero's attack skill
+            uint8_t _def;           // modified by hero's defence skill
+            uint8_t _shots_left;    // modified by battle and ammo cart
+            uint16_t _hp;            // modified by hero's items
+            uint16_t _hp_left;       // modified battle and hero's items
+            uint8_t _speed;         // modified by hero's items
+            Morale _morale;         // modified by hero's morale
+            Luck _luck;             // modified by hero's luck
 
             // Constructs a private structure containing data used during battles when no hero is leading the army.
             battle_stats(Creature _creature)
@@ -74,9 +74,13 @@ class Stack
         Stack_Action _action = Stack_Action::Attack;
 
 
-        struct hero_specialty_and_secondary_skills
+        struct hero_attributes
         {
-            std::string _hero_specialty_name = "";
+            uint8_t _att = 0;                   // hero's attack skill
+            uint8_t _def = 0;                   // hero's defence skill
+            Morale _morale = Morale::Neutral;   // hero's morale
+            Luck _luck = Luck::Neutral;         // hero's luck
+            std::string _specialty_name = "";   // hero's specialty name
 
             Skill_level _level_of_archery    = Skill_level::None;
             Skill_level _level_of_offence    = Skill_level::None;
@@ -85,27 +89,50 @@ class Stack
             Skill_level _level_of_leadership = Skill_level::None;
             Skill_level _level_of_luck       = Skill_level::None;
 
-            // Constructs a private structure containing data affecting battles when no hero is leading the army.
-            hero_specialty_and_secondary_skills(std::string hero_specialty_name = "", 
-                                                Skill_level level_of_archery = Skill_level::None, 
-                                                Skill_level level_of_offence = Skill_level::None, 
-                                                Skill_level level_of_armorer = Skill_level::None, 
-                                                Skill_level level_of_resistance = Skill_level::None,
-                                                Skill_level level_of_leadership = Skill_level::None, 
-                                                Skill_level level_of_luck = Skill_level::None) :
-                                                _hero_specialty_name(hero_specialty_name),
-                                                _level_of_archery(level_of_archery),
-                                                _level_of_offence(level_of_offence),
-                                                _level_of_armorer(level_of_armorer),
-                                                _level_of_resistance(level_of_resistance),
-                                                _level_of_leadership(level_of_leadership),
-                                                _level_of_luck(level_of_luck)
-                                                {};
+            // Constructs a private structure containing data affecting battles.
+            hero_attributes(const uint8_t att = 0, 
+                            const uint8_t def = 0, 
+                            const Morale morale = Morale::Neutral, 
+                            const Luck luck = Luck::Neutral,
+                            const std::string specialty_name = "", 
+                            const Skill_level level_of_archery = Skill_level::None,
+                            const Skill_level level_of_offence = Skill_level::None,
+                            const Skill_level level_of_armorer = Skill_level::None,
+                            const Skill_level level_of_resistance = Skill_level::None,
+                            const Skill_level level_of_leadership = Skill_level::None,
+                            const Skill_level level_of_luck = Skill_level::None) :
+                            _att(att), 
+                            _def(def),
+                            _morale(morale), 
+                            _luck(luck),
+                            _specialty_name(specialty_name),
+                            _level_of_archery(level_of_archery),
+                            _level_of_offence(level_of_offence),
+                            _level_of_armorer(level_of_armorer),
+                            _level_of_resistance(level_of_resistance),
+                            _level_of_leadership(level_of_leadership),
+                            _level_of_luck(level_of_luck)
+                            {};
+
+            // Constructs a private structure containing data affecting battles.
+            hero_attributes(const hero_attributes& h) :
+                            _att(h._att), 
+                            _def(h._def),
+                            _morale(h._morale), 
+                            _luck(h._luck),
+                            _specialty_name(h._specialty_name),
+                            _level_of_archery(h._level_of_archery),
+                            _level_of_offence(h._level_of_offence),
+                            _level_of_armorer(h._level_of_armorer),
+                            _level_of_resistance(h._level_of_resistance),
+                            _level_of_leadership(h._level_of_leadership),
+                            _level_of_luck(h._level_of_luck)
+                            {};
 
             // Constructs a private structure containing data affecting battles when a hero is leading the army.
-            // hero_specialty_and_secondary_skills(Hero& _hero) // not called when no hero is available
+            // hero_attributes(Hero& _hero) // not called when no hero is available
             // {
-            //     _hero_specialty_name = _hero.get_specialty().get_name();
+            //     _specialty_name = _hero.get_specialty().get_name();
 
             //     for(uint8_t i = 0; i < MAX_SECONDARY_SKILLS; i++)
             //     {
@@ -117,16 +144,16 @@ class Stack
             //         else if( _hero.get_secondary_skill(i)->get_name() == "Luck")       { _level_of_luck       = _hero.get_secondary_skill(i)->get_level(); }
             //     }
             // };
-        }hero_specialty_and_secondary_skills;
+        }hero_attributes;
 
     public:
         // Stack(const Hero& hero, const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y); // hero should be fixed 
 
         // Parametrized constructor used during battle.
-        Stack(const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y);
+        Stack(const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y, const Team team);
         
         // Parametrized constructor used in when purchasing a stack, moving it from one army to another or seperating it into smaller stacks.
-        Stack(const Creature creature, const uint32_t number);
+        Stack(const Creature creature, const uint32_t number, const Team team);
 
         // Copy constructors by reference. Used when moving a stack from one army to another or seperating it into smaller stacks.
         Stack(const Stack& stack, const uint32_t number);
@@ -138,6 +165,7 @@ class Stack
         ~Stack();
 
         Team get_team() { return _team; };
+        std::string get_team_as_string();
 
         Creature get_creature() { return _creature; };
 
@@ -150,11 +178,11 @@ class Stack
         void set_shots_left(const uint8_t shots_left) { battle_stats._shots_left = shots_left; };
         uint8_t get_shots_left() { return battle_stats._shots_left; };
         
-        void set_hp(const uint8_t hp) { battle_stats._hp = hp; }; // for bonuses from items
-        uint8_t get_hp() { return battle_stats._hp; };
+        void set_hp(const uint16_t hp) { battle_stats._hp = hp; }; // for bonuses from items
+        uint16_t get_hp() { return battle_stats._hp; };
 
-        void set_hp_left(const uint8_t hp) { battle_stats._hp_left = std::min(hp, battle_stats._hp); };
-        uint8_t get_hp_left() { return battle_stats._hp_left; };
+        void set_hp_left(const uint16_t hp) { battle_stats._hp_left = std::min(hp, battle_stats._hp); };
+        uint16_t get_hp_left() { return battle_stats._hp_left; };
 
         void set_speed(const uint8_t speed) { battle_stats._speed = speed; };
         uint8_t get_speed() { return battle_stats._speed; };
@@ -179,11 +207,11 @@ class Stack
         void set_action(Stack_Action action) { _action = action; };
         Stack_Action get_action() { return _action; };
 
-        std::string get_specialty()           { return hero_specialty_and_secondary_skills._hero_specialty_name; };
-        Skill_level get_level_of_archery()    { return hero_specialty_and_secondary_skills._level_of_archery;    };
-        Skill_level get_level_of_offence()    { return hero_specialty_and_secondary_skills._level_of_offence;    };
-        Skill_level get_level_of_armorer()    { return hero_specialty_and_secondary_skills._level_of_armorer;    };
-        Skill_level get_level_of_resistance() { return hero_specialty_and_secondary_skills._level_of_resistance; };
+        std::string get_specialty()           { return hero_attributes._specialty_name; };
+        Skill_level get_level_of_archery()    { return hero_attributes._level_of_archery;    };
+        Skill_level get_level_of_offence()    { return hero_attributes._level_of_offence;    };
+        Skill_level get_level_of_armorer()    { return hero_attributes._level_of_armorer;    };
+        Skill_level get_level_of_resistance() { return hero_attributes._level_of_resistance; };
 
         // Stack's number and/or remaining health of last units get affected.
         void recieve_damage(uint32_t damage);

@@ -1,7 +1,7 @@
 #include "Creature.h"
 
 Creature::Creature( const std::string name, const Faction faction, const uint8_t level, const bool is_upgraded, const uint8_t growth, const bool needs_2_hexes_in_battle,
-                    const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, const uint8_t hp, const uint8_t speed, const Morale morale, const Luck luck, const uint16_t fight_value, const uint16_t ai_value, 
+                    const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, const uint16_t hp, const uint8_t speed, const Morale morale, const Luck luck, const uint16_t fight_value, const uint16_t ai_value, 
                     const Resources resources, 
                     const bool is_undead = false, const bool is_unliving = false, const bool is_flying = false, const bool is_ranged = false, const bool has_dragon_breath = false, const bool has_attack_adjacent = false ) :
                     unit_info(name, faction, level, is_upgraded, growth, needs_2_hexes_in_battle),

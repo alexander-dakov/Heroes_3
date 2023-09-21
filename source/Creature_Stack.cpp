@@ -1,40 +1,62 @@
+#ifndef CREATURE_STACK_CPP
+#define CREATURE_STACK_CPP
+
 #include "Creature_Stack.h"
 
 // Stack::Stack(const Hero& hero, const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y) :
 //              _hero(hero), _creature(creature), _number(number), _pos(pos_x, pos_y),
 //              battle_stats(creature, hero),
-//              hero_specialty_and_secondary_skills(hero)
+//              hero_attributes(hero)
 //              {
 //                 _team = _hero.get_team();
 //              };
 
-Stack::Stack(const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y) :
-             _creature(creature), _number(number), _pos(pos_x, pos_y),
+Stack::Stack(const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y, const Team team = Team::Neutral) :
+             _creature(creature), _number(number), _pos(pos_x, pos_y), _team(team),
              battle_stats(creature), 
-             hero_specialty_and_secondary_skills()
+             hero_attributes()
              {};
 
-Stack::Stack(const Creature creature, const uint32_t number) :
-             _creature(creature), _number(number),
+Stack::Stack(const Creature creature, const uint32_t number, const Team team = Team::Neutral) :
+             _creature(creature), _number(number), _team(team),
              battle_stats(creature),
-             hero_specialty_and_secondary_skills()
+             hero_attributes()
              {};
 
 Stack::Stack(const Stack& stack, const uint32_t number) :
-             _creature(stack._creature), _number(stack._number),
+             _creature(stack._creature), _number(std::min(stack._number, number)), _team(stack._team),
              battle_stats(stack._creature),
-             hero_specialty_and_secondary_skills(stack.hero_specialty_and_secondary_skills)
+             hero_attributes(stack.hero_attributes)
              {};
 
 Stack::Stack(const Stack* stack, const uint32_t number) :
-             _creature(stack->_creature), _number(stack->_number),
+             _creature(stack->_creature), _number(std::min(stack->_number, number)), _team(stack->_team),
              battle_stats(stack->_creature),
-             hero_specialty_and_secondary_skills(stack->hero_specialty_and_secondary_skills)
+             hero_attributes(stack->hero_attributes)
              {};
 
 Stack::~Stack()
 {
     // std::cout << "Stack destroyed!" << std::endl;
+}
+
+std::string Stack::get_team_as_string()
+{
+      std::string team;
+
+      switch(get_team())
+      {
+            case Team::Neutral : team = "Neutral";  break;
+            case Team::Red     : team = "Red";      break;
+            case Team::Blue    : team = "Blue";     break;
+            case Team::Tan     : team = "Tan";      break;
+            case Team::Green   : team = "Green";    break;
+            case Team::Orange  : team = "Orange";   break;
+            case Team::Purple  : team = "Purple";   break;
+            case Team::Teal    : team = "Teal";     break;
+            case Team::Pink    : team = "Pink";     break;
+      }
+      return team;
 }
 
 void Stack::new_turn()
@@ -61,13 +83,18 @@ void Stack::take_action()
 
 void Stack::recieve_damage(uint32_t damage)
 {
-    uint8_t hp = get_hp(); // hp per unit
-    uint8_t hp_last = get_hp_left(); // hp of last unit
-    uint32_t num = get_number(); // amount of creatures in stack
+    uint16_t hp = get_hp();           // hp per unit
+    uint16_t hp_last = get_hp_left(); // hp of last unit
+    uint32_t num = get_number();     // amount of creatures in stack
 
     if(damage < hp_last)
     {
-        set_hp_left(hp_last - damage);
+        set_hp_left(static_cast<uint16_t>(hp_last - damage));
+
+        #if SHOW_DEBUG_INFO == 1
+            std::cout << _creature.get_name() << " has " << get_hp_left() << " hp left." << std::endl;
+        #endif
+
         return;
     }
     else if(damage == hp_last)
@@ -76,10 +103,13 @@ void Stack::recieve_damage(uint32_t damage)
         if(get_number() == 0)
         {
             set_has_perished(true);
+            std::cout << _creature.get_name() << " has perished!" << std::endl;
+
             set_action(Stack_Action::Skip);
             return;
         }
         set_hp_left(hp);
+        std::cout << "One " << _creature.get_name() << " has perished!" << std::endl;
         return;
     }
     else
@@ -90,13 +120,25 @@ void Stack::recieve_damage(uint32_t damage)
         {
             set_number(0);
             set_has_perished(true);
+            std::cout << "The whole " << _creature.get_name() << " stack has perished!" << std::endl;
+
             set_action(Stack_Action::Skip);
             return;
         }
         else
         {
-            set_hp_left(capacity % damage);
-            set_number(capacity / damage);
+            uint32_t initial_num = get_number();
+            uint32_t new_num = static_cast<uint32_t>(capacity / damage);
+
+            set_hp_left(static_cast<uint16_t>(capacity % damage));
+            set_number(new_num);
+
+            std::cout << initial_num - new_num << _creature.get_name() << " has perished!" << std::endl;
+
+            #if SHOW_DEBUG_INFO == 1
+                std::cout << _creature.get_name() << " has " << get_hp_left() << " hp left." << std::endl;
+            #endif
+
             return;
         }
     }
@@ -180,8 +222,11 @@ void Stack::attack(Stack& defender)
     if(!target(defender))
         return;
     
-    uint32_t final_damage;
-    uint32_t base_damage;
+    uint8_t max_dmg = _creature.get_max_dmg();
+    uint8_t min_dmg = _creature.get_min_dmg();
+    
+    uint32_t final_damage = 0;
+    uint32_t base_damage = 0;
 
     bool melee_penalty = false;
     bool ranged_penalty = false;
@@ -233,8 +278,8 @@ void Stack::attack(Stack& defender)
 
 
     // calculate R1
-    if(defender.get_def() >= get_att())
-        R1 = 0.25 * (defender.get_def() - get_att());
+    if( defender.get_def() >= get_att() && ( !_creature.get_is_ranged() || (_creature.get_is_ranged() && !can_shoot()) ) )
+        R1 = 0.025 * (defender.get_def() - get_att());
 
     // calculate R2
     // if secondary skills
@@ -257,23 +302,56 @@ void Stack::attack(Stack& defender)
     // calculate R8
     // if special abilities
 
-    final_damage = static_cast<int32_t>( base_damage * (1 + I1 + I2 + I3 + I4 + I5) * (1 - R1) * (1 - R2 - R3) * (1 - R4) * (1 - R5) * (1 - R6) * (1 - R7) * (1 - R8) );
+    uint8_t range = max_dmg - min_dmg + 1;
+    
+    if(get_number() <= 10)
+        for(int i = 0; i < get_number(); i++)
+            base_damage += rand() % range + min_dmg;
+    else
+    {
+        for(int i = 0; i < 10; i++)
+            base_damage += rand() % range + min_dmg;
+        
+        base_damage = base_damage * get_number()/10;
+    }
 
+#if SHOW_DEBUG_INFO == 1
+    std::cout << std::endl;
+    std::cout << "Damage parameter I1 = " << I1 << std::endl;
+    std::cout << "Damage parameter I2 = " << I2 << std::endl;
+    std::cout << "Damage parameter I3 = " << I3 << std::endl;
+    std::cout << "Damage parameter I4 = " << I4 << std::endl;
+    std::cout << "Damage parameter I5 = " << I5 << std::endl;
+    std::cout << "Damage parameter R1 = " << R1 << std::endl;
+    std::cout << "Damage parameter R2 = " << R2 << std::endl;
+    std::cout << "Damage parameter R3 = " << R3 << std::endl;
+    std::cout << "Damage parameter R4 = " << R4 << std::endl;
+    std::cout << "Damage parameter R5 = " << R5 << std::endl;
+    std::cout << "Damage parameter R6 = " << R6 << std::endl;
+    std::cout << "Damage parameter R7 = " << R7 << std::endl;
+    std::cout << "Damage parameter R8 = " << R8 << std::endl;
+    std::cout << std::endl;
+#endif
+
+    final_damage = static_cast<int32_t>( base_damage * (1 + I1 + I2 + I3 + I4 + I5) * (1 - R1) * (1 - R2 - R3) * (1 - R4) * (1 - R5) * (1 - R6) * (1 - R7) * (1 - R8) );
+    
+    printf("%s does %d damage to %s.\n", _creature.get_name().c_str(), final_damage, defender._creature.get_name().c_str());
+    
     defender.recieve_damage(final_damage);
 
-    //if defender is efreet sultan or has pell fire shield attacker and attacker is not immuned - attacker shoudl recieve dmg
+    //if defender is efreet sultan or has pell fire shield attacker and attacker is not immuned - attacker should recieve dmg
 }
 
 bool Stack::can_shoot()
 {
     // if archer has arrows and no active enemy is in the way
-    return false;
+    return true;
 }
 
 bool Stack::target(Stack& stack)
 {
     // if attacker can reach defender
-    return false;
+    return true;
 }
 
 void Stack::retaliate(Stack& attacker)
@@ -288,8 +366,8 @@ void Stack::print_battle_info()
     printf("Faction : %s\n", c.get_faction_as_string().c_str());
     printf("Level : %d\n", c.get_level());
     printf("Upgraded : %d\n", c.get_is_upgraded());
-    printf("Attack : %d(%d)\n", c.get_att());
-    printf("Defence : %d(%d)\n", c.get_def());
+    printf("Attack : %d(%d)\n", c.get_att(), get_att());
+    printf("Defence : %d(%d)\n", c.get_def(), get_def());
 
     if(c.get_is_ranged())
         printf("Shots : %d(%d)\n", c.get_shots(), get_shots_left());
@@ -328,3 +406,5 @@ void Stack::print_full_info()
     if(c.get_special_abilities().length() != 0)
         printf("Special abilities : %s\n", c.get_special_abilities().c_str());
 }
+
+#endif

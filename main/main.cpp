@@ -1,10 +1,16 @@
 #include <iostream>
 #include "../utilities/types.h"
+
+#define SHOW_DEBUG_INFO (1) // show(1) or hide(0) debug messages
+
 #include "../source/Creature_Stack.cpp"
 #include "../source/Creature_List.cpp"
 #include "../source/Hero_List.cpp"
 
+#define TESTS (1) // include(1) or exclude(0) tests library
+#if TESTS == 1
 #include "../tests/tests.cpp"
+#endif
 
 
 /* Thought processes that influence the development :
@@ -56,8 +62,10 @@ TO DO:
 
 int main()
 {
-    test_create_creature();
-    test_create_creature_stack();
+    // test_create_creature();
+    // test_create_creature_stack();
+
+    test_creature_stack_vs_creature_stack();
     
     system("pause");
     return 0;
