@@ -87,12 +87,12 @@ void test_creature_stack_vs_creature_stack()
 {
     print_before_testing_output();
 
-    Stack attacker(Creature_List::Lich, 10, Team::Red);
-    // Stack attacker(Creature_List::Ghost_Dragon, 1, Team::Red);
+    // Stack attacker(Creature_List::Lich, 10, Team::Red);
+    Stack attacker(Creature_List::Angel, 1, Team::Red);
     std::cout << attacker.get_team_as_string() << " stack is comprised of : " << attacker.get_number() << " " << attacker.get_creature().get_name() << std::endl;
 
-    // Stack defender(Creature_List::Skeleton, 1, Team::Blue);
-    Stack defender(Creature_List::Ghost_Dragon, 1, Team::Blue);
+    Stack defender(Creature_List::Skeleton, 20, Team::Blue);
+    // Stack defender(Creature_List::Ghost_Dragon, 1, Team::Blue);
     std::cout << defender.get_team_as_string() << " stack is comprised of : " << defender.get_number() << " " << defender.get_creature().get_name() << std::endl;
 
     attacker.attack(defender);

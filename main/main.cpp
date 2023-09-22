@@ -41,7 +41,7 @@
 
 TO DO:
  0) Go over each function and add comments above the declaration.
- 1) Test a creature vs creature battle
+ 1) Test a creature vs creature battle (needs more creatures with special abilities)
  2) Test a hero vs creature battle (no spells)
  3) Test a hero vs hero battle (no spells)
  4) Fix the implementation of secondary skills and test it in battle

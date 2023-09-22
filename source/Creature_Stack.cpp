@@ -128,9 +128,9 @@ void Stack::recieve_damage(uint32_t damage)
         else
         {
             uint32_t initial_num = get_number();
-            uint32_t new_num = static_cast<uint32_t>(capacity / damage);
+            uint32_t new_num = static_cast<uint32_t>( (capacity - damage) / hp );
 
-            set_hp_left(static_cast<uint16_t>(capacity % damage));
+            set_hp_left( static_cast<uint16_t>( (capacity - damage) % hp ) );
             set_number(new_num);
 
             std::cout << initial_num - new_num << _creature.get_name() << " has perished!" << std::endl;
@@ -302,17 +302,22 @@ void Stack::attack(Stack& defender)
     // calculate R8
     // if special abilities
 
-    uint8_t range = max_dmg - min_dmg + 1;
-    
-    if(get_number() <= 10)
-        for(int i = 0; i < get_number(); i++)
-            base_damage += rand() % range + min_dmg;
+    if(min_dmg == max_dmg)
+        base_damage = min_dmg * get_number();
     else
     {
-        for(int i = 0; i < 10; i++)
-            base_damage += rand() % range + min_dmg;
+        uint8_t range = max_dmg - min_dmg + 1;
         
-        base_damage = base_damage * get_number()/10;
+        if(get_number() <= 10)
+            for(int i = 0; i < get_number(); i++)
+                base_damage += rand() % range + min_dmg;
+        else
+        {
+            for(int i = 0; i < 10; i++)
+                base_damage += rand() % range + min_dmg;
+            
+            base_damage = base_damage * get_number()/10;
+        }
     }
 
 #if SHOW_DEBUG_INFO == 1
