@@ -146,6 +146,9 @@ class Stack
             // };
         }hero_attributes;
 
+        // Each creature can hold up to 3 spell effects at the same time.
+        // std::array<Spell,3> _spell_slots; // Do it with a LIFO.
+
     public:
         // Stack(const Hero& hero, const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y); // hero should be fixed 
 

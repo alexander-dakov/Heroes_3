@@ -1,5 +1,4 @@
 #include <iostream>
-#include <vector>
 #include "tests.h"
 #include "../utilities/types.h"
 #include "../source/Creature_Stack.cpp"
@@ -36,20 +35,18 @@ void test_create_creature()
     uint32_t sulfur = 0; 
     uint32_t crystal = 0;
     uint32_t gems = 0;
-    bool is_undead = true;  
-    bool is_unliving = false;
-    bool is_flying = false;
-    bool is_ranged = false;
-    bool has_dragon_breath = false;
-    bool has_attack_adjacent = false;
+    std::string special_abilities = "Undead.";
     
     Creature Skellies ( name, faction, level, is_upgraded, growth, needs_2_hexes_in_battle,
                         att, def, shots, min_dmg, max_dmg, hp, speed, morale, luck, fight_value, ai_value, 
-                        { gold, mercury, sulfur, crystal, gems },
-                        is_undead, is_unliving, is_flying, is_ranged, has_dragon_breath, has_attack_adjacent );
+                        { gold, mercury, sulfur, crystal, gems }, 
+                        special_abilities );
 
     print_before_testing_output();
     Skellies.print_full_info();
+
+    std::cout << "\nLets see only some of the many special abilities" << std::endl;
+    std::cout << Skellies.get_name() << " : \n" << " - is undead : " << Skellies.get_is_undead() << "\n - is ranged : " << Skellies.get_is_ranged() << "\n - is flying : " << Skellies.get_is_flying() << "\n - has double attack : " << Skellies.get_has_double_attack() << std::endl;
 
     Creature& ref = Skellies;
     Creature* ptr = &Skellies;
@@ -77,22 +74,26 @@ void test_create_creature_stack()
 
     for(int i = 0; i < ARMY_SLOTS; i++)
     {
-        army[i] = new Stack(Creature_List::Skeleton_Warrior, 50 + i);
+        army[i] = new Stack(Creature_List::Zealot, 50 + i);
         std::cout << "Stack " << i << " name is : " << army[i]->get_creature().get_name() << std::endl;
         std::cout << "Stack " << i << " number is : " << army[i]->get_number() << std::endl;
     }
+    army[0]->print_full_info();
+    std::cout << "\nLets see only some of the many special abilities" << std::endl;
+    auto c = army[0]->get_creature();
+    std::cout << c.get_name() << " : \n" << " - is undead : " << c.get_is_undead() << "\n - is non-living : " << c.get_is_bloodless() << "\n - is ranged : " << c.get_is_ranged() << "\n - is flying : " << c.get_is_flying() << "\n - has double attack : " << c.get_has_double_attack() << std::endl;
 }
 
 void test_creature_stack_vs_creature_stack()
 {
     print_before_testing_output();
 
-    // Stack attacker(Creature_List::Lich, 10, Team::Red);
-    Stack attacker(Creature_List::Angel, 1, Team::Red);
+    Stack attacker(Creature_List::Lich, 10, Team::Red);
+    // Stack attacker(Creature_List::Angel, 1, Team::Red);
     std::cout << attacker.get_team_as_string() << " stack is comprised of : " << attacker.get_number() << " " << attacker.get_creature().get_name() << std::endl;
 
-    Stack defender(Creature_List::Skeleton, 20, Team::Blue);
-    // Stack defender(Creature_List::Ghost_Dragon, 1, Team::Blue);
+    // Stack defender(Creature_List::Skeleton, 20, Team::Blue);
+    Stack defender(Creature_List::Ghost_Dragon, 1, Team::Blue);
     std::cout << defender.get_team_as_string() << " stack is comprised of : " << defender.get_number() << " " << defender.get_creature().get_name() << std::endl;
 
     attacker.attack(defender);

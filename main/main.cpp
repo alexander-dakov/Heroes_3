@@ -22,7 +22,7 @@
 1. Creatures :
     1) Since creatures in the game a influenced by the hero leading them (if they have one) they get to be treated as structures of data (no setters, only getters),
     that are constructed thanks to Creature.h.
-    2) A library of all in-game creatures, with their basic stats, is kept in a namespace called Creature_List (created in Creature_List.cpp)
+    2) A library of all in-game creatures, with their basic stats, is kept in a namespace called Creature_List (created in Creature_List.cpp). Creatures special abilities are derived from the string in the end of the constructor.
     3) Creature stacks are the interactable objects forming the armies, used in battles, which COPY an instance of a creature from Creature_List. It should not be a reference or a pointer
     as the object will suffer changes and there may be many instances of the same creature on the battle field.
     4) Those stacks should have constructors for both hero-lead and non-hero-lead armies. When there is no hero - the basic stats of the creatures will be used in battle.
