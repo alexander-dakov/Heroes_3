@@ -85,6 +85,7 @@ struct Creature
                   // attack bonus
                   bool _has_double_attack   = false; // Marksman, Crusader, Gradn Elf
                   bool _has_jousting        = false; // Cavalier, Champion
+                  bool _has_3_headed_attack = false; // Cerberus
                   bool _has_fireball_attack = false; // Magog
                   bool _has_cloud_attack    = false; // Lich, Power Lich
                   bool _has_attack_adjacent = false; // Magic Elemental, Psychic Elemental, Hydra, Chaos Hydra
@@ -131,9 +132,10 @@ struct Creature
                   bool _can_cast_rebirth = false; // Pheonix
 
                   // can cast spell in battle - player's choice
-                  bool _is_spellcaster               = false; // Master Genie
-                  bool _can_cast_ressurection     = false; // Arch Angel
-                  bool _can_cast_bloodlust        = false; // Ogre Mage
+                  bool _is_spellcaster                 = false; // Master Genie
+                  bool _can_cast_ressurection          = false; // Arch Angel
+                  bool _can_cast_summon_demons         = false; // Pit Lord
+                  bool _can_cast_bloodlust             = false; // Ogre Mage
                   bool _can_cast_protection_from_air   = false; // Storm Elemental
                   bool _can_cast_protection_from_water = false; // Ice Elemental
                   bool _can_cast_protection_from_fire  = false; // Energy Elemental
@@ -151,19 +153,23 @@ struct Creature
                   bool _reduce_magic_damage_75 = false; // Iron Golem
 
                   // immunities
-                  bool _is_immune_to_jousting = false; // Pikeman, Halberdier
-                  bool _is_immune_to_spells_level_1_3 = false; // Green Dragon, Red Dragon
-                  bool _is_immune_to_spells_level_1_4 = false; // Gold Dragon
-                  bool _is_immune_to_all_spells = false; // Black Dragon
-                  bool _is_immune_to_mind_spells = false; // Giant, Titan
+                  bool _is_immune_to_jousting             = false; // Pikeman, Halberdier
+                  bool _is_immune_to_fire_and_magic_arrow = false; // Efreet, Efreet Sultan
+                  bool _is_immune_to_mind_spells          = false; // Giant, Titan
+                  bool _is_immune_to_spells_level_1_3     = false; // Green Dragon, Red Dragon
+                  bool _is_immune_to_spells_level_1_4     = false; // Gold Dragon
+                  bool _is_immune_to_all_spells           = false; // Black Dragon
 
-                  // army morale modifiers
-                  bool _increases_alias_morale = false; // Angel, Arch Angel
-                  bool _decreases_enemy_morale = false; // Devil, Arch Devil, Bone Dragon, Ghost Dragon
+                  // army morale and luck modifiers
+                  bool _increases_alias_morale_1 = false; // Angel, Arch Angel
+                  bool _decreases_enemy_morale_1 = false; // Bone Dragon, Ghost Dragon
+                  bool _decreases_enemy_luck_1   = false; // Devil
+                  bool _decreases_enemy_luck_2   = false; // Arch Devil
 
                   // mana points modifiers
-                  bool _magic_damper = false; // Pegasus, Silver Pegasus; Effect = enemy hero's spells during combat cost 2 mana points more. Effects continues after Pegasi perish.
-                  bool _mana_economy = false; // Mage, Arch Mage; Effect = hero's spells during combat cost 2 mana points less.
+                  bool _magic_channel = false; // Familiar; Effect = 20% of mana spent from enemy hero is added to hero's mana when familiars are present.
+                  bool _magic_damper = false;  // Pegasus, Silver Pegasus; Effect = enemy hero's spells during combat cost 2 mana points more. Effects continues after Pegasi perish.
+                  bool _mana_economy = false;  // Mage, Arch Mage; Effect = hero's spells during combat cost 2 mana points less.
                   
                   // Create a map of all special abilities, refering to the fields in the struct accordingly.
                   std::map<std::string, bool*> create_map_of_all_abilities();
@@ -239,82 +245,87 @@ struct Creature
             
             uint16_t get_gems() { return cost._gems; };
 
-            bool get_is_undead()    { return special_abilities._is_undead; };
+            bool get_is_undead()    { return special_abilities._is_undead;    };
             bool get_is_bloodless() { return special_abilities._is_bloodless; };
 
             bool get_is_flying() { return special_abilities._is_flying; };
             bool get_is_ranged() { return special_abilities._is_ranged; };
 
-            bool get_no_melee_penalty()    { return special_abilities._no_melee_penalty; };
+            bool get_no_melee_penalty()    { return special_abilities._no_melee_penalty;    };
             bool get_no_obstacle_penalty() { return special_abilities._no_obstacle_penalty; };
 
-            bool get_has_double_attack()   { return special_abilities._has_double_attack; };
-            bool get_has_jousting()        { return special_abilities._has_jousting; };
+            bool get_has_double_attack()   { return special_abilities._has_double_attack;   };
+            bool get_has_jousting()        { return special_abilities._has_jousting;        };
+            bool get_has_3_headed_attack() { return special_abilities._has_3_headed_attack; };
             bool get_has_fireball_attack() { return special_abilities._has_fireball_attack; };
-            bool get_has_cloud_attack()    { return special_abilities._has_cloud_attack; };
+            bool get_has_cloud_attack()    { return special_abilities._has_cloud_attack;    };
             bool get_has_attack_adjacent() { return special_abilities._has_attack_adjacent; };
-            bool get_has_breath_attack()   { return special_abilities._has_breath_attack; };
-            bool get_hates_efreeti()       { return special_abilities._hates_efreeti; };
-            bool get_hates_genies()        { return special_abilities._hates_genies; };
-            bool get_hates_devils()        { return special_abilities._hates_devils; };
-            bool get_hates_angels()        { return special_abilities._hates_angels; };
+            bool get_has_breath_attack()   { return special_abilities._has_breath_attack;   };
+            bool get_hates_efreeti()       { return special_abilities._hates_efreeti;       };
+            bool get_hates_genies()        { return special_abilities._hates_genies;        };
+            bool get_hates_devils()        { return special_abilities._hates_devils;        };
+            bool get_hates_angels()        { return special_abilities._hates_angels;        };
             bool get_hates_black_dragons() { return special_abilities._hates_black_dragons; };
-            bool get_hates_titans()        { return special_abilities._hates_titans; };
+            bool get_hates_titans()        { return special_abilities._hates_titans;        };
 
-            bool get_has_two_retaliations()       { return special_abilities._has_two_retaliations; };
+            bool get_has_two_retaliations()       { return special_abilities._has_two_retaliations;       };
             bool get_has_unlimited_retaliations() { return special_abilities._has_unlimited_retaliations; };
-            bool get_no_enemy_retaliation()       { return special_abilities._no_enemy_retaliation; };
+            bool get_no_enemy_retaliation()       { return special_abilities._no_enemy_retaliation;       };
             
-            bool get_increases_alias_morale() { return special_abilities._increases_alias_morale; };
-            bool get_decreases_enemy_morale() { return special_abilities._decreases_enemy_morale; };
+            bool get_increases_alias_morale_1() { return special_abilities._increases_alias_morale_1; };
+            bool get_decreases_enemy_morale_1() { return special_abilities._decreases_enemy_morale_1; };
+            bool get_decreases_enemy_luck_1()   { return special_abilities._decreases_enemy_luck_1;   };
+            bool get_decreases_enemy_luck_2()   { return special_abilities._decreases_enemy_luck_2;   };
 
-            bool get_casts_binding ()        { return special_abilities._casts_binding; };
-            bool get_casts_life_drain ()     { return special_abilities._casts_life_drain; };
-            bool get_casts_dispell ()        { return special_abilities._casts_dispell; };
-            bool get_casts_weakness ()       { return special_abilities._casts_weakness; };
+            bool get_casts_binding ()        { return special_abilities._casts_binding;        };
+            bool get_casts_life_drain ()     { return special_abilities._casts_life_drain;     };
+            bool get_casts_dispell ()        { return special_abilities._casts_dispell;        };
+            bool get_casts_weakness ()       { return special_abilities._casts_weakness;       };
             bool get_casts_disrupting_ray () { return special_abilities._casts_disrupting_ray; };
 
-            bool get_can_cast_disease()          { return special_abilities._can_cast_disease; };
-            bool get_can_cast_weakness()         { return special_abilities._can_cast_weakness; };
-            bool get_can_cast_disrupting_ray()   { return special_abilities._can_cast_disrupting_ray; };
-            bool get_can_cast_curse()            { return special_abilities._can_cast_curse; };
-            bool get_can_cast_aging()            { return special_abilities._can_cast_aging; };
-            bool get_can_cast_poison()           { return special_abilities._can_cast_poison; };
+            bool get_can_cast_disease()          { return special_abilities._can_cast_disease;          };
+            bool get_can_cast_weakness()         { return special_abilities._can_cast_weakness;         };
+            bool get_can_cast_disrupting_ray()   { return special_abilities._can_cast_disrupting_ray;   };
+            bool get_can_cast_curse()            { return special_abilities._can_cast_curse;            };
+            bool get_can_cast_aging()            { return special_abilities._can_cast_aging;            };
+            bool get_can_cast_poison()           { return special_abilities._can_cast_poison;           };
             bool get_can_cast_lightning_strike() { return special_abilities._can_cast_lightning_strike; };
             bool get_can_cast_paralyzing_venom() { return special_abilities._can_cast_paralyzing_venom; };
-            bool get_can_cast_blind()            { return special_abilities._can_cast_blind; };
-            bool get_can_cast_death_blow()       { return special_abilities._can_cast_death_blow; };
+            bool get_can_cast_blind()            { return special_abilities._can_cast_blind;            };
+            bool get_can_cast_death_blow()       { return special_abilities._can_cast_death_blow;       };
 
             bool get_casts_fire_shield() { return special_abilities._casts_fire_shield; };
 
             bool get_can_cast_rebirth() { return special_abilities._can_cast_rebirth; };
 
-            bool get_is_spellcaster()            { return special_abilities._is_spellcaster; };
-            bool get_can_cast_ressurection()     { return special_abilities._can_cast_ressurection; };
-            bool get_can_cast_bloodlust()        { return special_abilities._can_cast_bloodlust; };
-            bool get_can_cast_protection_from_air()   { return special_abilities._can_cast_protection_from_air; };
+            bool get_is_spellcaster()                 { return special_abilities._is_spellcaster;                 };
+            bool get_can_cast_ressurection()          { return special_abilities._can_cast_ressurection;          };
+            bool get_can_cast_bloodlust()             { return special_abilities._can_cast_bloodlust;             };
+            bool get_can_cast_protection_from_air()   { return special_abilities._can_cast_protection_from_air;   };
             bool get_can_cast_protection_from_water() { return special_abilities._can_cast_protection_from_water; };
-            bool get_can_cast_protection_from_fire()  { return special_abilities._can_cast_protection_from_fire; };
+            bool get_can_cast_protection_from_fire()  { return special_abilities._can_cast_protection_from_fire;  };
             bool get_can_cast_protection_from_earth() { return special_abilities._can_cast_protection_from_earth; };
             
-            bool get_has_magic_resist_20()   { return special_abilities._has_magic_resist_20; };
-            bool get_has_magic_resist_40()   { return special_abilities._has_magic_resist_40; };
+            bool get_has_magic_resist_20()   { return special_abilities._has_magic_resist_20;   };
+            bool get_has_magic_resist_40()   { return special_abilities._has_magic_resist_40;   };
             bool get_has_magic_resist_aura() { return special_abilities._has_magic_resist_aura; };
 
             bool get_reduce_magic_damage_50() { return special_abilities._reduce_magic_damage_50; };
             bool get_reduce_magic_damage_75() { return special_abilities._reduce_magic_damage_75; };
 
-            bool get_is_immune_to_jousting()          { return special_abilities._is_immune_to_jousting; };
-            bool get_is_immune_to_spells_level_1_3()  { return special_abilities._is_immune_to_spells_level_1_3; };
-            bool get_is_immune_to_spells_level_1_4()  { return special_abilities._is_immune_to_spells_level_1_4; };
-            bool get_is_immune_to_all_spells()        { return special_abilities._is_immune_to_all_spells; };
-            bool get_is_immune_to_mind_spells()       { return special_abilities._is_immune_to_mind_spells; };
+            bool get_is_immune_to_jousting()          { return special_abilities._is_immune_to_jousting;          };
+            bool get_is_immune_to_fire_and_magic_arrow() { return special_abilities._is_immune_to_fire_and_magic_arrow; };
+            bool get_is_immune_to_mind_spells()       { return special_abilities._is_immune_to_mind_spells;       };
+            bool get_is_immune_to_spells_level_1_3()  { return special_abilities._is_immune_to_spells_level_1_3;  };
+            bool get_is_immune_to_spells_level_1_4()  { return special_abilities._is_immune_to_spells_level_1_4;  };
+            bool get_is_immune_to_all_spells()        { return special_abilities._is_immune_to_all_spells;        };
 
-            bool get_magic_damper() { return special_abilities._magic_damper; };
-            bool get_mana_economy() { return special_abilities._mana_economy; };
+            bool get_magic_channel() { return special_abilities._magic_channel; };
+            bool get_magic_damper()  { return special_abilities._magic_damper;  };
+            bool get_mana_economy()  { return special_abilities._mana_economy;  };
 
             bool get_casts_regeneration() { return special_abilities._casts_regeneration; };
-            bool get_casts_mana_drain()   { return special_abilities._casts_mana_drain; };
+            bool get_casts_mana_drain()   { return special_abilities._casts_mana_drain;   };
 
             // Returns a string with the cost of a creature.
             std::string get_cost();

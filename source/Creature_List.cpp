@@ -17,7 +17,7 @@ namespace Creature_List
     const Creature Royal_Griffin (     "Royal Griffin",     Faction::Castle,     3, true,   7, true,   9,  9,  0,  3,  6,  25,  9, Morale::Good,    Luck::Neutral,  364,  448, {  240, 0, 0, 0, 0 }, "Flying. Unlimited retaliations.");
     const Creature Swordsman (         "Swordsman",         Faction::Castle,     4, false,  4, false, 10, 12,  0,  6,  9,  35,  5, Morale::Good,    Luck::Neutral,  445,  445, {  300, 0, 0, 0, 0 }, "");
     const Creature Crusader (          "Crusader",          Faction::Castle,     4, true,   4, false, 12, 12,  0,  7, 10,  35,  6, Morale::Good,    Luck::Neutral,  588,  588, {  400, 0, 0, 0, 0 }, "Double attack.");
-    const Creature Monk (              "Monk",              Faction::Castle,     5, false,  3, false, 12,  7, 12, 10, 12,  30,  5, Morale::Good,    Luck::Neutral,  485,  485, {  400, 0, 0, 0, 0 }, "Ranged attack.");
+    const Creature Monk (              "Monk",              Faction::Castle,     5, false,  3, false, 12,  7, 12, 10, 12,  30,  5, Morale::Good,    Luck::Neutral,  582,  485, {  400, 0, 0, 0, 0 }, "Ranged attack.");
     const Creature Zealot (            "Zealot",            Faction::Castle,     5, true,   3, false, 12, 10, 24, 10, 12,  30,  7, Morale::Good,    Luck::Neutral,  500,  750, {  450, 0, 0, 0, 0 }, "Ranged attack. No melee penalty.");
     const Creature Cavalier (          "Cavalier",          Faction::Castle,     6, false,  2, true,  15, 15,  0, 15, 25, 100,  7, Morale::Good,    Luck::Neutral, 1668, 1946, { 1000, 0, 0, 0, 0 }, "Jousting bonus.");
     const Creature Champion (          "Champion",          Faction::Castle,     6, true,   2, true,  16, 16,  0, 20, 25, 100,  9, Morale::Good,    Luck::Neutral, 1800, 2100, { 1200, 0, 0, 0, 0 }, "Jousting bonus.");
@@ -53,10 +53,24 @@ namespace Creature_List
     const Creature Master_Genie (      "Master Genie",      Faction::Tower,      5, true,   3, false, 12, 12,  0, 13, 16,  40, 11, Morale::Good,    Luck::Neutral,  748,  942, {  600, 0, 0, 0, 0 }, "Hates Efreeti and Efreet Sultans. Spellcaster.");
     const Creature Naga (              "Naga",              Faction::Tower,      6, false,  2, true,  16, 13,  0, 20, 20, 110,  5, Morale::Good,    Luck::Neutral, 2016, 2016, { 1100, 0, 0, 0, 0 }, "No enemy retaliation.");
     const Creature Naga_Queen (        "Naga Queen",        Faction::Tower,      6, true,   2, true,  16, 13,  0, 30, 30, 110,  7, Morale::Good,    Luck::Neutral, 2840, 2840, { 1600, 0, 0, 0, 0 }, "No enemy retaliation.");
-    const Creature Giant (             "Giant",             Faction::Tower,      7, false,  1, true,  19, 16,  0, 40, 60, 150,  7, Morale::Good,    Luck::Neutral, 3146, 3718, { 2000, 0, 0, 0, 1 }, "Immunity to mind spells.");
+    const Creature Giant (             "Giant",             Faction::Tower,      7, false,  1, true,  19, 16,  0, 40, 60, 150,  7, Morale::Good,    Luck::Neutral, 3146, 3718, { 2000, 0, 0, 0, 1 }, "Immune to mind spells.");
     const Creature Titan (             "Titan",             Faction::Tower,      7, true,   1, true,  24, 24, 24, 40, 60, 300, 11, Morale::Good,    Luck::Neutral, 5000, 7500, { 5000, 0, 0, 0, 2 }, "Ranged attack. No melee penalty. Immunity to mind spells. Hates Black Dragons.");
 
     // Inferno
+    const Creature Imp (               "Imp",               Faction::Inferno,     1, false, 15, false,  2,  3,  0,  1,  2,   4,  5, Morale::Good,    Luck::Neutral,   50,   50, {   50, 0, 0, 0, 0 }, "");
+    const Creature Familiar (          "Familiar",          Faction::Inferno,     1, true,  15, false,  4,  4,  0,  1,  2,   4,  7, Morale::Good,    Luck::Neutral,   60,   60, {   60, 0, 0, 0, 0 }, "Magic channel.");
+    const Creature Gog (               "Gog",               Faction::Inferno,     2, false,  8, false,  6,  4, 12,  2,  4,  13,  4, Morale::Good,    Luck::Neutral,  145,  159, {  125, 0, 0, 0, 0 }, "Ranged attack.");
+    const Creature Magog (             "Magog",             Faction::Inferno,     2, true,   8, false,  7,  4, 24,  2,  4,  13,  6, Morale::Good,    Luck::Neutral,  210,  240, {  175, 0, 0, 0, 0 }, "Ranged attack. Fireball attack.");
+    const Creature Hell_Hound (        "Hell Hound",        Faction::Inferno,     3, false,  5, false, 10,  6,  0,  2,  7,  25,  7, Morale::Good,    Luck::Neutral,  275,  357, {  200, 0, 0, 0, 0 }, "");
+    const Creature Cerberus (          "Cerberus",          Faction::Inferno,     3, true,   5, false, 10,  8,  0,  2,  7,  25,  8, Morale::Good,    Luck::Neutral,  308,  392, {  250, 0, 0, 0, 0 }, "3-headed attack. No enemy retaliation.");
+    const Creature Demon (             "Demon",             Faction::Inferno,     4, false,  4, false, 10, 10,  0,  7,  9,  35,  5, Morale::Good,    Luck::Neutral,  445,  445, {  250, 0, 0, 0, 0 }, "");
+    const Creature Horned_Demon (      "Horned Demon",      Faction::Inferno,     4, true,   4, false, 10, 10,  0,  7,  9,  40,  6, Morale::Good,    Luck::Neutral,  480,  480, {  270, 0, 0, 0, 0 }, "");
+    const Creature Pit_Fiend (         "Pit Fiend",         Faction::Inferno,     5, false,  3, false, 13, 13,  0, 13, 17,  45,  6, Morale::Good,    Luck::Neutral,  765,  765, {  500, 0, 0, 0, 0 }, "");
+    const Creature Pit_Lord (          "Pit Lord",          Faction::Inferno,     5, true,   3, false, 13, 13,  0, 13, 17,  45,  7, Morale::Good,    Luck::Neutral, 1071, 1224, {  700, 0, 0, 0, 0 }, "Summon Demons.");
+    const Creature Efreet (            "Efreet",            Faction::Inferno,     6, false,  2, true,  16, 12,  0, 16, 24,  90,  9, Morale::Good,    Luck::Neutral, 1413, 1670, {  900, 0, 0, 0, 0 }, "Immune to fire (Magic Arrow included). Hates Genies and Master Genies.");
+    const Creature Efreet_Sultan (     "Efreet Sultan",     Faction::Inferno,     6, true,   2, true,  16, 14,  0, 16, 24,  90, 13, Morale::Good,    Luck::Neutral, 1802, 2343, { 1100, 0, 0, 0, 0 }, "Immune to fire (Magic Arrow included). Hates Genies and Master Genies. Fire Shield.");
+    const Creature Devil (             "Devil",             Faction::Inferno,     7, false,  1, true,  19, 21,  0, 30, 40, 160, 11, Morale::Good,    Luck::Neutral, 3759, 5101, { 2700, 1, 0, 0, 0 }, "-1 luck to enemy troops. No enemy retaliation. Hates Angels and Arch Angels.");
+    const Creature Arch_Devil (        "Arch Devil",        Faction::Inferno,     7, true,   1, true,  26, 28,  0, 30, 40, 200, 17, Morale::Good,    Luck::Neutral, 5243, 7115, { 4500, 2, 0, 0, 0 }, "-2 luck to enemy troops. No enemy retaliation. Hates Angels and Arch Angels.");
 
     // Necropolis
     const Creature Skeleton (          "Skeleton",          Faction::Necropolis, 1, false, 12, false,  5,  4,  0,  1,  3,   6,  4, Morale::Neutral, Luck::Neutral,   75,   60, {   60, 0, 0, 0, 0 }, "Undead.");

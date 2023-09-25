@@ -125,6 +125,7 @@ std::map<std::string, bool*> Creature::special_abilities::create_map_of_all_abil
 
       all_abilities["Double attack."]                    = &_has_double_attack;
       all_abilities["Jousting bonus."]                   = &_has_jousting;
+      all_abilities["3-headed attack."]                  = &_has_3_headed_attack;
       all_abilities["Fireball attack."]                  = &_has_fireball_attack;
       all_abilities["Death cloud."]                      = &_has_cloud_attack;
       all_abilities["Attack all adjacent enemies."]      = &_has_attack_adjacent;
@@ -166,6 +167,7 @@ std::map<std::string, bool*> Creature::special_abilities::create_map_of_all_abil
 
       all_abilities["Spellcaster."]                           = &_is_spellcaster;
       all_abilities["Can cast Ressurection once per battle."] = &_can_cast_ressurection;
+      all_abilities["Summon Demons."]                         = &_can_cast_summon_demons;
       all_abilities["Spellcaster (Bloodlust)."]               = &_can_cast_bloodlust;
       all_abilities["Spellcaster (Protection from Air)."]     = &_can_cast_protection_from_air;
       all_abilities["Spellcaster (Protection from Water)."]   = &_can_cast_protection_from_water;
@@ -179,17 +181,21 @@ std::map<std::string, bool*> Creature::special_abilities::create_map_of_all_abil
       all_abilities["Spell damage reduction 50%."] = &_reduce_magic_damage_50;
       all_abilities["Spell damage reduction 75%."] = &_reduce_magic_damage_75;
 
-      all_abilities["Immune to jousting."]         = &_is_immune_to_jousting;
-      all_abilities["Immune to level 1-3 spells."] = &_is_immune_to_spells_level_1_3;
-      all_abilities["Immune to level 1-4 spells."] = &_is_immune_to_spells_level_1_4;
-      all_abilities["Immune to all spells."]       = &_is_immune_to_all_spells;
-      all_abilities["Immunity to mind spells."]    = &_is_immune_to_mind_spells;
+      all_abilities["Immune to jousting."]                    = &_is_immune_to_jousting;
+      all_abilities["Immune to fire (Magic Arrow included)."] = &_is_immune_to_fire_and_magic_arrow;
+      all_abilities["Immune to mind spells."]                 = &_is_immune_to_mind_spells;
+      all_abilities["Immune to level 1-3 spells."]            = &_is_immune_to_spells_level_1_3;
+      all_abilities["Immune to level 1-4 spells."]            = &_is_immune_to_spells_level_1_4;
+      all_abilities["Immune to all spells."]                  = &_is_immune_to_all_spells;
 
-      all_abilities["+1 morale to alias troops."] = &_increases_alias_morale;
-      all_abilities["-1 morale to enemy troops."] = &_decreases_enemy_morale;
+      all_abilities["+1 morale to alias troops."] = &_increases_alias_morale_1;
+      all_abilities["-1 morale to enemy troops."] = &_decreases_enemy_morale_1;
+      all_abilities["-1 luck to enemy troops."]   = &_decreases_enemy_luck_1;
+      all_abilities["-2 luck to enemy troops."]   = &_decreases_enemy_luck_2;
 
-      all_abilities["Magic damper."] = &_magic_damper;
-      all_abilities["Hero's combat spells cost 2 less mana."]   = &_mana_economy;
+      all_abilities["Magic channel."]                         = &_magic_channel;
+      all_abilities["Magic damper."]                          = &_magic_damper;
+      all_abilities["Hero's combat spells cost 2 less mana."] = &_mana_economy;
 
       return all_abilities;
 }
