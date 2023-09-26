@@ -123,6 +123,8 @@ std::map<std::string, bool*> Creature::special_abilities::create_map_of_all_abil
       all_abilities["No melee penalty."]    = &_no_melee_penalty;
       all_abilities["No obstacle penalty."] = &_no_obstacle_penalty;
 
+      all_abilities["Strike and return."] = &_strike_and_return;
+
       all_abilities["Double attack."]                    = &_has_double_attack;
       all_abilities["Jousting bonus."]                   = &_has_jousting;
       all_abilities["3-headed attack."]                  = &_has_3_headed_attack;
@@ -156,7 +158,9 @@ std::map<std::string, bool*> Creature::special_abilities::create_map_of_all_abil
       all_abilities["25% chance to cast Curse per attack."]            = &_can_cast_curse;
       all_abilities["20% chance to cast Aging per attack."]            = &_can_cast_aging;
       // all_abilities["20% chance to cast Poison per attack."]           = &_can_cast_poison;
-      // all_abilities["20% chance to cast Paralyzing Venom per attack."] = &_can_cast_paralyzing_venom;
+      all_abilities["20% chance to cast Paralyzing Venom per attack."] = &_can_cast_paralyzing_venom;
+      all_abilities["20% chance to cast Petrify per melee attack."]    = &_can_cast_petrify;
+      // all_abilities["20% chance to cast Petrify per attack."]          = &_can_cast_petrify;
       all_abilities["20% chance to cast Blind per attack."]            = &_can_cast_blind;
       // all_abilities["20% chance to cast Lightning Strike per attack."] = &_can_cast_lightning_strike;
       all_abilities["20% chance to cast Death Blow per attack."]       = &_can_cast_death_blow;
@@ -182,11 +186,15 @@ std::map<std::string, bool*> Creature::special_abilities::create_map_of_all_abil
       all_abilities["Spell damage reduction 75%."] = &_reduce_magic_damage_75;
 
       all_abilities["Immune to jousting."]                    = &_is_immune_to_jousting;
+      all_abilities["Immune to Blind."]                       = &_is_immune_to_blind;
+      all_abilities["Immune to Petrify."]                     = &_is_immune_to_petrify;
       all_abilities["Immune to fire (Magic Arrow included)."] = &_is_immune_to_fire_and_magic_arrow;
       all_abilities["Immune to mind spells."]                 = &_is_immune_to_mind_spells;
-      all_abilities["Immune to level 1-3 spells."]            = &_is_immune_to_spells_level_1_3;
-      all_abilities["Immune to level 1-4 spells."]            = &_is_immune_to_spells_level_1_4;
+      all_abilities["Immune to spells level 1-3."]            = &_is_immune_to_spells_level_1_3;
+      all_abilities["Immune to spells level 1-4."]            = &_is_immune_to_spells_level_1_4;
       all_abilities["Immune to all spells."]                  = &_is_immune_to_all_spells;
+
+      all_abilities["Minimum morale is +1."] = &_minimum_morale_1;
 
       all_abilities["+1 morale to alias troops."] = &_increases_alias_morale_1;
       all_abilities["-1 morale to enemy troops."] = &_decreases_enemy_morale_1;
@@ -207,8 +215,18 @@ void Creature::special_abilities::fill_special_abilities()
 
       auto all_abilities = create_map_of_all_abilities();
 
+      uint8_t counter = 0;
       while( helper.length() > 1) // no need to enter helper when an empty space remains
       {
+            counter ++;
+            if( counter > max_num_of_special_abilities)
+            {
+                  std::cout << "A creature's special ability is not recognized by the algorithm. Make sure that the string in create_map_of_all_abilities() is the same as in Creature_List." << std::endl;
+                  std::cout << "Problematic string : " << helper << std::endl;
+                  std::cout << "Full string : " << _abilities << std::endl;
+                  abort();
+            }
+
             if( helper[0] == ' ' ) // if the first character is whitespace - delete it
             {
                   helper.erase(0, 1);

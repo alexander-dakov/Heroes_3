@@ -10,6 +10,7 @@
 #include "Resources.h"
 #include "Skill_level.h"
 
+constexpr uint8_t max_num_of_special_abilities = 6;
 
 struct Creature
 {
@@ -82,6 +83,9 @@ struct Creature
                   bool _no_melee_penalty    = false; // Mage, Arch Mage, Titan
                   bool _no_obstacle_penalty = false; // Mage, Arch Mage, Zealot
 
+                  // attack style
+                  bool _strike_and_return = false; // Harpy, Harpy Hag
+
                   // attack bonus
                   bool _has_double_attack   = false; // Marksman, Crusader, Gradn Elf
                   bool _has_jousting        = false; // Cavalier, Champion
@@ -121,6 +125,7 @@ struct Creature
                   bool _can_cast_aging            = false; // Ghost Dragon
                   bool _can_cast_poison           = false; // Wyvern Monarch
                   bool _can_cast_paralyzing_venom = false; // Scorpicore
+                  bool _can_cast_petrify          = false; // Medusa, Medusa Queen
                   bool _can_cast_blind            = false; // Unicorn, War Unicorn
                   bool _can_cast_lightning_strike = false; // Thunderbird
                   bool _can_cast_death_blow       = false; // Dread Knight
@@ -154,13 +159,18 @@ struct Creature
 
                   // immunities
                   bool _is_immune_to_jousting             = false; // Pikeman, Halberdier
+                  bool _is_immune_to_blind                = false; // Troglodyte
+                  bool _is_immune_to_petrify              = false; // Infernal Troglodyte
                   bool _is_immune_to_fire_and_magic_arrow = false; // Efreet, Efreet Sultan
                   bool _is_immune_to_mind_spells          = false; // Giant, Titan
                   bool _is_immune_to_spells_level_1_3     = false; // Green Dragon, Red Dragon
                   bool _is_immune_to_spells_level_1_4     = false; // Gold Dragon
                   bool _is_immune_to_all_spells           = false; // Black Dragon
 
-                  // army morale and luck modifiers
+                  // morale modifiers
+                  bool _minimum_morale_1 = false; // Minotaur, Minotaur King
+
+                  // whole army morale and luck modifiers
                   bool _increases_alias_morale_1 = false; // Angel, Arch Angel
                   bool _decreases_enemy_morale_1 = false; // Bone Dragon, Ghost Dragon
                   bool _decreases_enemy_luck_1   = false; // Devil
@@ -254,6 +264,8 @@ struct Creature
             bool get_no_melee_penalty()    { return special_abilities._no_melee_penalty;    };
             bool get_no_obstacle_penalty() { return special_abilities._no_obstacle_penalty; };
 
+            bool get_strike_and_return()   { return special_abilities._strike_and_return; };
+
             bool get_has_double_attack()   { return special_abilities._has_double_attack;   };
             bool get_has_jousting()        { return special_abilities._has_jousting;        };
             bool get_has_3_headed_attack() { return special_abilities._has_3_headed_attack; };
@@ -271,6 +283,8 @@ struct Creature
             bool get_has_two_retaliations()       { return special_abilities._has_two_retaliations;       };
             bool get_has_unlimited_retaliations() { return special_abilities._has_unlimited_retaliations; };
             bool get_no_enemy_retaliation()       { return special_abilities._no_enemy_retaliation;       };
+            
+            bool get_minimum_morale_1() { return special_abilities._minimum_morale_1; };
             
             bool get_increases_alias_morale_1() { return special_abilities._increases_alias_morale_1; };
             bool get_decreases_enemy_morale_1() { return special_abilities._decreases_enemy_morale_1; };
@@ -291,6 +305,7 @@ struct Creature
             bool get_can_cast_poison()           { return special_abilities._can_cast_poison;           };
             bool get_can_cast_lightning_strike() { return special_abilities._can_cast_lightning_strike; };
             bool get_can_cast_paralyzing_venom() { return special_abilities._can_cast_paralyzing_venom; };
+            bool get_can_cast_petrify()          { return special_abilities._can_cast_petrify;          };
             bool get_can_cast_blind()            { return special_abilities._can_cast_blind;            };
             bool get_can_cast_death_blow()       { return special_abilities._can_cast_death_blow;       };
 
@@ -313,12 +328,14 @@ struct Creature
             bool get_reduce_magic_damage_50() { return special_abilities._reduce_magic_damage_50; };
             bool get_reduce_magic_damage_75() { return special_abilities._reduce_magic_damage_75; };
 
-            bool get_is_immune_to_jousting()          { return special_abilities._is_immune_to_jousting;          };
+            bool get_is_immune_to_jousting()             { return special_abilities._is_immune_to_jousting;             };
+            bool get_is_immune_to_blind()                { return special_abilities._is_immune_to_blind;                };
+            bool get_is_immune_to_petrify()              { return special_abilities._is_immune_to_petrify;              };
             bool get_is_immune_to_fire_and_magic_arrow() { return special_abilities._is_immune_to_fire_and_magic_arrow; };
-            bool get_is_immune_to_mind_spells()       { return special_abilities._is_immune_to_mind_spells;       };
-            bool get_is_immune_to_spells_level_1_3()  { return special_abilities._is_immune_to_spells_level_1_3;  };
-            bool get_is_immune_to_spells_level_1_4()  { return special_abilities._is_immune_to_spells_level_1_4;  };
-            bool get_is_immune_to_all_spells()        { return special_abilities._is_immune_to_all_spells;        };
+            bool get_is_immune_to_mind_spells()          { return special_abilities._is_immune_to_mind_spells;          };
+            bool get_is_immune_to_spells_level_1_3()     { return special_abilities._is_immune_to_spells_level_1_3;     };
+            bool get_is_immune_to_spells_level_1_4()     { return special_abilities._is_immune_to_spells_level_1_4;     };
+            bool get_is_immune_to_all_spells()           { return special_abilities._is_immune_to_all_spells;           };
 
             bool get_magic_channel() { return special_abilities._magic_channel; };
             bool get_magic_damper()  { return special_abilities._magic_damper;  };
