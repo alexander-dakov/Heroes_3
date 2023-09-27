@@ -104,6 +104,22 @@ namespace Creature_List
     const Creature Red_Dragon (          "Red Dragon",          Faction::Dungeon,    7, false,  1, true,  19, 19,  0, 40, 50, 180, 11, Morale::Good,    Luck::Neutral, 3762, 4702, { 2500, 0, 1, 0, 0 }, "Breath attack. Immune to spells level 1-3.");
     const Creature Black_Dragon (        "Black Dragon",        Faction::Dungeon,    7, true,   1, true,  25, 25,  0, 40, 50, 300, 15, Morale::Good,    Luck::Neutral, 6783, 8721, { 4000, 0, 2, 0, 0 }, "Breath attack. Immune to all spells. Hates Titans.");
 
+    // Fortress
+    const Creature Gnoll (               "Gnoll",               Faction::Fortress,   1, false, 12, false,  3,  5,  0,  2,  3,   6,  4, Morale::Good,    Luck::Neutral,   70,   56, {   50, 0, 0, 0, 0 }, "");
+    const Creature Gnoll_Marauder (      "Gnoll Marauder",      Faction::Fortress,   1, true,  12, false,  4,  6,  0,  2,  3,   6,  5, Morale::Good,    Luck::Neutral,   90,   90, {   70, 0, 0, 0, 0 }, "");
+    const Creature Lizardman (           "Lizardman",           Faction::Fortress,   2, false,  9, false,  5,  6, 12,  2,  3,  14,  4, Morale::Good,    Luck::Neutral,  115,  126, {  110, 0, 0, 0, 0 }, "Ranged attack.");
+    const Creature Lizard_Warrior (      "Lizard Warrior",      Faction::Fortress,   2, true,   9, false,  6,  8, 24,  2,  5,  15,  5, Morale::Good,    Luck::Neutral,  130,  156, {  140, 0, 0, 0, 0 }, "Ranged attack.");
+    const Creature Serpent_Fly (         "Serpent Fly",         Faction::Fortress,   3, false,  8, true,   7,  9,  0,  2,  5,  20,  9, Morale::Good,    Luck::Neutral,  215,  268, {  220, 0, 0, 0, 0 }, "Casts Dispel to benefical spells per attack.");
+    const Creature Dragon_Fly (          "Dragon Fly",          Faction::Fortress,   3, true,   8, true,   8, 10,  0,  2,  5,  20, 13, Morale::Good,    Luck::Neutral,  250,  312, {  240, 0, 0, 0, 0 }, "Casts Dispel to benefical spells per attack. Casts advanced Weakness per attack.");
+    const Creature Basilisk (            "Basilisk",            Faction::Fortress,   4, false,  4, false, 11, 11,  4,  6, 10,  35,  5, Morale::Good,    Luck::Neutral,  506,  552, {  325, 0, 0, 0, 0 }, "20% chance to cast Petrify per attack.");
+    const Creature Greater_Basilisk (    "Greater Basilisk",    Faction::Fortress,   4, true,   4, false, 12, 12,  8,  6, 10,  40,  7, Morale::Good,    Luck::Neutral,  561,  714, {  400, 0, 0, 0, 0 }, "20% chance to cast Petrify per attack.");
+    const Creature Gorgon (              "Gorgon",              Faction::Fortress,   5, false,  3, false, 10, 14,  0, 12, 16,  70,  5, Morale::Good,    Luck::Neutral,  890,  890, {  525, 0, 0, 0, 0 }, "");
+    const Creature Mighty_Gorgon (       "Mighty Gorgon",       Faction::Fortress,   5, true,   3, false, 11, 16,  0, 12, 16,  70,  6, Morale::Good,    Luck::Neutral, 1028, 1028, {  600, 0, 0, 0, 0 }, "10% chance to cast Death Stare per melee attack.");
+    const Creature Monarch (             "Monarch",             Faction::Fortress,   6, false,  2, true,  14, 14,  0, 14, 18,  70,  7, Morale::Good,    Luck::Neutral, 1050, 1350, {  800, 0, 0, 0, 0 }, "");
+    const Creature Wyvern_Monarch (      "Wyvern Monarch",      Faction::Fortress,   6, true,   2, true,  14, 14,  0, 18, 22,  70, 11, Morale::Good,    Luck::Neutral, 1518, 1518, { 1100, 0, 0, 0, 0 }, "30% chance to cast Poison per attack.");
+    const Creature Hydra (               "Hydra",               Faction::Fortress,   7, false,  1, true,  16, 18,  0, 25, 45, 175,  5, Morale::Good,    Luck::Neutral, 4120, 4120, { 2200, 0, 0, 0, 0 }, "Attack all adjacent enemies. No enemy retaliation.");
+    const Creature Chaos_Hydra (         "Chaos Hydra",         Faction::Fortress,   7, true,   1, true,  18, 20,  0, 25, 45, 250,  7, Morale::Good,    Luck::Neutral, 5272, 5931, { 3500, 0, 1, 0, 0 }, "Attack all adjacent enemies. No enemy retaliation.");
+  
     // Stronghold
     const Creature Goblin (              "Goblin",              Faction::Stronghold, 1, false, 15, false,  4,  2,  0,  1,  2,   5,  5, Morale::Good,    Luck::Neutral,   60,   60, {   40, 0, 0, 0, 0 }, "");
     const Creature Hobgoblin (           "Hobgoblin",           Faction::Stronghold, 1, true,  15, false,  5,  3,  0,  1,  2,   5,  7, Morale::Good,    Luck::Neutral,   65,   78, {   50, 0, 0, 0, 0 }, "");
@@ -119,8 +135,6 @@ namespace Creature_List
     const Creature Cyclops_King (        "Cyclops King",        Faction::Stronghold, 6, true,   2, true,  17, 13, 24, 16, 20,  70,  8, Morale::Good,    Luck::Neutral, 1110, 1443, { 1100, 0, 0, 0, 0 }, "Ranged attack. Can attack siege walls.");
     const Creature Behemoth (            "Behemoth",            Faction::Stronghold, 7, false,  1, true,  17, 17,  0, 30, 50, 160,  6, Morale::Good,    Luck::Neutral, 3162, 3162, { 1500, 0, 0, 0, 0 }, "-40% to enemy's defense upon attack.");
     const Creature Ancient_Behemoth (    "Ancient Behemoth",    Faction::Stronghold, 7, true,   1, true,  19, 19,  0, 30, 50, 300,  9, Morale::Good,    Luck::Neutral, 5397, 6168, { 3000, 0, 0, 1, 0 }, "-80% to enemy's defense upon attack.");
-
-    // Fortress
 
     // Conflux
     const Creature Pixie (               "Pixie",               Faction::Conflux,    1, false, 20, false,  2,  2,  0,  1,  2,   3,  7, Morale::Good,    Luck::Neutral,   40,   55, {   25, 0, 0, 0, 0 }, "");

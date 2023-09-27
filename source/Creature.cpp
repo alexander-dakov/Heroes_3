@@ -153,22 +153,24 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
 
       all_abilities["Binding attack."]       =  { &_casts_binding    };
       all_abilities["Life drain."]           =  { &_casts_life_drain };
-      // all_abilities["Casts Dispell."]        =  { &_casts_dispell  };
+      all_abilities["Casts Dispel to benefical spells per attack."] =  { &_casts_dispell_on_buffs  };
+      all_abilities["Casts advanced Weakness per attack."]          =  { &_casts_advanced_weakness };
       // all_abilities["Casts Weakness."]       =  { &_casts_weakness };
       // all_abilities["Casts Disrupting Ray."] =  { &_casts_disrupting_ray };
 
-      all_abilities["20% chance to cast Disease per attack."]          = { &_can_cast_disease };
-      // all_abilities["20% chance to cast Weakness per attack."]         = &_can_cast_weakness;
-      // all_abilities["20% chance to cast Disrupting Ray per attack."]   = &_can_cast_disrupting_ray;
-      all_abilities["25% chance to cast Curse per attack."]            = { &_can_cast_curse };
-      all_abilities["20% chance to cast Aging per attack."]            = { &_can_cast_aging };
-      // all_abilities["20% chance to cast Poison per attack."]           = &_can_cast_poison;
-      all_abilities["20% chance to cast Paralyzing Venom per attack."] = { &_can_cast_paralyzing_venom };
-      all_abilities["20% chance to cast Petrify per melee attack."]    = { &_can_cast_petrify };
-      // all_abilities["20% chance to cast Petrify per attack."]          = &_can_cast_petrify;
-      all_abilities["20% chance to cast Blind per attack."]            = { &_can_cast_blind };
-      all_abilities["20% chance to cast Lightning Strike per attack."] = { &_can_cast_lightning_strike };
-      all_abilities["20% chance to cast Death Blow per attack."]       = { &_can_cast_death_blow };
+      all_abilities["20% chance to cast Disease per attack."]           = { &_can_cast_disease          };
+      // all_abilities["20% chance to cast Weakness per attack."]          = { &_can_cast_weakness };
+      // all_abilities["20% chance to cast Disrupting Ray per attack."]    = { &_can_cast_disrupting_ray };
+      all_abilities["25% chance to cast Curse per attack."]             = { &_can_cast_curse            };
+      all_abilities["20% chance to cast Aging per attack."]             = { &_can_cast_aging            };
+      all_abilities["30% chance to cast Poison per attack."]            = { &_can_cast_poison           };
+      all_abilities["20% chance to cast Paralyzing Venom per attack."]  = { &_can_cast_paralyzing_venom };
+      all_abilities["20% chance to cast Petrify per melee attack."]     = { &_can_cast_petrify          };
+      all_abilities["20% chance to cast Petrify per attack."]           = { &_can_cast_petrify          };
+      all_abilities["20% chance to cast Blind per attack."]             = { &_can_cast_blind            };
+      all_abilities["20% chance to cast Lightning Strike per attack."]  = { &_can_cast_lightning_strike };
+      all_abilities["20% chance to cast Death Blow per attack."]        = { &_can_cast_death_blow       };
+      all_abilities["10% chance to cast Death Stare per melee attack."] = { &_can_cast_death_stare      };
 
       all_abilities["Fire Shield."] = { &_casts_fire_shield };
 

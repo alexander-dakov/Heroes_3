@@ -35,8 +35,8 @@ class Stack
             uint8_t _att;           // modified by hero's attack skill
             uint8_t _def;           // modified by battle and hero's defense skill
             uint8_t _shots_left;    // modified by battle and ammo cart
-            uint16_t _hp;            // modified by hero's items
-            uint16_t _hp_left;       // modified battle and hero's items
+            uint16_t _hp;           // modified by battle and hero's items
+            uint16_t _hp_left;      // modified by battle and hero's items
             uint8_t _speed;         // modified by hero's items
             Morale _morale;         // modified by hero's morale
             Luck _luck;             // modified by hero's luck

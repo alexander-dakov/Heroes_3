@@ -118,7 +118,8 @@ struct Creature
                   // casts after attack
                   bool _casts_binding            = false; // Dendroid Guard, Dendroid Soldier
                   bool _casts_life_drain         = false; // Vampire Lord
-                  bool _casts_dispell            = false; // Serpent Fly, Dragon Fly
+                  bool _casts_dispell_on_buffs   = false; // Serpent Fly, Dragon Fly
+                  bool _casts_advanced_weakness  = false; // Dragon Fly
                   bool _casts_weakness           = false; // Sea Witch, Sorceress
                   bool _casts_disrupting_ray     = false; // Sea Witch, Sorceress
 
@@ -130,10 +131,11 @@ struct Creature
                   bool _can_cast_aging            = false; // Ghost Dragon
                   bool _can_cast_poison           = false; // Wyvern Monarch
                   bool _can_cast_paralyzing_venom = false; // Scorpicore
-                  bool _can_cast_petrify          = false; // Medusa, Medusa Queen
+                  bool _can_cast_petrify          = false; // Medusa, Medusa Queen, Basilisk, Greater Basilisk
                   bool _can_cast_blind            = false; // Unicorn, War Unicorn
                   bool _can_cast_lightning_strike = false; // Thunderbird
                   bool _can_cast_death_blow       = false; // Dread Knight
+                  bool _can_cast_death_stare      = false; // Mighty Gorgon
 
                   // casts when attacked
                   bool _casts_fire_shield = false; // Efreet Sultan
@@ -315,11 +317,12 @@ struct Creature
             bool get_decreases_enemy_luck_1()   { return special_abilities._decreases_enemy_luck_1;   };
             bool get_decreases_enemy_luck_2()   { return special_abilities._decreases_enemy_luck_2;   };
 
-            bool get_casts_binding ()        { return special_abilities._casts_binding;        };
-            bool get_casts_life_drain ()     { return special_abilities._casts_life_drain;     };
-            bool get_casts_dispell ()        { return special_abilities._casts_dispell;        };
-            bool get_casts_weakness ()       { return special_abilities._casts_weakness;       };
-            bool get_casts_disrupting_ray () { return special_abilities._casts_disrupting_ray; };
+            bool get_casts_binding ()           { return special_abilities._casts_binding;           };
+            bool get_casts_life_drain ()        { return special_abilities._casts_life_drain;        };
+            bool get_casts_dispell_on_buffs ()  { return special_abilities._casts_dispell_on_buffs;  };
+            bool get_casts_advanced_weakness () { return special_abilities._casts_advanced_weakness; };
+            bool get_casts_weakness ()          { return special_abilities._casts_weakness;          };
+            bool get_casts_disrupting_ray ()    { return special_abilities._casts_disrupting_ray;    };
 
             bool get_can_cast_disease()          { return special_abilities._can_cast_disease;          };
             bool get_can_cast_weakness()         { return special_abilities._can_cast_weakness;         };
@@ -332,6 +335,7 @@ struct Creature
             bool get_can_cast_petrify()          { return special_abilities._can_cast_petrify;          };
             bool get_can_cast_blind()            { return special_abilities._can_cast_blind;            };
             bool get_can_cast_death_blow()       { return special_abilities._can_cast_death_blow;       };
+            bool get_can_cast_death_stare()      { return special_abilities._can_cast_death_stare;      };
 
             bool get_casts_fire_shield() { return special_abilities._casts_fire_shield; };
 
