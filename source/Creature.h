@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <vector>
 #include <map>
 #include "../utilities/types.h"
 #include "Faction.h"
@@ -87,19 +88,20 @@ struct Creature
                   bool _strike_and_return = false; // Harpy, Harpy Hag
 
                   // attack bonus
-                  bool _has_double_attack   = false; // Marksman, Crusader, Gradn Elf
-                  bool _has_jousting        = false; // Cavalier, Champion
-                  bool _has_3_headed_attack = false; // Cerberus
-                  bool _has_fireball_attack = false; // Magog
-                  bool _has_cloud_attack    = false; // Lich, Power Lich
-                  bool _has_attack_adjacent = false; // Magic Elemental, Psychic Elemental, Hydra, Chaos Hydra
-                  bool _has_breath_attack   = false; // Firebird, Pheonix, Dragons: Green + Gold + Red + Black + Faerie + Rust + Azure
-                  bool _hates_efreeti       = false; // Genie, Master Genie
-                  bool _hates_genies        = false; // Efreet, Efreet Sultan
-                  bool _hates_devils        = false; // Angel, Arch Angel
-                  bool _hates_angels        = false; // Devil, Arch Devil
-                  bool _hates_black_dragons = false; // Titan
-                  bool _hates_titans        = false; // Black Dragon
+                  bool _has_double_attack           = false; // Marksman, Crusader, Gradn Elf
+                  bool _has_jousting                = false; // Cavalier, Champion
+                  bool _has_3_headed_attack         = false; // Cerberus
+                  bool _has_fireball_attack         = false; // Magog
+                  bool _has_cloud_attack            = false; // Lich, Power Lich
+                  bool _has_attack_adjacent_enemies = false; // Hydra, Chaos Hydra
+                  bool _has_attack_adjacent_hexes   = false; // Magic Elemental, Psychic Elemental
+                  bool _has_breath_attack           = false; // Firebird, Pheonix, Dragons: Green + Gold + Red + Black + Faerie + Rust + Azure
+                  bool _hates_efreeti               = false; // Genie, Master Genie
+                  bool _hates_genies                = false; // Efreet, Efreet Sultan
+                  bool _hates_devils                = false; // Angel, Arch Angel
+                  bool _hates_angels                = false; // Devil, Arch Devil
+                  bool _hates_black_dragons         = false; // Titan
+                  bool _hates_titans                = false; // Black Dragon
 
                   // retaliation
                   bool _has_two_retaliations       = false; // Griffin
@@ -146,8 +148,6 @@ struct Creature
                   bool _can_cast_protection_from_fire  = false; // Energy Elemental
                   bool _can_cast_protection_from_earth = false; // Magma Elemental
                   
-                  // vulnerabilities
-
                   // resistances
                   bool _has_magic_resist_20 = false; // Dwarf
                   bool _has_magic_resist_40 = false; // Battle Dwarf
@@ -161,12 +161,29 @@ struct Creature
                   bool _is_immune_to_jousting             = false; // Pikeman, Halberdier
                   bool _is_immune_to_blind                = false; // Troglodyte
                   bool _is_immune_to_petrify              = false; // Infernal Troglodyte
-                  bool _is_immune_to_fire_and_magic_arrow = false; // Efreet, Efreet Sultan
+                  bool _is_immune_to_magic_arrow          = false; // Efreet, Efreet Sultan, Fire & Energy Elemental
+                  bool _is_immune_to_ice_bolt             = false; // Water & Ice Elemental
+                  bool _is_immune_to_frost_ring           = false; // Water & Ice Elemental
+                  bool _is_immune_to_lightning_bolt       = false; // Earth & Magma Elemental
+                  bool _is_immune_to_chain_lightning      = false; // Earth & Magma Elemental
+                  bool _is_immune_to_meteor_shower        = false; // Air & Storm Elemental
+                  bool _is_immune_to_armageddon           = false; // Earth & Magma Elemental
+                  bool _is_immune_to_fire_spells          = false; // Efreet, Efreet Sultan, Fire & Energy Elemental
                   bool _is_immune_to_mind_spells          = false; // Giant, Titan
                   bool _is_immune_to_spells_level_1_3     = false; // Green Dragon, Red Dragon
                   bool _is_immune_to_spells_level_1_4     = false; // Gold Dragon
                   bool _is_immune_to_all_spells           = false; // Black Dragon
-
+                  
+                  // vulnerabilities
+                  bool _is_vulnerable_to_ice_bolt        = false; // Fire & Energy Elemental
+                  bool _is_vulnerable_to_frost_ring      = false; // Fire & Energy Elemental
+                  bool _is_vulnerable_to_lightning_bolt  = false; // Air & Storm Elemental
+                  bool _is_vulnerable_to_chain_lightning = false; // Air & Storm Elemental
+                  bool _is_vulnerable_to_meteor_shower   = false; // Earth & Magma Elemental
+                  bool _is_vulnerable_to_fire_ball       = false; // Water & Ice Elemental
+                  bool _is_vulnerable_to_inferno         = false; // Water & Ice Elemental
+                  bool _is_vulnerable_to_armageddon      = false; // Air & Storm Elemental, Water & Ice Elemental
+                  
                   // morale modifiers
                   bool _minimum_morale_1 = false; // Minotaur, Minotaur King
 
@@ -182,7 +199,7 @@ struct Creature
                   bool _mana_economy = false;  // Mage, Arch Mage; Effect = hero's spells during combat cost 2 mana points less.
                   
                   // Create a map of all special abilities, refering to the fields in the struct accordingly.
-                  std::map<std::string, bool*> create_map_of_all_abilities();
+                  std::map< std::string, std::vector<bool*> > create_map_of_all_abilities();
 
                   // Fill the special abilities struct according to the passed special abilities string.
                   void fill_special_abilities();
@@ -266,19 +283,20 @@ struct Creature
 
             bool get_strike_and_return()   { return special_abilities._strike_and_return; };
 
-            bool get_has_double_attack()   { return special_abilities._has_double_attack;   };
-            bool get_has_jousting()        { return special_abilities._has_jousting;        };
-            bool get_has_3_headed_attack() { return special_abilities._has_3_headed_attack; };
-            bool get_has_fireball_attack() { return special_abilities._has_fireball_attack; };
-            bool get_has_cloud_attack()    { return special_abilities._has_cloud_attack;    };
-            bool get_has_attack_adjacent() { return special_abilities._has_attack_adjacent; };
-            bool get_has_breath_attack()   { return special_abilities._has_breath_attack;   };
-            bool get_hates_efreeti()       { return special_abilities._hates_efreeti;       };
-            bool get_hates_genies()        { return special_abilities._hates_genies;        };
-            bool get_hates_devils()        { return special_abilities._hates_devils;        };
-            bool get_hates_angels()        { return special_abilities._hates_angels;        };
-            bool get_hates_black_dragons() { return special_abilities._hates_black_dragons; };
-            bool get_hates_titans()        { return special_abilities._hates_titans;        };
+            bool get_has_double_attack()           { return special_abilities._has_double_attack;           };
+            bool get_has_jousting()                { return special_abilities._has_jousting;                };
+            bool get_has_3_headed_attack()         { return special_abilities._has_3_headed_attack;         };
+            bool get_has_fireball_attack()         { return special_abilities._has_fireball_attack;         };
+            bool get_has_cloud_attack()            { return special_abilities._has_cloud_attack;            };
+            bool get_has_attack_adjacent_enemies() { return special_abilities._has_attack_adjacent_enemies; };
+            bool get_has_attack_adjacent_hexes()   { return special_abilities._has_attack_adjacent_hexes;   };
+            bool get_has_breath_attack()           { return special_abilities._has_breath_attack;           };
+            bool get_hates_efreeti()               { return special_abilities._hates_efreeti;               };
+            bool get_hates_genies()                { return special_abilities._hates_genies;                };
+            bool get_hates_devils()                { return special_abilities._hates_devils;                };
+            bool get_hates_angels()                { return special_abilities._hates_angels;                };
+            bool get_hates_black_dragons()         { return special_abilities._hates_black_dragons;         };
+            bool get_hates_titans()                { return special_abilities._hates_titans;                };
 
             bool get_has_two_retaliations()       { return special_abilities._has_two_retaliations;       };
             bool get_has_unlimited_retaliations() { return special_abilities._has_unlimited_retaliations; };
@@ -328,14 +346,30 @@ struct Creature
             bool get_reduce_magic_damage_50() { return special_abilities._reduce_magic_damage_50; };
             bool get_reduce_magic_damage_75() { return special_abilities._reduce_magic_damage_75; };
 
-            bool get_is_immune_to_jousting()             { return special_abilities._is_immune_to_jousting;             };
-            bool get_is_immune_to_blind()                { return special_abilities._is_immune_to_blind;                };
-            bool get_is_immune_to_petrify()              { return special_abilities._is_immune_to_petrify;              };
-            bool get_is_immune_to_fire_and_magic_arrow() { return special_abilities._is_immune_to_fire_and_magic_arrow; };
-            bool get_is_immune_to_mind_spells()          { return special_abilities._is_immune_to_mind_spells;          };
-            bool get_is_immune_to_spells_level_1_3()     { return special_abilities._is_immune_to_spells_level_1_3;     };
-            bool get_is_immune_to_spells_level_1_4()     { return special_abilities._is_immune_to_spells_level_1_4;     };
-            bool get_is_immune_to_all_spells()           { return special_abilities._is_immune_to_all_spells;           };
+            bool get_is_immune_to_jousting()         { return special_abilities._is_immune_to_jousting;         };
+            bool get_is_immune_to_blind()            { return special_abilities._is_immune_to_blind;            };
+            bool get_is_immune_to_petrify()          { return special_abilities._is_immune_to_petrify;          };
+            bool get_is_immune_to_magic_arrow()      { return special_abilities._is_immune_to_magic_arrow;      };
+            bool get_is_immune_to_ice_bolt()         { return special_abilities._is_immune_to_ice_bolt;         };
+            bool get_is_immune_to_frost_ring()       { return special_abilities._is_immune_to_frost_ring;       };
+            bool get_is_immune_to_lightning_bolt()   { return special_abilities._is_immune_to_lightning_bolt;   };
+            bool get_is_immune_to_chain_lightning()  { return special_abilities._is_immune_to_chain_lightning;  };
+            bool get_is_immune_to_meteor_shower()    { return special_abilities._is_immune_to_meteor_shower;    };
+            bool get_is_immune_to_armageddon()       { return special_abilities._is_immune_to_armageddon;       };
+            bool get_is_immune_to_fire_spells()      { return special_abilities._is_immune_to_fire_spells;      };
+            bool get_is_immune_to_mind_spells()      { return special_abilities._is_immune_to_mind_spells;      };
+            bool get_is_immune_to_spells_level_1_3() { return special_abilities._is_immune_to_spells_level_1_3; };
+            bool get_is_immune_to_spells_level_1_4() { return special_abilities._is_immune_to_spells_level_1_4; };
+            bool get_is_immune_to_all_spells()       { return special_abilities._is_immune_to_all_spells;       };
+
+            bool get_is_vulnerable_to_ice_bolt()        { return special_abilities._is_vulnerable_to_ice_bolt;        };
+            bool get_is_vulnerable_to_frost_ring()      { return special_abilities._is_vulnerable_to_frost_ring;      };
+            bool get_is_vulnerable_to_lightning_bolt()  { return special_abilities._is_vulnerable_to_lightning_bolt;  };
+            bool get_is_vulnerable_to_chain_lightning() { return special_abilities._is_vulnerable_to_chain_lightning; };
+            bool get_is_vulnerable_to_meteor_shower()   { return special_abilities._is_vulnerable_to_meteor_shower;   };
+            bool get_is_vulnerable_to_fire_ball()       { return special_abilities._is_vulnerable_to_fire_ball;       };
+            bool get_is_vulnerable_to_inferno()         { return special_abilities._is_vulnerable_to_inferno;         };
+            bool get_is_vulnerable_to_armageddon()      { return special_abilities._is_vulnerable_to_armageddon;      };
 
             bool get_magic_channel() { return special_abilities._magic_channel; };
             bool get_magic_damper()  { return special_abilities._magic_damper;  };

@@ -110,100 +110,109 @@ void Creature::logical_limitations()
 
 }
 
-std::map<std::string, bool*> Creature::special_abilities::create_map_of_all_abilities()
+std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_map_of_all_abilities()
 {
-      std::map<std::string, bool*> all_abilities; // all special abilities in existance, refering to their respective boolean
+      std::map< std::string, std::vector<bool*> > all_abilities; // all special abilities in existance, refering to their respective boolean
 
-      all_abilities["Undead."]        = &_is_undead;
-      all_abilities["Non-living."]    = &_is_bloodless;
+      all_abilities["Undead."]        = { &_is_undead    };
+      all_abilities["Non-living."]    = { &_is_bloodless };
 
-      all_abilities["Flying."]        = &_is_flying;
-      all_abilities["Ranged attack."] = &_is_ranged;
+      all_abilities["Flying."]        = { &_is_flying };
+      all_abilities["Ranged attack."] = { &_is_ranged };
 
-      all_abilities["No melee penalty."]    = &_no_melee_penalty;
-      all_abilities["No obstacle penalty."] = &_no_obstacle_penalty;
+      all_abilities["No melee penalty."]    = { &_no_melee_penalty    };
+      all_abilities["No obstacle penalty."] = { &_no_obstacle_penalty };
 
-      all_abilities["Strike and return."] = &_strike_and_return;
+      all_abilities["Strike and return."] = { &_strike_and_return };
 
-      all_abilities["Double attack."]                    = &_has_double_attack;
-      all_abilities["Jousting bonus."]                   = &_has_jousting;
-      all_abilities["3-headed attack."]                  = &_has_3_headed_attack;
-      all_abilities["Fireball attack."]                  = &_has_fireball_attack;
-      all_abilities["Death cloud."]                      = &_has_cloud_attack;
-      all_abilities["Attack all adjacent enemies."]      = &_has_attack_adjacent;
-      all_abilities["Breath attack."]                    = &_has_breath_attack;
-      all_abilities["Hates Efreeti and Efreet Sultans."] = &_hates_efreeti;
-      all_abilities["Hates Genies and Master Genies."]   = &_hates_genies;
-      all_abilities["Hates Devils and Arch Devils."]     = &_hates_devils;
-      all_abilities["Hates Angels and Arch Angels."]     = &_hates_angels;
-      all_abilities["Hates Black Dragons."]              = &_hates_black_dragons;
-      all_abilities["Hates Titans."]                     = &_hates_titans;
+      all_abilities["Double attack."]                    = { &_has_double_attack   };
+      all_abilities["Jousting bonus."]                   = { &_has_jousting        };
+      all_abilities["3-headed attack."]                  = { &_has_3_headed_attack };
+      all_abilities["Fireball attack."]                  = { &_has_fireball_attack };
+      all_abilities["Death cloud."]                      = { &_has_cloud_attack    };
+      all_abilities["Attack all adjacent enemies."]      = { &_has_attack_adjacent_enemies };
+      all_abilities["Attack all adjacent hexes."]        = { &_has_attack_adjacent_hexes };
+      all_abilities["Breath attack."]                    = { &_has_breath_attack   };
+      all_abilities["Hates Efreeti and Efreet Sultans."] = { &_hates_efreeti       };
+      all_abilities["Hates Genies and Master Genies."]   = { &_hates_genies        };
+      all_abilities["Hates Devils and Arch Devils."]     = { &_hates_devils        };
+      all_abilities["Hates Angels and Arch Angels."]     = { &_hates_angels        };
+      all_abilities["Hates Black Dragons."]              = { &_hates_black_dragons };
+      all_abilities["Hates Titans."]                     = { &_hates_titans        };
 
-      all_abilities["Two retaliations."]       = &_has_two_retaliations;
-      all_abilities["Unlimited retaliations."] = &_has_unlimited_retaliations;
-      all_abilities["No enemy retaliation."]   = &_no_enemy_retaliation;
+      all_abilities["Two retaliations."]       = { &_has_two_retaliations       };
+      all_abilities["Unlimited retaliations."] = { &_has_unlimited_retaliations };
+      all_abilities["No enemy retaliation."]   = { &_no_enemy_retaliation       };
       
-      all_abilities["Regeneration."] = &_casts_regeneration;
-      all_abilities["Mana drain."]   = &_casts_mana_drain;
+      all_abilities["Regeneration."] = { &_casts_regeneration };
+      all_abilities["Mana drain."]   = { &_casts_mana_drain   };
 
-      all_abilities["Binding attack."]       =  &_casts_binding;
-      all_abilities["Life drain."]           =  &_casts_life_drain;
-      // all_abilities["Casts Dispell."]        =  &_casts_dispell;
-      // all_abilities["Casts Weakness."]       =  &_casts_weakness;
-      // all_abilities["Casts Disrupting Ray."] =  &_casts_disrupting_ray;
+      all_abilities["Binding attack."]       =  { &_casts_binding    };
+      all_abilities["Life drain."]           =  { &_casts_life_drain };
+      // all_abilities["Casts Dispell."]        =  { &_casts_dispell  };
+      // all_abilities["Casts Weakness."]       =  { &_casts_weakness };
+      // all_abilities["Casts Disrupting Ray."] =  { &_casts_disrupting_ray };
 
-      all_abilities["20% chance to cast Disease per attack."]          = &_can_cast_disease;
+      all_abilities["20% chance to cast Disease per attack."]          = { &_can_cast_disease };
       // all_abilities["20% chance to cast Weakness per attack."]         = &_can_cast_weakness;
       // all_abilities["20% chance to cast Disrupting Ray per attack."]   = &_can_cast_disrupting_ray;
-      all_abilities["25% chance to cast Curse per attack."]            = &_can_cast_curse;
-      all_abilities["20% chance to cast Aging per attack."]            = &_can_cast_aging;
+      all_abilities["25% chance to cast Curse per attack."]            = { &_can_cast_curse };
+      all_abilities["20% chance to cast Aging per attack."]            = { &_can_cast_aging };
       // all_abilities["20% chance to cast Poison per attack."]           = &_can_cast_poison;
-      all_abilities["20% chance to cast Paralyzing Venom per attack."] = &_can_cast_paralyzing_venom;
-      all_abilities["20% chance to cast Petrify per melee attack."]    = &_can_cast_petrify;
+      all_abilities["20% chance to cast Paralyzing Venom per attack."] = { &_can_cast_paralyzing_venom };
+      all_abilities["20% chance to cast Petrify per melee attack."]    = { &_can_cast_petrify };
       // all_abilities["20% chance to cast Petrify per attack."]          = &_can_cast_petrify;
-      all_abilities["20% chance to cast Blind per attack."]            = &_can_cast_blind;
+      all_abilities["20% chance to cast Blind per attack."]            = { &_can_cast_blind };
       // all_abilities["20% chance to cast Lightning Strike per attack."] = &_can_cast_lightning_strike;
-      all_abilities["20% chance to cast Death Blow per attack."]       = &_can_cast_death_blow;
+      all_abilities["20% chance to cast Death Blow per attack."]       = { &_can_cast_death_blow };
 
-      all_abilities["Fire Shield."] = &_casts_fire_shield;
+      all_abilities["Fire Shield."] = { &_casts_fire_shield };
 
-      all_abilities["Rebirth."] = &_can_cast_rebirth;
+      all_abilities["Rebirth."] = { &_can_cast_rebirth };
 
-      all_abilities["Spellcaster."]                           = &_is_spellcaster;
-      all_abilities["Can cast Ressurection once per battle."] = &_can_cast_ressurection;
-      all_abilities["Summon Demons."]                         = &_can_cast_summon_demons;
-      all_abilities["Spellcaster (Bloodlust)."]               = &_can_cast_bloodlust;
-      all_abilities["Spellcaster (Protection from Air)."]     = &_can_cast_protection_from_air;
-      all_abilities["Spellcaster (Protection from Water)."]   = &_can_cast_protection_from_water;
-      all_abilities["Spellcaster (Protection from Fire)."]    = &_can_cast_protection_from_fire;
-      all_abilities["Spellcaster (Protection from Earth)."]   = &_can_cast_protection_from_earth;
+      all_abilities["Spellcaster."]                           = { &_is_spellcaster                 };
+      all_abilities["Can cast Ressurection once per battle."] = { &_can_cast_ressurection          };
+      all_abilities["Summon Demons."]                         = { &_can_cast_summon_demons         };
+      all_abilities["Spellcaster (Bloodlust)."]               = { &_can_cast_bloodlust             };
+      all_abilities["Spellcaster (Protection from Air)."]     = { &_can_cast_protection_from_air   };
+      all_abilities["Spellcaster (Protection from Water)."]   = { &_can_cast_protection_from_water };
+      all_abilities["Spellcaster (Protection from Fire)."]    = { &_can_cast_protection_from_fire  };
+      all_abilities["Spellcaster (Protection from Earth)."]   = { &_can_cast_protection_from_earth };
 
-      all_abilities["Magic resistance 20%."]         = &_has_magic_resist_20;
-      all_abilities["Magic resistance 40%."]         = &_has_magic_resist_40;
-      all_abilities["Aura of magic resistance 20%."] = &_has_magic_resist_aura;
+      all_abilities["Magic resistance 20%."]         = { &_has_magic_resist_20   };
+      all_abilities["Magic resistance 40%."]         = { &_has_magic_resist_40   };
+      all_abilities["Aura of magic resistance 20%."] = { &_has_magic_resist_aura };
 
-      all_abilities["Spell damage reduction 50%."] = &_reduce_magic_damage_50;
-      all_abilities["Spell damage reduction 75%."] = &_reduce_magic_damage_75;
+      all_abilities["Spell damage reduction 50%."] = { &_reduce_magic_damage_50 };
+      all_abilities["Spell damage reduction 75%."] = { &_reduce_magic_damage_75 };
 
-      all_abilities["Immune to jousting."]                    = &_is_immune_to_jousting;
-      all_abilities["Immune to Blind."]                       = &_is_immune_to_blind;
-      all_abilities["Immune to Petrify."]                     = &_is_immune_to_petrify;
-      all_abilities["Immune to fire (Magic Arrow included)."] = &_is_immune_to_fire_and_magic_arrow;
-      all_abilities["Immune to mind spells."]                 = &_is_immune_to_mind_spells;
-      all_abilities["Immune to spells level 1-3."]            = &_is_immune_to_spells_level_1_3;
-      all_abilities["Immune to spells level 1-4."]            = &_is_immune_to_spells_level_1_4;
-      all_abilities["Immune to all spells."]                  = &_is_immune_to_all_spells;
+      all_abilities["Immune to jousting."]                    = { &_is_immune_to_jousting };
+      all_abilities["Immune to Blind."]                       = { &_is_immune_to_blind    };
+      all_abilities["Immune to Petrify."]                     = { &_is_immune_to_petrify  };
+      all_abilities["Immune to Ice Bolt and Frost Ring."]     = { &_is_immune_to_ice_bolt, &_is_immune_to_frost_ring };
+      all_abilities["Immune to Meteor Shower."]               = { &_is_immune_to_meteor_shower };
+      all_abilities["Immune to Lightning Bolt, Chain Lightning and Armageddon."] = { &_is_immune_to_lightning_bolt, &_is_immune_to_chain_lightning, &_is_immune_to_armageddon };
+      all_abilities["Immune to fire (Magic Arrow included)."] = { &_is_immune_to_fire_spells, &_is_immune_to_magic_arrow };
+      all_abilities["Immune to mind spells."]                 = { &_is_immune_to_mind_spells      };
+      all_abilities["Immune to spells level 1-3."]            = { &_is_immune_to_spells_level_1_3 };
+      all_abilities["Immune to spells level 1-4."]            = { &_is_immune_to_spells_level_1_4 };
+      all_abilities["Immune to all spells."]                  = { &_is_immune_to_all_spells       };
+      
+      all_abilities["Vulnerable to Ice Bolt and Frost Ring."]                        = { &_is_vulnerable_to_ice_bolt, &_is_vulnerable_to_frost_ring };
+      all_abilities["Vulnerable to Lightning Bolt, Chain Lightning and Armageddon."] = { &_is_vulnerable_to_lightning_bolt, &_is_vulnerable_to_chain_lightning, &_is_vulnerable_to_armageddon };
+      all_abilities["Vulnerable to Armageddon, Fireball, Inferno."]                  = { &_is_vulnerable_to_armageddon, &_is_vulnerable_to_fire_ball, &_is_vulnerable_to_inferno };
+      all_abilities["Vulnerable to Meteor Shower."]                                  = { &_is_vulnerable_to_meteor_shower   };
+      
+      all_abilities["Minimum morale is +1."] = { &_minimum_morale_1 };
 
-      all_abilities["Minimum morale is +1."] = &_minimum_morale_1;
+      all_abilities["+1 morale to alias troops."] = { &_increases_alias_morale_1 };
+      all_abilities["-1 morale to enemy troops."] = { &_decreases_enemy_morale_1 };
+      all_abilities["-1 luck to enemy troops."]   = { &_decreases_enemy_luck_1   };
+      all_abilities["-2 luck to enemy troops."]   = { &_decreases_enemy_luck_2   };
 
-      all_abilities["+1 morale to alias troops."] = &_increases_alias_morale_1;
-      all_abilities["-1 morale to enemy troops."] = &_decreases_enemy_morale_1;
-      all_abilities["-1 luck to enemy troops."]   = &_decreases_enemy_luck_1;
-      all_abilities["-2 luck to enemy troops."]   = &_decreases_enemy_luck_2;
-
-      all_abilities["Magic channel."]                         = &_magic_channel;
-      all_abilities["Magic damper."]                          = &_magic_damper;
-      all_abilities["Hero's combat spells cost 2 less mana."] = &_mana_economy;
+      all_abilities["Magic channel."]                         = { &_magic_channel };
+      all_abilities["Magic damper."]                          = { &_magic_damper  };
+      all_abilities["Hero's combat spells cost 2 less mana."] = { &_mana_economy  };
 
       return all_abilities;
 }
@@ -234,13 +243,14 @@ void Creature::special_abilities::fill_special_abilities()
             }
             else
             {
-                  for(auto ability : all_abilities) // key-value pair
+                  for(auto abilities : all_abilities) // key-value pair
                   {
-                        pos = helper.find(ability.first);
+                        pos = helper.find(abilities.first);
                         if(pos != std::string::npos)
                         {
-                              *ability.second = true;
-                              helper.erase(pos, ability.first.length());
+                              for(auto ability : abilities.second)
+                                    *ability = true;
+                              helper.erase(pos, abilities.first.length());
                               if( helper[pos] == ' ' ) // if the new character on the same place is whitespace - delete it
                                     helper.erase(pos, 1);
                               break;

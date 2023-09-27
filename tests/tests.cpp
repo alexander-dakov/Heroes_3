@@ -74,14 +74,21 @@ void test_create_creature_stack()
 
     for(int i = 0; i < ARMY_SLOTS; i++)
     {
-        army[i] = new Stack(Creature_List::Zealot, 50 + i);
+        army[i] = new Stack(Creature_List::Efreet_Sultan, 50 + i);
         std::cout << "Stack " << i << " name is : " << army[i]->get_creature().get_name() << std::endl;
         std::cout << "Stack " << i << " number is : " << army[i]->get_number() << std::endl;
     }
     army[0]->print_full_info();
     std::cout << "\nLets see only some of the many special abilities" << std::endl;
     auto c = army[0]->get_creature();
-    std::cout << c.get_name() << " : \n" << " - is undead : " << c.get_is_undead() << "\n - is non-living : " << c.get_is_bloodless() << "\n - is ranged : " << c.get_is_ranged() << "\n - is flying : " << c.get_is_flying() << "\n - has double attack : " << c.get_has_double_attack() << std::endl;
+    std::cout << c.get_name() << " :"<< std::endl;
+    std::cout << " - is undead : " << c.get_is_undead() << std::endl;
+    std::cout << " - is non-living : " << c.get_is_bloodless() << std::endl;
+    std::cout << " - is ranged : " << c.get_is_ranged() << std::endl;
+    std::cout << " - is flying : " << c.get_is_flying() << std::endl;
+    std::cout << " - has double attack : " << c.get_has_double_attack() << std::endl;
+    std::cout << " - is immune to magic arrow : " << c.get_is_immune_to_magic_arrow() << std::endl;
+    std::cout << " - is immune to fire spells: " << c.get_is_immune_to_fire_spells() << std::endl;
 }
 
 void test_creature_stack_vs_creature_stack()
