@@ -372,7 +372,7 @@ void Stack::print_battle_info()
     printf("Level : %d\n", c.get_level());
     printf("Upgraded : %d\n", c.get_is_upgraded());
     printf("Attack : %d(%d)\n", c.get_att(), get_att());
-    printf("Defence : %d(%d)\n", c.get_def(), get_def());
+    printf("Defense : %d(%d)\n", c.get_def(), get_def());
 
     if(c.get_is_ranged())
         printf("Shots : %d(%d)\n", c.get_shots(), get_shots_left());
@@ -395,7 +395,7 @@ void Stack::print_full_info()
     printf("Upgraded : %d\n", c.get_is_upgraded());
     printf("Growth per week : %d\n", c.get_growth());
     printf("Attack : %d(%d)\n", c.get_att(), get_att());
-    printf("Defence : %d(%d)\n", c.get_def(), get_def());
+    printf("Defense : %d(%d)\n", c.get_def(), get_def());
 
     if(c.get_is_ranged())
         printf("Shots : %d\n", c.get_shots());

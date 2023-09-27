@@ -10,8 +10,8 @@ enum Faction
     Inferno,
     Necropolis,
     Dungeon,
-    Fortress,
     Stronghold,
+    Fortress,
     Conflux,
     Cove
 };

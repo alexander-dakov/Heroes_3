@@ -123,22 +123,26 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
       all_abilities["No melee penalty."]    = { &_no_melee_penalty    };
       all_abilities["No obstacle penalty."] = { &_no_obstacle_penalty };
 
-      all_abilities["Strike and return."] = { &_strike_and_return };
+      all_abilities["Strike and return."]      = { &_strike_and_return       };
+      all_abilities["Strike and return."]      = { &_strike_and_return       };
+      all_abilities["Can attack siege walls."] = { &_can_attack_siege_walls  };
 
-      all_abilities["Double attack."]                    = { &_has_double_attack   };
-      all_abilities["Jousting bonus."]                   = { &_has_jousting        };
-      all_abilities["3-headed attack."]                  = { &_has_3_headed_attack };
-      all_abilities["Fireball attack."]                  = { &_has_fireball_attack };
-      all_abilities["Death cloud."]                      = { &_has_cloud_attack    };
-      all_abilities["Attack all adjacent enemies."]      = { &_has_attack_adjacent_enemies };
-      all_abilities["Attack all adjacent hexes."]        = { &_has_attack_adjacent_hexes };
-      all_abilities["Breath attack."]                    = { &_has_breath_attack   };
-      all_abilities["Hates Efreeti and Efreet Sultans."] = { &_hates_efreeti       };
-      all_abilities["Hates Genies and Master Genies."]   = { &_hates_genies        };
-      all_abilities["Hates Devils and Arch Devils."]     = { &_hates_devils        };
-      all_abilities["Hates Angels and Arch Angels."]     = { &_hates_angels        };
-      all_abilities["Hates Black Dragons."]              = { &_hates_black_dragons };
-      all_abilities["Hates Titans."]                     = { &_hates_titans        };
+      all_abilities["Double attack."]                       = { &_has_double_attack           };
+      all_abilities["Jousting bonus."]                      = { &_has_jousting                };
+      all_abilities["3-headed attack."]                     = { &_has_3_headed_attack         };
+      all_abilities["Fireball attack."]                     = { &_has_fireball_attack         };
+      all_abilities["Death cloud."]                         = { &_has_cloud_attack            };
+      all_abilities["Attack all adjacent enemies."]         = { &_has_attack_adjacent_enemies };
+      all_abilities["Attack all adjacent hexes."]           = { &_has_attack_adjacent_hexes   };
+      all_abilities["Breath attack."]                       = { &_has_breath_attack           };
+      all_abilities["Hates Efreeti and Efreet Sultans."]    = { &_hates_efreeti               };
+      all_abilities["Hates Genies and Master Genies."]      = { &_hates_genies                };
+      all_abilities["Hates Devils and Arch Devils."]        = { &_hates_devils                };
+      all_abilities["Hates Angels and Arch Angels."]        = { &_hates_angels                };
+      all_abilities["Hates Black Dragons."]                 = { &_hates_black_dragons         };
+      all_abilities["Hates Titans."]                        = { &_hates_titans                };
+      all_abilities["-40% to enemy's defense upon attack."] = { &_reduce_enemy_defense_40     };
+      all_abilities["-80% to enemy's defense upon attack."] = { &_reduce_enemy_defense_80     };
 
       all_abilities["Two retaliations."]       = { &_has_two_retaliations       };
       all_abilities["Unlimited retaliations."] = { &_has_unlimited_retaliations };
@@ -163,7 +167,7 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
       all_abilities["20% chance to cast Petrify per melee attack."]    = { &_can_cast_petrify };
       // all_abilities["20% chance to cast Petrify per attack."]          = &_can_cast_petrify;
       all_abilities["20% chance to cast Blind per attack."]            = { &_can_cast_blind };
-      // all_abilities["20% chance to cast Lightning Strike per attack."] = &_can_cast_lightning_strike;
+      all_abilities["20% chance to cast Lightning Strike per attack."] = { &_can_cast_lightning_strike };
       all_abilities["20% chance to cast Death Blow per attack."]       = { &_can_cast_death_blow };
 
       all_abilities["Fire Shield."] = { &_casts_fire_shield };
@@ -302,7 +306,7 @@ void Creature::print_full_info()
       printf("Upgraded : %d\n", get_is_upgraded());
       printf("Growth per week : %d\n", get_growth());
       printf("Attack : %d\n", get_att());
-      printf("Defence : %d\n", get_def());
+      printf("Defense : %d\n", get_def());
 
       if(get_is_ranged())
             printf("Shots : %d\n", get_shots());

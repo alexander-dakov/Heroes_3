@@ -33,7 +33,7 @@ class Stack
         struct battle_stats
         {
             uint8_t _att;           // modified by hero's attack skill
-            uint8_t _def;           // modified by hero's defence skill
+            uint8_t _def;           // modified by battle and hero's defense skill
             uint8_t _shots_left;    // modified by battle and ammo cart
             uint16_t _hp;            // modified by hero's items
             uint16_t _hp_left;       // modified battle and hero's items
@@ -58,7 +58,7 @@ class Stack
             // battle_stats(Creature _creature, Hero& _hero)
             // {
             //     _att = _creature.get_att() + _hero.get_attack();
-            //     _def = _creature.get_def() + _hero.get_defence();
+            //     _def = _creature.get_def() + _hero.get_defense();
             //     _shots_left = _creature.get_shots();
             //     _hp = _creature.get_hp();
             //     _hp_left = _hp;
@@ -77,7 +77,7 @@ class Stack
         struct hero_attributes
         {
             uint8_t _att = 0;                   // hero's attack skill
-            uint8_t _def = 0;                   // hero's defence skill
+            uint8_t _def = 0;                   // hero's defense skill
             Morale _morale = Morale::Neutral;   // hero's morale
             Luck _luck = Luck::Neutral;         // hero's luck
             std::string _specialty_name = "";   // hero's specialty name
@@ -240,7 +240,7 @@ class Stack
         // Skip stack's action and return to it later during the same battle turn.
         void wait() { set_action(Stack_Action::Wait); };
 
-        // Stack does nothing, but gains bonus defence skill during the battle turn. 
+        // Stack does nothing, but gains bonus defense skill during the battle turn. 
         void defend() { set_action(Stack_Action::Defend); };
 
         // Reposition stack on the battle field according to stack speed and objects.

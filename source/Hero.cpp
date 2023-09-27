@@ -1,14 +1,14 @@
 #include "Hero.h"
 
 Hero::Hero( const std::string name, const Gender gender, const Class class_, const Faction faction, const Team team, const uint8_t level, const uint32_t experience, 
-            const uint8_t attack, const uint8_t defence, const uint8_t power, const uint8_t knowledge,
+            const uint8_t attack, const uint8_t defense, const uint8_t power, const uint8_t knowledge,
             const Specialty& specialty,
             const Morale morale, const Luck luck,
             // secondary skills
             const bool has_first_aid, const bool has_ammo_cart, const bool has_ballista, const bool has_catapult,
             const bool has_spellbook ) :
             _name(name), _gender(gender), _class(class_), _faction(faction), _team(team), _level(level), _experience(experience), 
-            primary_skills(attack, defence, power, knowledge),
+            primary_skills(attack, defense, power, knowledge),
             _specialty(specialty),
             _morale(morale), _luck(luck),
             // {"None", ...} write them in some way and change field in Hero.h,

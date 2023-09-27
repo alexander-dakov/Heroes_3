@@ -85,10 +85,11 @@ struct Creature
                   bool _no_obstacle_penalty = false; // Mage, Arch Mage, Zealot
 
                   // attack style
-                  bool _strike_and_return = false; // Harpy, Harpy Hag
+                  bool _strike_and_return      = false; // Harpy, Harpy Hag
+                  bool _can_attack_siege_walls = false; // Cyclops, Cyclops King
 
                   // attack bonus
-                  bool _has_double_attack           = false; // Marksman, Crusader, Gradn Elf
+                  bool _has_double_attack           = false; // Marksman, Crusader, Grand Elf
                   bool _has_jousting                = false; // Cavalier, Champion
                   bool _has_3_headed_attack         = false; // Cerberus
                   bool _has_fireball_attack         = false; // Magog
@@ -102,6 +103,8 @@ struct Creature
                   bool _hates_angels                = false; // Devil, Arch Devil
                   bool _hates_black_dragons         = false; // Titan
                   bool _hates_titans                = false; // Black Dragon
+                  bool _reduce_enemy_defense_40     = false; // Behemoth
+                  bool _reduce_enemy_defense_80     = false; // Ancient Behemoth
 
                   // retaliation
                   bool _has_two_retaliations       = false; // Griffin
@@ -153,7 +156,7 @@ struct Creature
                   bool _has_magic_resist_40 = false; // Battle Dwarf
                   bool _has_magic_resist_aura = false; // Battle Dwarf
 
-                  // reducitons
+                  // damage reduciton
                   bool _reduce_magic_damage_50 = false; // Stone Golem
                   bool _reduce_magic_damage_75 = false; // Iron Golem
 
@@ -281,7 +284,8 @@ struct Creature
             bool get_no_melee_penalty()    { return special_abilities._no_melee_penalty;    };
             bool get_no_obstacle_penalty() { return special_abilities._no_obstacle_penalty; };
 
-            bool get_strike_and_return()   { return special_abilities._strike_and_return; };
+            bool get_strike_and_return()      { return special_abilities._strike_and_return;      };
+            bool get_can_attack_siege_walls() { return special_abilities._can_attack_siege_walls; };
 
             bool get_has_double_attack()           { return special_abilities._has_double_attack;           };
             bool get_has_jousting()                { return special_abilities._has_jousting;                };
@@ -297,6 +301,8 @@ struct Creature
             bool get_hates_angels()                { return special_abilities._hates_angels;                };
             bool get_hates_black_dragons()         { return special_abilities._hates_black_dragons;         };
             bool get_hates_titans()                { return special_abilities._hates_titans;                };
+            bool get_reduce_enemy_defense_40()     { return special_abilities._reduce_enemy_defense_40;     };
+            bool get_reduce_enemy_defense_80()     { return special_abilities._reduce_enemy_defense_80;     };
 
             bool get_has_two_retaliations()       { return special_abilities._has_two_retaliations;       };
             bool get_has_unlimited_retaliations() { return special_abilities._has_unlimited_retaliations; };

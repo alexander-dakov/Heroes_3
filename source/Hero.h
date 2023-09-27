@@ -41,12 +41,12 @@ class Hero
             struct primary_skills
             {
                   uint8_t _attack;
-                  uint8_t _defence;
+                  uint8_t _defense;
                   uint8_t _power;
                   uint8_t _knowledge;
 
-                  primary_skills( uint8_t attack, uint8_t defence, uint8_t power, uint8_t knowledge ) : 
-                                  _attack(attack), _defence(defence), _power(power), _knowledge(knowledge)
+                  primary_skills( uint8_t attack, uint8_t defense, uint8_t power, uint8_t knowledge ) : 
+                                  _attack(attack), _defense(defense), _power(power), _knowledge(knowledge)
                                   {};
             }primary_skills;
 
@@ -92,7 +92,7 @@ class Hero
 
       public:
             Hero( const std::string name, const Gender gender, const Class class_, const Faction faction, const Team team, const uint8_t level, const uint32_t experience, 
-                  const uint8_t attack, const uint8_t defence, const uint8_t power, const uint8_t knowledge,
+                  const uint8_t attack, const uint8_t defense, const uint8_t power, const uint8_t knowledge,
                   const Specialty& specialty,
                   const Morale morale, const Luck luck,
                   // secondary skills
@@ -120,8 +120,8 @@ class Hero
             void set_attack(const uint8_t attack) { primary_skills._attack = attack; };
             uint8_t get_attack() {return primary_skills._attack; };
 
-            void set_defence(const uint8_t defence) { primary_skills._defence = defence; };
-            uint8_t get_defence() {return primary_skills._defence; };
+            void set_defense(const uint8_t defense) { primary_skills._defense = defense; };
+            uint8_t get_defense() {return primary_skills._defense; };
 
             void set_power(const uint8_t power) { primary_skills._power = power; };
             uint8_t get_power() {return primary_skills._power; };

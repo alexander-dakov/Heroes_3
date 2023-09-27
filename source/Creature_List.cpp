@@ -103,10 +103,24 @@ namespace Creature_List
     const Creature Scorpicore (          "Scorpicore",          Faction::Dungeon,    6, true,   2, true,  16, 14,  0, 14, 20,  80, 11, Morale::Good,    Luck::Neutral, 1248, 1589, { 1050, 0, 0, 0, 0 }, "20% chance to cast Paralyzing Venom per attack.");
     const Creature Red_Dragon (          "Red Dragon",          Faction::Dungeon,    7, false,  1, true,  19, 19,  0, 40, 50, 180, 11, Morale::Good,    Luck::Neutral, 3762, 4702, { 2500, 0, 1, 0, 0 }, "Breath attack. Immune to spells level 1-3.");
     const Creature Black_Dragon (        "Black Dragon",        Faction::Dungeon,    7, true,   1, true,  25, 25,  0, 40, 50, 300, 15, Morale::Good,    Luck::Neutral, 6783, 8721, { 4000, 0, 2, 0, 0 }, "Breath attack. Immune to all spells. Hates Titans.");
-  
-    // Fortress
 
     // Stronghold
+    const Creature Goblin (              "Goblin",              Faction::Stronghold, 1, false, 15, false,  4,  2,  0,  1,  2,   5,  5, Morale::Good,    Luck::Neutral,   60,   60, {   40, 0, 0, 0, 0 }, "");
+    const Creature Hobgoblin (           "Hobgoblin",           Faction::Stronghold, 1, true,  15, false,  5,  3,  0,  1,  2,   5,  7, Morale::Good,    Luck::Neutral,   65,   78, {   50, 0, 0, 0, 0 }, "");
+    const Creature Wolf_Rider (          "Wolf Rider",          Faction::Stronghold, 2, false,  9, false,  7,  5,  0,  2,  4,  10,  6, Morale::Good,    Luck::Neutral,  130,  130, {  100, 0, 0, 0, 0 }, "");
+    const Creature Wolf_Raider (         "Wolf Raider",         Faction::Stronghold, 2, true,   9, false,  8,  5,  0,  3,  4,  10,  8, Morale::Good,    Luck::Neutral,  174,  203, {  140, 0, 0, 0, 0 }, "Double attack.");
+    const Creature Orc (                 "Orc",                 Faction::Stronghold, 3, false,  7, true,   8,  4, 12,  2,  5,  15,  4, Morale::Good,    Luck::Neutral,  175,  192, {  150, 0, 0, 0, 0 }, "Ranged attack.");
+    const Creature Orc_Chieftain (       "Orc Chieftain",       Faction::Stronghold, 3, true,   7, true,   8,  4, 24,  2,  5,  20,  5, Morale::Good,    Luck::Neutral,  200,  240, {  165, 0, 0, 0, 0 }, "Ranged attack.");
+    const Creature Ogre (                "Ogre",                Faction::Stronghold, 4, false,  4, false, 13,  7,  4,  6, 12,  40,  4, Morale::Good,    Luck::Neutral,  520,  416, {  300, 0, 0, 0, 0 }, "");
+    const Creature Ogre_Mage (           "Ogre Mage",           Faction::Stronghold, 4, true,   4, false, 13,  7,  8,  6, 12,  60,  5, Morale::Good,    Luck::Neutral,  672,  672, {  400, 0, 0, 0, 0 }, "Spellcaster (Bloodlust).");
+    const Creature Roc (                 "Roc",                 Faction::Stronghold, 5, false,  3, false, 13, 11,  0, 11, 15,  60,  7, Morale::Good,    Luck::Neutral,  790, 1027, {  600, 0, 0, 0, 0 }, "");
+    const Creature Thunderbird (         "Thunderbird",         Faction::Stronghold, 5, true,   3, false, 13, 11,  0, 11, 15,  60, 11, Morale::Good,    Luck::Neutral,  869, 1106, {  700, 0, 0, 0, 0 }, "20% chance to cast Lightning Strike per attack.");
+    const Creature Cyclops (             "Cyclops",             Faction::Stronghold, 6, false,  2, true,  15, 12, 16, 16, 20,  70,  6, Morale::Good,    Luck::Neutral, 1055, 1266, {  750, 0, 0, 0, 0 }, "Ranged attack. Can attack siege walls.");
+    const Creature Cyclops_King (        "Cyclops King",        Faction::Stronghold, 6, true,   2, true,  17, 13, 24, 16, 20,  70,  8, Morale::Good,    Luck::Neutral, 1110, 1443, { 1100, 0, 0, 0, 0 }, "Ranged attack. Can attack siege walls.");
+    const Creature Behemoth (            "Behemoth",            Faction::Stronghold, 7, false,  1, true,  17, 17,  0, 30, 50, 160,  6, Morale::Good,    Luck::Neutral, 3162, 3162, { 1500, 0, 0, 0, 0 }, "-40% to enemy's defense upon attack.");
+    const Creature Ancient_Behemoth (    "Ancient Behemoth",    Faction::Stronghold, 7, true,   1, true,  19, 19,  0, 30, 50, 300,  9, Morale::Good,    Luck::Neutral, 5397, 6168, { 3000, 0, 0, 1, 0 }, "-80% to enemy's defense upon attack.");
+
+    // Fortress
 
     // Conflux
     const Creature Pixie (               "Pixie",               Faction::Conflux,    1, false, 20, false,  2,  2,  0,  1,  2,   3,  7, Morale::Good,    Luck::Neutral,   40,   55, {   25, 0, 0, 0, 0 }, "");
