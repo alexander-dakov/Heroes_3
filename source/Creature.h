@@ -50,11 +50,11 @@ struct Creature
                   Morale _morale;
                   Luck _luck;
                   uint16_t _fight_value;
-                  uint16_t _ai_value;
+                  uint32_t _ai_value;
 
                   // Constructs a private structure containing data used during battles
                   battle_stats( const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, 
-                                const uint16_t hp, const uint8_t speed, Morale morale, Luck luck, const uint16_t fight_value, const uint16_t ai_value ) : 
+                                const uint16_t hp, const uint8_t speed, Morale morale, Luck luck, const uint16_t fight_value, const uint32_t ai_value ) : 
                                 _att(att), _def(def), _shots(shots), _min_dmg(min_dmg), _max_dmg(max_dmg), _hp(hp), _speed(speed),
                                 _morale(morale), _luck(luck) ,_fight_value(fight_value), _ai_value(ai_value)
                                 {};
@@ -89,6 +89,7 @@ struct Creature
                   // attack penalty
                   bool _no_melee_penalty    = false; // Mage, Arch Mage, Titan
                   bool _no_obstacle_penalty = false; // Mage, Arch Mage, Zealot
+                  bool _no_range_penalty    = false; // Sharpshooter
 
                   // attack style
                   bool _strike_and_return      = false; // Harpy, Harpy Hag
@@ -134,7 +135,7 @@ struct Creature
                   bool _casts_weakness                            = false; // Sea Witch
                   bool _casts_advanced_weakness                   = false; // Dragon Fly, Sorceress
                   bool _casts_disrupting_ray_on_weakened          = false; // Sea Witch
-                  bool _casts_advanced_disrupting_ray_on_weakened  = false; // Sorceress
+                  bool _casts_advanced_disrupting_ray_on_weakened = false; // Sorceress
 
                   // some chance of cast per attack
                   bool _can_cast_disease          = false; // Zombie
@@ -142,12 +143,15 @@ struct Creature
                   bool _can_cast_aging            = false; // Ghost Dragon
                   bool _can_cast_poison           = false; // Wyvern Monarch, Sea Serpent, Haspid
                   bool _can_cast_paralyzing_venom = false; // Scorpicore
+                  bool _can_cast_fear             = false; // Azure Dragon
                   bool _can_cast_petrify          = false; // Medusa, Medusa Queen, Basilisk, Greater Basilisk
                   bool _can_cast_blind            = false; // Unicorn, War Unicorn
                   bool _can_cast_lightning_strike = false; // Thunderbird
                   bool _can_cast_death_blow       = false; // Dread Knight
                   bool _can_cast_death_stare      = false; // Mighty Gorgon
                   bool _can_cast_accurate_shot    = false; // Sea Dog
+                  bool _can_cast_acid_breath      = false; // Rust Dragon
+                  bool _can_cast_hypnotize        = false; // Fangarm; Effect = like the spell but occurs according to formula
 
                   // casts when attacked
                   bool _casts_fire_shield = false; // Efreet Sultan
@@ -158,6 +162,8 @@ struct Creature
                   // can cast spell in battle - player's choice
                   bool _is_spellcaster                 = false; // Master Genie
                   bool _can_cast_ressurection          = false; // Arch Angel
+                  bool _can_cast_advanced_fortune      = false; // Leprechaun
+                  bool _can_cast_advanced_mirth        = false; // Satyr
                   bool _can_cast_summon_demons         = false; // Pit Lord
                   bool _can_cast_bloodlust             = false; // Ogre Mage
                   bool _can_cast_protection_from_air   = false; // Storm Elemental
@@ -166,16 +172,21 @@ struct Creature
                   bool _can_cast_protection_from_earth = false; // Magma Elemental
                   
                   // resistances
-                  bool _has_magic_resist_20 = false; // Dwarf
-                  bool _has_magic_resist_40 = false; // Battle Dwarf
+                  bool _has_magic_resist_20   = false; // Dwarf
+                  bool _has_magic_resist_40   = false; // Battle Dwarf
                   bool _has_magic_resist_aura = false; // Battle Dwarf
+                  bool _has_magic_mirror      = false; // Faerie Dragon
 
                   // damage reduciton
                   bool _reduce_magic_damage_50 = false; // Stone Golem
                   bool _reduce_magic_damage_75 = false; // Iron Golem
+                  bool _reduce_magic_damage_80 = false; // Steel Golem
+                  bool _reduce_magic_damage_85 = false; // Gold Golem
+                  bool _reduce_magic_damage_95 = false; // Diamond Golem
 
                   // immunities
                   bool _is_immune_to_jousting             = false; // Pikeman, Halberdier
+                  bool _is_immune_to_fear                 = false; // Azure Dragon
                   bool _is_immune_to_blind                = false; // Troglodyte
                   bool _is_immune_to_petrify              = false; // Infernal Troglodyte
                   bool _is_immune_to_magic_arrow          = false; // Efreet, Efreet Sultan, Fire & Energy Elemental
@@ -203,17 +214,24 @@ struct Creature
                   
                   // morale modifiers
                   bool _minimum_morale_1 = false; // Minotaur, Minotaur King
+                  bool _luck_is_always_1 = false; // Halfling
 
                   // whole army morale and luck modifiers
                   bool _increases_alias_morale_1 = false; // Angel, Arch Angel
                   bool _decreases_enemy_morale_1 = false; // Bone Dragon, Ghost Dragon
                   bool _decreases_enemy_luck_1   = false; // Devil
                   bool _decreases_enemy_luck_2   = false; // Arch Devil
+                  bool _doubles_luck_chance      = false; // Leprechaun
 
                   // mana points modifiers
                   bool _magic_channel = false; // Familiar; Effect = 20% of mana spent from enemy hero is added to hero's mana when familiars are present.
                   bool _magic_damper = false;  // Pegasus, Silver Pegasus; Effect = enemy hero's spells during combat cost 2 mana points more. Effects continues after Pegasi perish.
                   bool _mana_economy = false;  // Mage, Arch Mage; Effect = hero's spells during combat cost 2 mana points less.
+                  
+                  // effects on adventure map
+                  bool _has_spying         = false; // Rogue
+                  bool _is_sandwalker      = false; // Nomad
+                  bool _generates_crystals = false; // Crystal Dragon
                   
                   // Create a map of all special abilities, refering to the fields in the struct accordingly.
                   std::map< std::string, std::vector<bool*> > create_map_of_all_abilities();
@@ -228,7 +246,7 @@ struct Creature
       public:
             // Parametrized constructor (no default constructor allowed). Calls Logical_Limitations_When_Constructing().
             Creature( const std::string name, const Faction faction, const uint8_t level, const Upgrade_level upgrade, const uint8_t growth, const bool needs_2_hexes_in_battle,
-                      const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, const uint16_t hp, const uint8_t speed, const Morale morale, const Luck luck, const uint16_t fight_value, const uint16_t ai_value, 
+                      const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, const uint16_t hp, const uint8_t speed, const Morale morale, const Luck luck, const uint16_t fight_value, const uint32_t ai_value, 
                       const Resources resources, 
                       const std::string abilities );
             
@@ -277,7 +295,7 @@ struct Creature
 
             uint16_t get_fight_value() { return battle_stats._fight_value; };
 
-            uint16_t get_ai_value() { return battle_stats._ai_value; };
+            uint32_t get_ai_value() { return battle_stats._ai_value; };
 
             uint16_t get_gold() { return cost._gold; };
 
@@ -297,6 +315,7 @@ struct Creature
 
             bool get_no_melee_penalty()    { return special_abilities._no_melee_penalty;    };
             bool get_no_obstacle_penalty() { return special_abilities._no_obstacle_penalty; };
+            bool get_no_range_penalty()    { return special_abilities._no_range_penalty;    };
 
             bool get_strike_and_return()      { return special_abilities._strike_and_return;      };
             bool get_can_attack_siege_walls() { return special_abilities._can_attack_siege_walls; };
@@ -319,7 +338,6 @@ struct Creature
             bool get_ignore_enemy_defense_40()     { return special_abilities._ignore_enemy_defense_40;     };
             bool get_ignore_enemy_defense_80()     { return special_abilities._ignore_enemy_defense_80;     };
 
-
             bool get_ignore_enemy_attack_30() { return special_abilities._ignore_enemy_attack_30; };
             bool get_ignore_enemy_attack_60() { return special_abilities._ignore_enemy_attack_60; };
 
@@ -327,20 +345,25 @@ struct Creature
             bool get_has_unlimited_retaliations() { return special_abilities._has_unlimited_retaliations; };
             bool get_no_enemy_retaliation()       { return special_abilities._no_enemy_retaliation;       };
             
+            bool get_casts_regeneration() { return special_abilities._casts_regeneration; };
+            bool get_casts_mana_drain()   { return special_abilities._casts_mana_drain;   };
+
             bool get_minimum_morale_1() { return special_abilities._minimum_morale_1; };
+            bool get_luck_is_always_1() { return special_abilities._luck_is_always_1; };
             
             bool get_increases_alias_morale_1() { return special_abilities._increases_alias_morale_1; };
             bool get_decreases_enemy_morale_1() { return special_abilities._decreases_enemy_morale_1; };
             bool get_decreases_enemy_luck_1()   { return special_abilities._decreases_enemy_luck_1;   };
             bool get_decreases_enemy_luck_2()   { return special_abilities._decreases_enemy_luck_2;   };
+            bool get_doubles_luck_chance()      { return special_abilities._doubles_luck_chance;      };
 
-            bool get_casts_binding ()                             { return special_abilities._casts_binding;                             };
-            bool get_casts_life_drain ()                          { return special_abilities._casts_life_drain;                          };
-            bool get_casts_dispell_on_buffs ()                    { return special_abilities._casts_dispell_on_buffs;                    };
-            bool get_casts_weakness ()                            { return special_abilities._casts_weakness;                            };
-            bool get_casts_advanced_weakness ()                   { return special_abilities._casts_advanced_weakness;                   };
-            bool get_casts_disrupting_ray_on_weakened ()          { return special_abilities._casts_disrupting_ray_on_weakened;          };
-            bool get_casts_advanced_disrupting_ray_on_weakened () { return special_abilities._casts_advanced_disrupting_ray_on_weakened; };
+            bool get_casts_binding()                             { return special_abilities._casts_binding;                             };
+            bool get_casts_life_drain()                          { return special_abilities._casts_life_drain;                          };
+            bool get_casts_dispell_on_buffs()                    { return special_abilities._casts_dispell_on_buffs;                    };
+            bool get_casts_weakness()                            { return special_abilities._casts_weakness;                            };
+            bool get_casts_advanced_weakness()                   { return special_abilities._casts_advanced_weakness;                   };
+            bool get_casts_disrupting_ray_on_weakened()          { return special_abilities._casts_disrupting_ray_on_weakened;          };
+            bool get_casts_advanced_disrupting_ray_on_weakened() { return special_abilities._casts_advanced_disrupting_ray_on_weakened; };
 
             bool get_can_cast_disease()          { return special_abilities._can_cast_disease;          };
             bool get_can_cast_curse()            { return special_abilities._can_cast_curse;            };
@@ -348,11 +371,14 @@ struct Creature
             bool get_can_cast_poison()           { return special_abilities._can_cast_poison;           };
             bool get_can_cast_lightning_strike() { return special_abilities._can_cast_lightning_strike; };
             bool get_can_cast_paralyzing_venom() { return special_abilities._can_cast_paralyzing_venom; };
+            bool get_can_cast_fear()             { return special_abilities._can_cast_fear;             };
             bool get_can_cast_petrify()          { return special_abilities._can_cast_petrify;          };
             bool get_can_cast_blind()            { return special_abilities._can_cast_blind;            };
             bool get_can_cast_death_blow()       { return special_abilities._can_cast_death_blow;       };
             bool get_can_cast_death_stare()      { return special_abilities._can_cast_death_stare;      };
             bool get_can_cast_accurate_shot()    { return special_abilities._can_cast_accurate_shot;    };
+            bool get_can_cast_acid_breath()      { return special_abilities._can_cast_acid_breath;      };
+            bool get_can_cast_hypnotize()        { return special_abilities._can_cast_hypnotize;        };
 
             bool get_casts_fire_shield() { return special_abilities._casts_fire_shield; };
 
@@ -360,6 +386,8 @@ struct Creature
 
             bool get_is_spellcaster()                 { return special_abilities._is_spellcaster;                 };
             bool get_can_cast_ressurection()          { return special_abilities._can_cast_ressurection;          };
+            bool get_can_cast_advanced_fortune()      { return special_abilities._can_cast_advanced_fortune;      };
+            bool get_can_cast_advanced_mirth()        { return special_abilities._can_cast_advanced_mirth;        };
             bool get_can_cast_bloodlust()             { return special_abilities._can_cast_bloodlust;             };
             bool get_can_cast_protection_from_air()   { return special_abilities._can_cast_protection_from_air;   };
             bool get_can_cast_protection_from_water() { return special_abilities._can_cast_protection_from_water; };
@@ -369,11 +397,16 @@ struct Creature
             bool get_has_magic_resist_20()   { return special_abilities._has_magic_resist_20;   };
             bool get_has_magic_resist_40()   { return special_abilities._has_magic_resist_40;   };
             bool get_has_magic_resist_aura() { return special_abilities._has_magic_resist_aura; };
+            bool get_has_magic_mirror()      { return special_abilities._has_magic_mirror;      };
 
             bool get_reduce_magic_damage_50() { return special_abilities._reduce_magic_damage_50; };
             bool get_reduce_magic_damage_75() { return special_abilities._reduce_magic_damage_75; };
+            bool get_reduce_magic_damage_80() { return special_abilities._reduce_magic_damage_80; };
+            bool get_reduce_magic_damage_85() { return special_abilities._reduce_magic_damage_85; };
+            bool get_reduce_magic_damage_95() { return special_abilities._reduce_magic_damage_95; };
 
             bool get_is_immune_to_jousting()         { return special_abilities._is_immune_to_jousting;         };
+            bool get_is_immune_to_fear()             { return special_abilities._is_immune_to_fear;             };
             bool get_is_immune_to_blind()            { return special_abilities._is_immune_to_blind;            };
             bool get_is_immune_to_petrify()          { return special_abilities._is_immune_to_petrify;          };
             bool get_is_immune_to_magic_arrow()      { return special_abilities._is_immune_to_magic_arrow;      };
@@ -402,8 +435,9 @@ struct Creature
             bool get_magic_damper()  { return special_abilities._magic_damper;  };
             bool get_mana_economy()  { return special_abilities._mana_economy;  };
 
-            bool get_casts_regeneration() { return special_abilities._casts_regeneration; };
-            bool get_casts_mana_drain()   { return special_abilities._casts_mana_drain;   };
+            bool get_has_spying()         { return special_abilities._has_spying;         };
+            bool get_is_sandwalker()      { return special_abilities._is_sandwalker;      };
+            bool get_generates_crystals() { return special_abilities._generates_crystals; };
 
             // Returns a string with the cost of a creature.
             std::string get_cost();

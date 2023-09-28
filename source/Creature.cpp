@@ -1,7 +1,7 @@
 #include "Creature.h"
 
 Creature::Creature( const std::string name, const Faction faction, const uint8_t level, const Upgrade_level upgrade, const uint8_t growth, const bool needs_2_hexes_in_battle,
-                    const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, const uint16_t hp, const uint8_t speed, const Morale morale, const Luck luck, const uint16_t fight_value, const uint16_t ai_value, 
+                    const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, const uint16_t hp, const uint8_t speed, const Morale morale, const Luck luck, const uint16_t fight_value, const uint32_t ai_value, 
                     const Resources resources,
                     const std::string abilities ) : 
                     unit_info(name, faction, level, upgrade, growth, needs_2_hexes_in_battle),
@@ -123,6 +123,7 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
 
       all_abilities["No melee penalty."]    = { &_no_melee_penalty    };
       all_abilities["No obstacle penalty."] = { &_no_obstacle_penalty };
+      all_abilities["No range penalty."]    = { &_no_range_penalty    };
 
       all_abilities["Strike and return."]      = { &_strike_and_return       };
       all_abilities["Strike and return."]      = { &_strike_and_return       };
@@ -150,7 +151,6 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
       all_abilities["Ignores 30% of enemy's attack skill."] = { &_ignore_enemy_attack_30 };
       all_abilities["Ignores 60% of enemy's attack skill."] = { &_ignore_enemy_attack_60 };
 
-
       all_abilities["Two retaliations."]       = { &_has_two_retaliations       };
       all_abilities["Unlimited retaliations."] = { &_has_unlimited_retaliations };
       all_abilities["No enemy retaliation."]   = { &_no_enemy_retaliation       };
@@ -162,44 +162,54 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
       all_abilities["Life drain."]                                        = { &_casts_life_drain                          };
       all_abilities["Casts Dispel to benefical spells per attack."]       = { &_casts_dispell_on_buffs                    };
       all_abilities["Casts Weakness per attack."]                         = { &_casts_weakness                            };
-      all_abilities["Casts advanced Weakness per attack."]                = { &_casts_advanced_weakness                   };
+      all_abilities["Casts Advanced Weakness per attack."]                = { &_casts_advanced_weakness                   };
       all_abilities["Casts Disrupting Ray on weakened enemies."]          = { &_casts_disrupting_ray_on_weakened          };
-      all_abilities["Casts advanced Disrupting Ray on weakened enemies."] = { &_casts_advanced_disrupting_ray_on_weakened };
+      all_abilities["Casts Advanced Disrupting Ray on weakened enemies."] = { &_casts_advanced_disrupting_ray_on_weakened };
 
-      all_abilities["20% chance to cast Disease per attack."]              = { &_can_cast_disease          };
-      all_abilities["25% chance to cast Curse per attack."]                = { &_can_cast_curse            };
-      all_abilities["20% chance to cast Aging per attack."]                = { &_can_cast_aging            };
-      all_abilities["30% chance to cast Poison per attack."]               = { &_can_cast_poison           };
-      all_abilities["20% chance to cast Paralyzing Venom per attack."]     = { &_can_cast_paralyzing_venom };
-      all_abilities["20% chance to cast Petrify per melee attack."]        = { &_can_cast_petrify          };
-      all_abilities["20% chance to cast Petrify per attack."]              = { &_can_cast_petrify          };
-      all_abilities["20% chance to cast Blind per attack."]                = { &_can_cast_blind            };
-      all_abilities["20% chance to cast Lightning Strike per attack."]     = { &_can_cast_lightning_strike };
-      all_abilities["20% chance to cast Death Blow per attack."]           = { &_can_cast_death_blow       };
-      all_abilities["10% chance to cast Death Stare per melee attack."]    = { &_can_cast_death_stare      };
-      all_abilities["10% chance to cast Accurate Shot per ranged attack."] = { &_can_cast_accurate_shot    };
+      all_abilities["20% chance to cast Disease per attack."]                       = { &_can_cast_disease          };
+      all_abilities["25% chance to cast Curse per attack."]                         = { &_can_cast_curse            };
+      all_abilities["20% chance to cast Aging per attack."]                         = { &_can_cast_aging            };
+      all_abilities["30% chance to cast Poison per attack."]                        = { &_can_cast_poison           };
+      all_abilities["20% chance to cast Paralyzing Venom per attack."]              = { &_can_cast_paralyzing_venom };
+      all_abilities["20% chance to cast Fear to adjacent enemies before they act."] = { &_can_cast_fear             };
+      all_abilities["20% chance to cast Petrify per melee attack."]                 = { &_can_cast_petrify          };
+      all_abilities["20% chance to cast Petrify per attack."]                       = { &_can_cast_petrify          };
+      all_abilities["20% chance to cast Blind per attack."]                         = { &_can_cast_blind            };
+      all_abilities["20% chance to cast Lightning Strike per attack."]              = { &_can_cast_lightning_strike };
+      all_abilities["20% chance to cast Death Blow per attack."]                    = { &_can_cast_death_blow       };
+      all_abilities["10% chance to cast Death Stare per melee attack."]             = { &_can_cast_death_stare      };
+      all_abilities["10% chance to cast Accurate Shot per ranged attack."]          = { &_can_cast_accurate_shot    };
+      all_abilities["20% chance to cast Acid Breath per attack."]                   = { &_can_cast_acid_breath      };
+      all_abilities["Can cast Hypnotize per attack."]                               = { &_can_cast_hypnotize        };
 
       all_abilities["Fire Shield."] = { &_casts_fire_shield };
 
       all_abilities["Rebirth."] = { &_can_cast_rebirth };
 
-      all_abilities["Spellcaster."]                           = { &_is_spellcaster                 };
-      all_abilities["Can cast Ressurection once per battle."] = { &_can_cast_ressurection          };
-      all_abilities["Summon Demons."]                         = { &_can_cast_summon_demons         };
-      all_abilities["Spellcaster (Bloodlust)."]               = { &_can_cast_bloodlust             };
-      all_abilities["Spellcaster (Protection from Air)."]     = { &_can_cast_protection_from_air   };
-      all_abilities["Spellcaster (Protection from Water)."]   = { &_can_cast_protection_from_water };
-      all_abilities["Spellcaster (Protection from Fire)."]    = { &_can_cast_protection_from_fire  };
-      all_abilities["Spellcaster (Protection from Earth)."]   = { &_can_cast_protection_from_earth };
+      all_abilities["Spellcaster."]                                  = { &_is_spellcaster                 };
+      all_abilities["Can cast Ressurection once per battle."]        = { &_can_cast_ressurection          };
+      all_abilities["Can cast Advanced Fortune 3 times per battle."] = { &_can_cast_advanced_fortune      };
+      all_abilities["Can cast Advanced Mirth 3 times per battle."]   = { &_can_cast_advanced_mirth        };
+      all_abilities["Summon Demons."]                                = { &_can_cast_summon_demons         };
+      all_abilities["Spellcaster (Bloodlust)."]                      = { &_can_cast_bloodlust             };
+      all_abilities["Spellcaster (Protection from Air)."]            = { &_can_cast_protection_from_air   };
+      all_abilities["Spellcaster (Protection from Water)."]          = { &_can_cast_protection_from_water };
+      all_abilities["Spellcaster (Protection from Fire)."]           = { &_can_cast_protection_from_fire  };
+      all_abilities["Spellcaster (Protection from Earth)."]          = { &_can_cast_protection_from_earth };
 
       all_abilities["Magic resistance 20%."]         = { &_has_magic_resist_20   };
       all_abilities["Magic resistance 40%."]         = { &_has_magic_resist_40   };
       all_abilities["Aura of magic resistance 20%."] = { &_has_magic_resist_aura };
+      all_abilities["Naturally has Magic Mirror."]   = { &_has_magic_mirror      };
 
       all_abilities["Spell damage reduction 50%."] = { &_reduce_magic_damage_50 };
       all_abilities["Spell damage reduction 75%."] = { &_reduce_magic_damage_75 };
+      all_abilities["Spell damage reduction 80%."] = { &_reduce_magic_damage_80 };
+      all_abilities["Spell damage reduction 85%."] = { &_reduce_magic_damage_85 };
+      all_abilities["Spell damage reduction 95%."] = { &_reduce_magic_damage_95 };
 
       all_abilities["Immune to jousting."]                    = { &_is_immune_to_jousting };
+      all_abilities["Immune to Fear."]                        = { &_is_immune_to_fear     };
       all_abilities["Immune to Blind."]                       = { &_is_immune_to_blind    };
       all_abilities["Immune to Petrify."]                     = { &_is_immune_to_petrify  };
       all_abilities["Immune to Ice Bolt and Frost Ring."]     = { &_is_immune_to_ice_bolt, &_is_immune_to_frost_ring };
@@ -217,15 +227,21 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
       all_abilities["Vulnerable to Meteor Shower."]                                  = { &_is_vulnerable_to_meteor_shower   };
       
       all_abilities["Minimum morale is +1."] = { &_minimum_morale_1 };
+      all_abilities["Luck is always +1."]    = { &_luck_is_always_1 };
 
-      all_abilities["+1 morale to alias troops."] = { &_increases_alias_morale_1 };
-      all_abilities["-1 morale to enemy troops."] = { &_decreases_enemy_morale_1 };
-      all_abilities["-1 luck to enemy troops."]   = { &_decreases_enemy_luck_1   };
-      all_abilities["-2 luck to enemy troops."]   = { &_decreases_enemy_luck_2   };
+      all_abilities["+1 morale to alias troops."]         = { &_increases_alias_morale_1 };
+      all_abilities["-1 morale to enemy troops."]         = { &_decreases_enemy_morale_1 };
+      all_abilities["-1 luck to enemy troops."]           = { &_decreases_enemy_luck_1   };
+      all_abilities["-2 luck to enemy troops."]           = { &_decreases_enemy_luck_2   };
+      all_abilities["Doubles friendly unit Luck chance."] = { &_doubles_luck_chance   };
 
       all_abilities["Magic channel."]                         = { &_magic_channel };
       all_abilities["Magic damper."]                          = { &_magic_damper  };
       all_abilities["Hero's combat spells cost 2 less mana."] = { &_mana_economy  };
+
+      all_abilities["Spying."]             = { &_has_spying };
+      all_abilities["Sandwalker."]         = { &_is_sandwalker };
+      all_abilities["Generates crystals."] = { &_generates_crystals };
 
       return all_abilities;
 }

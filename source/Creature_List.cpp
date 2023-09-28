@@ -5,8 +5,6 @@
 
 namespace Creature_List
 {
-    // Important - only Necropolis has its special abilities somewhat right. All special abilities should be implemented and the list creatures - updated.
-    
     //                                     name,                   faction,      level,   upgrade level,   growth, 2_hex,  A,  D,  S, mD, MD, hp, speed,  morale,           luck,       fight, ai, { gold, m, s, c, g }, special abilities );
     // Castle
     const Creature Pikeman (             "Pikeman",             Faction::Castle,     1, Upgrade_level::None,   14, false,  4,  5,  0,  1,  3,  10,  4, Morale::Good,    Luck::Neutral,  100,   80, {   60, 0, 0, 0, 0 }, "Immune to jousting.");
@@ -110,7 +108,7 @@ namespace Creature_List
     const Creature Lizardman (           "Lizardman",           Faction::Fortress,   2, Upgrade_level::None,    9, false,  5,  6, 12,  2,  3,  14,  4, Morale::Good,    Luck::Neutral,  115,  126, {  110, 0, 0, 0, 0 }, "Ranged attack.");
     const Creature Lizard_Warrior (      "Lizard Warrior",      Faction::Fortress,   2, Upgrade_level::First,   9, false,  6,  8, 24,  2,  5,  15,  5, Morale::Good,    Luck::Neutral,  130,  156, {  140, 0, 0, 0, 0 }, "Ranged attack.");
     const Creature Serpent_Fly (         "Serpent Fly",         Faction::Fortress,   3, Upgrade_level::None,    8, false,  7,  9,  0,  2,  5,  20,  9, Morale::Good,    Luck::Neutral,  215,  268, {  220, 0, 0, 0, 0 }, "Casts Dispel to benefical spells per attack.");
-    const Creature Dragon_Fly (          "Dragon Fly",          Faction::Fortress,   3, Upgrade_level::First,   8, false,  8, 10,  0,  2,  5,  20, 13, Morale::Good,    Luck::Neutral,  250,  312, {  240, 0, 0, 0, 0 }, "Casts Dispel to benefical spells per attack. Casts advanced Weakness per attack.");
+    const Creature Dragon_Fly (          "Dragon Fly",          Faction::Fortress,   3, Upgrade_level::First,   8, false,  8, 10,  0,  2,  5,  20, 13, Morale::Good,    Luck::Neutral,  250,  312, {  240, 0, 0, 0, 0 }, "Casts Dispel to benefical spells per attack. Casts Advanced Weakness per attack.");
     const Creature Basilisk (            "Basilisk",            Faction::Fortress,   4, Upgrade_level::None,    4, true,  11, 11,  4,  6, 10,  35,  5, Morale::Good,    Luck::Neutral,  506,  552, {  325, 0, 0, 0, 0 }, "20% chance to cast Petrify per attack.");
     const Creature Greater_Basilisk (    "Greater Basilisk",    Faction::Fortress,   4, Upgrade_level::First,   4, true,  12, 12,  8,  6, 10,  40,  7, Morale::Good,    Luck::Neutral,  561,  714, {  400, 0, 0, 0, 0 }, "20% chance to cast Petrify per attack.");
     const Creature Gorgon (              "Gorgon",              Faction::Fortress,   5, Upgrade_level::None,    3, true,  10, 14,  0, 12, 16,  70,  5, Morale::Good,    Luck::Neutral,  890,  890, {  525, 0, 0, 0, 0 }, "");
@@ -163,14 +161,32 @@ namespace Creature_List
     const Creature Stormbird (           "Stormbird",           Faction::Cove,       4, Upgrade_level::None,    4, true,  10,  8,  0,  6,  9,  30,  9, Morale::Good,    Luck::Neutral,  386,  502, {  275, 0, 0, 0, 0 }, "");
     const Creature Ayssid (              "Ayssid",              Faction::Cove,       4, Upgrade_level::First,   4, true,  11,  8,  0,  6, 10,  30, 11, Morale::Good,    Luck::Neutral,  478,  645, {  325, 0, 0, 0, 0 }, "Ferocity.");
     const Creature Sea_Witch (           "Sea Witch",           Faction::Cove,       5, Upgrade_level::None,    3, false, 12,  7, 12, 10, 14,  35,  6, Morale::Good,    Luck::Neutral,  608,  790, {  515, 0, 0, 0, 0 }, "Ranged attack. Casts Weakness per attack. Casts Disrupting Ray on weakened enemies.");
-    const Creature Sorceress (           "Sorceress",           Faction::Cove,       5, Upgrade_level::First,   3, false, 12,  9, 12, 10, 16,  35,  7, Morale::Good,    Luck::Neutral,  665,  852, {  565, 0, 0, 0, 0 }, "Ranged attack. Casts advanced Weakness per attack. Casts advanced Disrupting Ray on weakened enemies.");
+    const Creature Sorceress (           "Sorceress",           Faction::Cove,       5, Upgrade_level::First,   3, false, 12,  9, 12, 10, 16,  35,  7, Morale::Good,    Luck::Neutral,  665,  852, {  565, 0, 0, 0, 0 }, "Ranged attack. Casts Advanced Weakness per attack. Casts Advanced Disrupting Ray on weakened enemies.");
     const Creature Nix (                 "Nix",                 Faction::Cove,       6, Upgrade_level::None,    2, false, 13, 16,  0, 18, 22,  80,  6, Morale::Good,    Luck::Neutral, 1415, 1415, { 1000, 0, 0, 0, 0 }, "Ignores 30% of enemy's attack skill.");
     const Creature Nix_Warrior (         "Nix Warrior",         Faction::Cove,       6, Upgrade_level::First,   2, false, 14, 17,  0, 18, 22,  90,  7, Morale::Good,    Luck::Neutral, 1763, 2116, { 1300, 0, 0, 0, 0 }, "Ignores 60% of enemy's attack skill.");
     const Creature Sea_Serpent (         "Sea Serpent",         Faction::Cove,       7, Upgrade_level::None,    1, true,  22, 16,  0, 30, 55, 180,  9, Morale::Good,    Luck::Neutral, 3162, 3953, { 2200, 0, 1, 0, 0 }, "30% chance to cast Poison per attack.");
     const Creature Haspid (              "Haspid",              Faction::Cove,       7, Upgrade_level::First,   1, true,  29, 20,  0, 30, 55, 300, 12, Morale::Good,    Luck::Neutral, 5554, 7220, { 4000, 0, 2, 0, 0 }, "30% chance to cast Poison per attack. Revenge.");
 
     // Neutral
-    
+    const Creature Peasant (             "Peasant",             Faction::Neutral,    1, Upgrade_level::None,   25, false,  1,  1,  0,  1,  1,   1,  3, Morale::Good,    Luck::Neutral,   15,   15, {   10, 0, 0, 0, 0 }, "");
+    const Creature Halfling (            "Halfling",            Faction::Neutral,    1, Upgrade_level::None,   15, false,  4,  2, 24,  1,  3,   4,  5, Morale::Good,    Luck::Good,      60,   75, {   40, 0, 0, 0, 0 }, "Ranged attack. Luck is always +1.");
+    const Creature Rogue (               "Rogue",               Faction::Neutral,    2, Upgrade_level::None,    8, false,  8,  3,  0,  2,  4,  10,  6, Morale::Good,    Luck::Neutral,  135,  135, {  100, 0, 0, 0, 0 }, "Spying.");
+    const Creature Boar (                "Boar",                Faction::Neutral,    2, Upgrade_level::None,    8, true,   6,  5,  0,  2,  3,  15,  6, Morale::Good,    Luck::Neutral,  145,  145, {  150, 0, 0, 0, 0 }, "");
+    const Creature Leprechaun (          "Leprechaun",          Faction::Neutral,    2, Upgrade_level::None,    9, false,  8,  5,  0,  3,  5,  15,  5, Morale::Good,    Luck::Good,     208,  208, {  100, 0, 0, 0, 0 }, "Doubles friendly unit Luck chance. Can cast Advanced Fortune 3 times per battle.");
+    const Creature Nomad (               "Nomad",               Faction::Neutral,    3, Upgrade_level::None,    7, true,   9,  8,  0,  2,  6,  30,  7, Morale::Good,    Luck::Neutral,  415,  345, {  200, 0, 0, 0, 0 }, "Sandwalker.");
+    const Creature Mummy (               "Mummy",               Faction::Neutral,    3, Upgrade_level::None,    7, false,  7,  7,  0,  3,  5,  30,  5, Morale::Neutral, Luck::Neutral,  270,  270, {  350, 0, 0, 0, 0 }, "Undead. 25% chance to cast Curse per attack.");
+    const Creature Sharpshooter (        "Sharpshooter",        Faction::Neutral,    4, Upgrade_level::None,    4, false, 12, 10, 32,  8, 10,  15,  9, Morale::Good,    Luck::Neutral,  415,  585, {  400, 0, 0, 0, 0 }, "Ranged attack. No range penalty. No obstacle penalty.");
+    const Creature Satyr (               "Satyr",               Faction::Neutral,    4, Upgrade_level::None,    4, false, 10, 11,  0,  6, 10,  35,  7, Morale::Good,    Luck::Neutral,  471,  518, {  350, 0, 0, 0, 0 }, "Can cast Advanced Mirth 3 times per battle.");
+    const Creature Steel_Golem (         "Steel Golem",         Faction::Neutral,    4, Upgrade_level::None,    4, false, 10, 11,  0,  6,  8,  45,  6, Morale::Good,    Luck::Neutral,  597,  597, {  400, 0, 0, 0, 0 }, "Non-living. Spell damage reduction 80%.");
+    const Creature Troll (               "Troll",               Faction::Neutral,    5, Upgrade_level::None,    3, false, 14,  7,  0, 10, 15,  40,  7, Morale::Good,    Luck::Neutral, 1024, 1024, {  500, 0, 0, 0, 0 }, "Regeneration.");
+    const Creature Gold_Golem (          "Gold Golem",          Faction::Neutral,    5, Upgrade_level::None,    3, false, 11, 12,  0,  8, 10,  50,  5, Morale::Good,    Luck::Neutral,  600,  600, {  500, 0, 0, 0, 0 }, "Non-living. Spell damage reduction 85%.");
+    const Creature Fangarm (             "Fangarm",             Faction::Neutral,    5, Upgrade_level::None,    3, false, 12, 12,  0,  8, 12,  50,  6, Morale::Good,    Luck::Neutral,  929,  929, {  600, 0, 0, 0, 0 }, "Immune to mind spells. Unlimited retaliations. Can cast Hypnotize per attack.");
+    const Creature Diamond_Golem (       "Diamond Golem",       Faction::Neutral,    6, Upgrade_level::None,    2, false, 13, 12,  0, 10, 14,  60,  5, Morale::Good,    Luck::Neutral,  775,  775, {  750, 0, 0, 0, 0 }, "Non-living. Spell damage reduction 95%.");  
+    const Creature Enchanter (           "Enchanter",           Faction::Neutral,    6, Upgrade_level::None,    2, false, 17, 12, 32, 14, 14,  30,  9, Morale::Good,    Luck::Neutral,  805, 1210, {  750, 0, 0, 0, 0 }, "Ranged attack. No melee penalty. No obstacle penalty. Spellcaster.");  
+    const Creature Faerie_Dragon (       "Faerie Dragon",       Faction::Neutral,    7, Upgrade_level::None,    1, true,  20, 20,  0, 20, 30, 500, 15, Morale::Good,    Luck::Neutral,16317,30501, {10000, 0, 0, 0, 8 }, "Spellcaster. Naturally has Magic Mirror.");  
+    const Creature Rust_Dragon (         "Rust Dragon",         Faction::Neutral,    7, Upgrade_level::None,    1, true,  30, 30,  0, 50, 50, 750, 17, Morale::Good,    Luck::Neutral,24030,26433, {15000, 0,14, 0, 0 }, "Breath attack. Casts Weakness per attack. 20% chance to cast Acid Breath per attack.");  
+    const Creature Crystal_Dragon (      "Crystal Dragon",      Faction::Neutral,    7, Upgrade_level::None,    1, true,  40, 40,  0, 60, 75, 800, 16, Morale::Good,    Luck::Neutral,30260,39338, {20000, 0, 0,10, 0 }, "Generates crystals. Magic resistance 20%.");  
+    const Creature Azure_Dragon (        "Azure Dragon",        Faction::Neutral,    7, Upgrade_level::None,    1, true,  50, 50,  0, 70, 80,1000, 19, Morale::Good,    Luck::Neutral,56315,78845, {30000,20, 0, 0, 0 }, "Breath attack. 20% chance to cast Fear to adjacent enemies before they act. Immune to spells level 1-3. Immune to Fear.");  
 }
 
 #endif
