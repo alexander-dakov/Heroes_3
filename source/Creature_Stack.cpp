@@ -370,7 +370,7 @@ void Stack::print_battle_info()
     printf("Name : %s\n", c.get_name().c_str());
     printf("Faction : %s\n", c.get_faction_as_string().c_str());
     printf("Level : %d\n", c.get_level());
-    printf("Upgraded : %d\n", c.get_is_upgraded());
+    printf("Upgrade level : %d\n", c.get_upgrade());
     printf("Attack : %d(%d)\n", c.get_att(), get_att());
     printf("Defense : %d(%d)\n", c.get_def(), get_def());
 
@@ -392,7 +392,7 @@ void Stack::print_full_info()
     printf("Name : %s\n", c.get_name().c_str());
     printf("Faction : %s\n", c.get_faction_as_string().c_str());
     printf("Level : %d\n", c.get_level());
-    printf("Upgraded : %d\n", c.get_is_upgraded());
+    printf("Upgrade level : %d\n", c.get_upgrade());
     printf("Growth per week : %d\n", c.get_growth());
     printf("Attack : %d(%d)\n", c.get_att(), get_att());
     printf("Defense : %d(%d)\n", c.get_def(), get_def());
@@ -400,7 +400,11 @@ void Stack::print_full_info()
     if(c.get_is_ranged())
         printf("Shots : %d\n", c.get_shots());
     
-    printf("Damage : %d - %d\n", c.get_min_dmg(), c.get_max_dmg());
+    if(c.get_min_dmg() != c.get_max_dmg())
+        printf("Damage : %d - %d\n", c.get_min_dmg(), c.get_max_dmg());
+    else
+        printf("Damage : %d\n", c.get_min_dmg());
+
     printf("Health : %d\n", c.get_hp());
     printf("Morale : %d\n", c.get_morale());
     printf("Luck : %d\n", c.get_luck());

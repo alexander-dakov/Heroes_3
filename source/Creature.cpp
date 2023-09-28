@@ -1,10 +1,10 @@
 #include "Creature.h"
 
-Creature::Creature( const std::string name, const Faction faction, const uint8_t level, const bool is_upgraded, const uint8_t growth, const bool needs_2_hexes_in_battle,
+Creature::Creature( const std::string name, const Faction faction, const uint8_t level, const Upgrade_level upgrade, const uint8_t growth, const bool needs_2_hexes_in_battle,
                     const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, const uint16_t hp, const uint8_t speed, const Morale morale, const Luck luck, const uint16_t fight_value, const uint16_t ai_value, 
                     const Resources resources,
                     const std::string abilities ) : 
-                    unit_info(name, faction, level, is_upgraded, growth, needs_2_hexes_in_battle),
+                    unit_info(name, faction, level, upgrade, growth, needs_2_hexes_in_battle),
                     battle_stats(att, def, shots, min_dmg, max_dmg, hp, speed, morale, luck, fight_value, ai_value),
                     cost(resources),  
                     special_abilities(abilities)
@@ -118,6 +118,7 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
       all_abilities["Non-living."]    = { &_is_bloodless };
 
       all_abilities["Flying."]        = { &_is_flying };
+      all_abilities["Teleporting."]   = { &_is_flying };
       all_abilities["Ranged attack."] = { &_is_ranged };
 
       all_abilities["No melee penalty."]    = { &_no_melee_penalty    };
@@ -127,22 +128,28 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
       all_abilities["Strike and return."]      = { &_strike_and_return       };
       all_abilities["Can attack siege walls."] = { &_can_attack_siege_walls  };
 
-      all_abilities["Double attack."]                       = { &_has_double_attack           };
-      all_abilities["Jousting bonus."]                      = { &_has_jousting                };
-      all_abilities["3-headed attack."]                     = { &_has_3_headed_attack         };
-      all_abilities["Fireball attack."]                     = { &_has_fireball_attack         };
-      all_abilities["Death cloud."]                         = { &_has_cloud_attack            };
-      all_abilities["Attack all adjacent enemies."]         = { &_has_attack_adjacent_enemies };
-      all_abilities["Attack all adjacent hexes."]           = { &_has_attack_adjacent_hexes   };
-      all_abilities["Breath attack."]                       = { &_has_breath_attack           };
-      all_abilities["Hates Efreeti and Efreet Sultans."]    = { &_hates_efreeti               };
-      all_abilities["Hates Genies and Master Genies."]      = { &_hates_genies                };
-      all_abilities["Hates Devils and Arch Devils."]        = { &_hates_devils                };
-      all_abilities["Hates Angels and Arch Angels."]        = { &_hates_angels                };
-      all_abilities["Hates Black Dragons."]                 = { &_hates_black_dragons         };
-      all_abilities["Hates Titans."]                        = { &_hates_titans                };
-      all_abilities["-40% to enemy's defense upon attack."] = { &_reduce_enemy_defense_40     };
-      all_abilities["-80% to enemy's defense upon attack."] = { &_reduce_enemy_defense_80     };
+      all_abilities["Ferocity."]                             = { &_has_ferocity                };
+      all_abilities["Double attack."]                        = { &_has_double_attack           };
+      all_abilities["Jousting bonus."]                       = { &_has_jousting                };
+      all_abilities["Revenge."]                              = { &_has_revenge                 };
+      all_abilities["3-headed attack."]                      = { &_has_3_headed_attack         };
+      all_abilities["Fireball attack."]                      = { &_has_fireball_attack         };
+      all_abilities["Death cloud."]                          = { &_has_cloud_attack            };
+      all_abilities["Attack all adjacent enemies."]          = { &_has_attack_adjacent_enemies };
+      all_abilities["Attack all adjacent hexes."]            = { &_has_attack_adjacent_hexes   };
+      all_abilities["Breath attack."]                        = { &_has_breath_attack           };
+      all_abilities["Hates Efreeti and Efreet Sultans."]     = { &_hates_efreeti               };
+      all_abilities["Hates Genies and Master Genies."]       = { &_hates_genies                };
+      all_abilities["Hates Devils and Arch Devils."]         = { &_hates_devils                };
+      all_abilities["Hates Angels and Arch Angels."]         = { &_hates_angels                };
+      all_abilities["Hates Black Dragons."]                  = { &_hates_black_dragons         };
+      all_abilities["Hates Titans."]                         = { &_hates_titans                };
+      all_abilities["Ignores 40% of enemy's defense skill."] = { &_ignore_enemy_defense_40     };
+      all_abilities["Ignores 80% of enemy's defense skill."] = { &_ignore_enemy_defense_80     };
+
+      all_abilities["Ignores 30% of enemy's attack skill."] = { &_ignore_enemy_attack_30 };
+      all_abilities["Ignores 60% of enemy's attack skill."] = { &_ignore_enemy_attack_60 };
+
 
       all_abilities["Two retaliations."]       = { &_has_two_retaliations       };
       all_abilities["Unlimited retaliations."] = { &_has_unlimited_retaliations };
@@ -151,26 +158,26 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
       all_abilities["Regeneration."] = { &_casts_regeneration };
       all_abilities["Mana drain."]   = { &_casts_mana_drain   };
 
-      all_abilities["Binding attack."]       =  { &_casts_binding    };
-      all_abilities["Life drain."]           =  { &_casts_life_drain };
-      all_abilities["Casts Dispel to benefical spells per attack."] =  { &_casts_dispell_on_buffs  };
-      all_abilities["Casts advanced Weakness per attack."]          =  { &_casts_advanced_weakness };
-      // all_abilities["Casts Weakness."]       =  { &_casts_weakness };
-      // all_abilities["Casts Disrupting Ray."] =  { &_casts_disrupting_ray };
+      all_abilities["Binding attack."]                                    = { &_casts_binding                             };
+      all_abilities["Life drain."]                                        = { &_casts_life_drain                          };
+      all_abilities["Casts Dispel to benefical spells per attack."]       = { &_casts_dispell_on_buffs                    };
+      all_abilities["Casts Weakness per attack."]                         = { &_casts_weakness                            };
+      all_abilities["Casts advanced Weakness per attack."]                = { &_casts_advanced_weakness                   };
+      all_abilities["Casts Disrupting Ray on weakened enemies."]          = { &_casts_disrupting_ray_on_weakened          };
+      all_abilities["Casts advanced Disrupting Ray on weakened enemies."] = { &_casts_advanced_disrupting_ray_on_weakened };
 
-      all_abilities["20% chance to cast Disease per attack."]           = { &_can_cast_disease          };
-      // all_abilities["20% chance to cast Weakness per attack."]          = { &_can_cast_weakness };
-      // all_abilities["20% chance to cast Disrupting Ray per attack."]    = { &_can_cast_disrupting_ray };
-      all_abilities["25% chance to cast Curse per attack."]             = { &_can_cast_curse            };
-      all_abilities["20% chance to cast Aging per attack."]             = { &_can_cast_aging            };
-      all_abilities["30% chance to cast Poison per attack."]            = { &_can_cast_poison           };
-      all_abilities["20% chance to cast Paralyzing Venom per attack."]  = { &_can_cast_paralyzing_venom };
-      all_abilities["20% chance to cast Petrify per melee attack."]     = { &_can_cast_petrify          };
-      all_abilities["20% chance to cast Petrify per attack."]           = { &_can_cast_petrify          };
-      all_abilities["20% chance to cast Blind per attack."]             = { &_can_cast_blind            };
-      all_abilities["20% chance to cast Lightning Strike per attack."]  = { &_can_cast_lightning_strike };
-      all_abilities["20% chance to cast Death Blow per attack."]        = { &_can_cast_death_blow       };
-      all_abilities["10% chance to cast Death Stare per melee attack."] = { &_can_cast_death_stare      };
+      all_abilities["20% chance to cast Disease per attack."]              = { &_can_cast_disease          };
+      all_abilities["25% chance to cast Curse per attack."]                = { &_can_cast_curse            };
+      all_abilities["20% chance to cast Aging per attack."]                = { &_can_cast_aging            };
+      all_abilities["30% chance to cast Poison per attack."]               = { &_can_cast_poison           };
+      all_abilities["20% chance to cast Paralyzing Venom per attack."]     = { &_can_cast_paralyzing_venom };
+      all_abilities["20% chance to cast Petrify per melee attack."]        = { &_can_cast_petrify          };
+      all_abilities["20% chance to cast Petrify per attack."]              = { &_can_cast_petrify          };
+      all_abilities["20% chance to cast Blind per attack."]                = { &_can_cast_blind            };
+      all_abilities["20% chance to cast Lightning Strike per attack."]     = { &_can_cast_lightning_strike };
+      all_abilities["20% chance to cast Death Blow per attack."]           = { &_can_cast_death_blow       };
+      all_abilities["10% chance to cast Death Stare per melee attack."]    = { &_can_cast_death_stare      };
+      all_abilities["10% chance to cast Accurate Shot per ranged attack."] = { &_can_cast_accurate_shot    };
 
       all_abilities["Fire Shield."] = { &_casts_fire_shield };
 
@@ -305,7 +312,7 @@ void Creature::print_full_info()
       printf("Name : %s\n", get_name().c_str());
       printf("Faction : %s\n", get_faction_as_string().c_str());
       printf("Level : %d\n", get_level());
-      printf("Upgraded : %d\n", get_is_upgraded());
+      printf("Level of upgrade : %d\n", get_upgrade());
       printf("Growth per week : %d\n", get_growth());
       printf("Attack : %d\n", get_att());
       printf("Defense : %d\n", get_def());
@@ -313,7 +320,11 @@ void Creature::print_full_info()
       if(get_is_ranged())
             printf("Shots : %d\n", get_shots());
       
-      printf("Damage : %d - %d\n", get_min_dmg(), get_max_dmg());
+      if(get_min_dmg() != get_max_dmg())
+            printf("Damage : %d - %d\n", get_min_dmg(), get_max_dmg());
+      else
+            printf("Damage : %d\n", get_min_dmg());
+
       printf("Health : %d\n", get_hp());
       printf("Morale : %d\n", get_morale());
       printf("Luck : %d\n", get_luck());

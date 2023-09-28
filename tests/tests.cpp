@@ -16,7 +16,7 @@ void test_create_creature()
     std::string name = "Skellies";
     Faction faction = Faction::Necropolis;
     uint8_t level = 1;
-    bool is_upgraded = false;
+    Upgrade_level upgrade = Upgrade_level::None;
     uint8_t growth = 12;
     bool needs_2_hexes_in_battle = false;
     uint8_t att = 5;
@@ -37,7 +37,7 @@ void test_create_creature()
     uint32_t gems = 0;
     std::string special_abilities = "Undead.";
     
-    Creature Skellies ( name, faction, level, is_upgraded, growth, needs_2_hexes_in_battle,
+    Creature Skellies ( name, faction, level, upgrade, growth, needs_2_hexes_in_battle,
                         att, def, shots, min_dmg, max_dmg, hp, speed, morale, luck, fight_value, ai_value, 
                         { gold, mercury, sulfur, crystal, gems }, 
                         special_abilities );

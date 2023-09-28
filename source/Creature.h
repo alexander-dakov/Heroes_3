@@ -13,6 +13,12 @@
 
 constexpr uint8_t max_num_of_special_abilities = 6;
 
+enum class Upgrade_level
+{
+      None = 0,
+      First,
+      Second
+};
 struct Creature
 {
       private:
@@ -22,13 +28,13 @@ struct Creature
                   std::string _name;
                   Faction _faction;
                   uint8_t _level;
-                  bool _is_upgraded;
+                  Upgrade_level _upgrade;
                   uint8_t _growth;
                   bool _needs_2_hexes_in_battle;
 
                   // Constructs a private structure containing data used for overview
-                  unit_info( std::string name, Faction faction, uint8_t level, bool is_upgraded, uint8_t growth, bool needs_2_hexes_in_battle ) :
-                             _name(name), _faction(faction), _level(level), _is_upgraded(is_upgraded), _growth(growth), _needs_2_hexes_in_battle(needs_2_hexes_in_battle) 
+                  unit_info( std::string name, Faction faction, uint8_t level, Upgrade_level upgrade, uint8_t growth, bool needs_2_hexes_in_battle ) :
+                             _name(name), _faction(faction), _level(level), _upgrade(upgrade), _growth(growth), _needs_2_hexes_in_battle(needs_2_hexes_in_battle) 
                              {};
             }unit_info;
 
@@ -89,8 +95,10 @@ struct Creature
                   bool _can_attack_siege_walls = false; // Cyclops, Cyclops King
 
                   // attack bonus
+                  bool _has_ferocity                = false; // Ayssid; Effect : if a unit from the attacked stack dies, a seconda attack follows 
                   bool _has_double_attack           = false; // Marksman, Crusader, Grand Elf
                   bool _has_jousting                = false; // Cavalier, Champion
+                  bool _has_revenge                 = false; // Haspid; Effect : attacks deal a bit more damage after stack suffers damage
                   bool _has_3_headed_attack         = false; // Cerberus
                   bool _has_fireball_attack         = false; // Magog
                   bool _has_cloud_attack            = false; // Lich, Power Lich
@@ -103,8 +111,12 @@ struct Creature
                   bool _hates_angels                = false; // Devil, Arch Devil
                   bool _hates_black_dragons         = false; // Titan
                   bool _hates_titans                = false; // Black Dragon
-                  bool _reduce_enemy_defense_40     = false; // Behemoth
-                  bool _reduce_enemy_defense_80     = false; // Ancient Behemoth
+                  bool _ignore_enemy_defense_40     = false; // Behemoth
+                  bool _ignore_enemy_defense_80     = false; // Ancient Behemoth
+
+                  // defense bonus
+                  bool _ignore_enemy_attack_30     = false; // Nix
+                  bool _ignore_enemy_attack_60     = false; // Nix Warrior
 
                   // retaliation
                   bool _has_two_retaliations       = false; // Griffin
@@ -116,26 +128,26 @@ struct Creature
                   bool _casts_mana_drain   = false; // Wraith; Effect = enemy hero's spell points are reduced by 2.
 
                   // casts after attack
-                  bool _casts_binding            = false; // Dendroid Guard, Dendroid Soldier
-                  bool _casts_life_drain         = false; // Vampire Lord
-                  bool _casts_dispell_on_buffs   = false; // Serpent Fly, Dragon Fly
-                  bool _casts_advanced_weakness  = false; // Dragon Fly
-                  bool _casts_weakness           = false; // Sea Witch, Sorceress
-                  bool _casts_disrupting_ray     = false; // Sea Witch, Sorceress
+                  bool _casts_binding                             = false; // Dendroid Guard, Dendroid Soldier
+                  bool _casts_life_drain                          = false; // Vampire Lord
+                  bool _casts_dispell_on_buffs                    = false; // Serpent Fly, Dragon Fly
+                  bool _casts_weakness                            = false; // Sea Witch
+                  bool _casts_advanced_weakness                   = false; // Dragon Fly, Sorceress
+                  bool _casts_disrupting_ray_on_weakened          = false; // Sea Witch
+                  bool _casts_advanced_disrupting_ray_on_weakened  = false; // Sorceress
 
                   // some chance of cast per attack
                   bool _can_cast_disease          = false; // Zombie
-                  bool _can_cast_weakness         = false; // Dragon Fly
-                  bool _can_cast_disrupting_ray   = false; // Dragon Fly
                   bool _can_cast_curse            = false; // Black Knigt, Dread Knight
                   bool _can_cast_aging            = false; // Ghost Dragon
-                  bool _can_cast_poison           = false; // Wyvern Monarch
+                  bool _can_cast_poison           = false; // Wyvern Monarch, Sea Serpent, Haspid
                   bool _can_cast_paralyzing_venom = false; // Scorpicore
                   bool _can_cast_petrify          = false; // Medusa, Medusa Queen, Basilisk, Greater Basilisk
                   bool _can_cast_blind            = false; // Unicorn, War Unicorn
                   bool _can_cast_lightning_strike = false; // Thunderbird
                   bool _can_cast_death_blow       = false; // Dread Knight
                   bool _can_cast_death_stare      = false; // Mighty Gorgon
+                  bool _can_cast_accurate_shot    = false; // Sea Dog
 
                   // casts when attacked
                   bool _casts_fire_shield = false; // Efreet Sultan
@@ -215,7 +227,7 @@ struct Creature
          
       public:
             // Parametrized constructor (no default constructor allowed). Calls Logical_Limitations_When_Constructing().
-            Creature( const std::string name, const Faction faction, const uint8_t level, const bool is_upgraded, const uint8_t growth, const bool needs_2_hexes_in_battle,
+            Creature( const std::string name, const Faction faction, const uint8_t level, const Upgrade_level upgrade, const uint8_t growth, const bool needs_2_hexes_in_battle,
                       const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, const uint16_t hp, const uint8_t speed, const Morale morale, const Luck luck, const uint16_t fight_value, const uint16_t ai_value, 
                       const Resources resources, 
                       const std::string abilities );
@@ -239,7 +251,7 @@ struct Creature
 
             uint8_t get_level() { return unit_info._level; };
 
-            bool get_is_upgraded() { return unit_info._is_upgraded; };
+            Upgrade_level get_upgrade() { return unit_info._upgrade; };
 
             uint8_t get_growth() { return unit_info._growth; };
 
@@ -291,6 +303,7 @@ struct Creature
 
             bool get_has_double_attack()           { return special_abilities._has_double_attack;           };
             bool get_has_jousting()                { return special_abilities._has_jousting;                };
+            bool get_has_revenge()                 { return special_abilities._has_revenge;                 };
             bool get_has_3_headed_attack()         { return special_abilities._has_3_headed_attack;         };
             bool get_has_fireball_attack()         { return special_abilities._has_fireball_attack;         };
             bool get_has_cloud_attack()            { return special_abilities._has_cloud_attack;            };
@@ -303,8 +316,12 @@ struct Creature
             bool get_hates_angels()                { return special_abilities._hates_angels;                };
             bool get_hates_black_dragons()         { return special_abilities._hates_black_dragons;         };
             bool get_hates_titans()                { return special_abilities._hates_titans;                };
-            bool get_reduce_enemy_defense_40()     { return special_abilities._reduce_enemy_defense_40;     };
-            bool get_reduce_enemy_defense_80()     { return special_abilities._reduce_enemy_defense_80;     };
+            bool get_ignore_enemy_defense_40()     { return special_abilities._ignore_enemy_defense_40;     };
+            bool get_ignore_enemy_defense_80()     { return special_abilities._ignore_enemy_defense_80;     };
+
+
+            bool get_ignore_enemy_attack_30() { return special_abilities._ignore_enemy_attack_30; };
+            bool get_ignore_enemy_attack_60() { return special_abilities._ignore_enemy_attack_60; };
 
             bool get_has_two_retaliations()       { return special_abilities._has_two_retaliations;       };
             bool get_has_unlimited_retaliations() { return special_abilities._has_unlimited_retaliations; };
@@ -317,16 +334,15 @@ struct Creature
             bool get_decreases_enemy_luck_1()   { return special_abilities._decreases_enemy_luck_1;   };
             bool get_decreases_enemy_luck_2()   { return special_abilities._decreases_enemy_luck_2;   };
 
-            bool get_casts_binding ()           { return special_abilities._casts_binding;           };
-            bool get_casts_life_drain ()        { return special_abilities._casts_life_drain;        };
-            bool get_casts_dispell_on_buffs ()  { return special_abilities._casts_dispell_on_buffs;  };
-            bool get_casts_advanced_weakness () { return special_abilities._casts_advanced_weakness; };
-            bool get_casts_weakness ()          { return special_abilities._casts_weakness;          };
-            bool get_casts_disrupting_ray ()    { return special_abilities._casts_disrupting_ray;    };
+            bool get_casts_binding ()                             { return special_abilities._casts_binding;                             };
+            bool get_casts_life_drain ()                          { return special_abilities._casts_life_drain;                          };
+            bool get_casts_dispell_on_buffs ()                    { return special_abilities._casts_dispell_on_buffs;                    };
+            bool get_casts_weakness ()                            { return special_abilities._casts_weakness;                            };
+            bool get_casts_advanced_weakness ()                   { return special_abilities._casts_advanced_weakness;                   };
+            bool get_casts_disrupting_ray_on_weakened ()          { return special_abilities._casts_disrupting_ray_on_weakened;          };
+            bool get_casts_advanced_disrupting_ray_on_weakened () { return special_abilities._casts_advanced_disrupting_ray_on_weakened; };
 
             bool get_can_cast_disease()          { return special_abilities._can_cast_disease;          };
-            bool get_can_cast_weakness()         { return special_abilities._can_cast_weakness;         };
-            bool get_can_cast_disrupting_ray()   { return special_abilities._can_cast_disrupting_ray;   };
             bool get_can_cast_curse()            { return special_abilities._can_cast_curse;            };
             bool get_can_cast_aging()            { return special_abilities._can_cast_aging;            };
             bool get_can_cast_poison()           { return special_abilities._can_cast_poison;           };
@@ -336,6 +352,7 @@ struct Creature
             bool get_can_cast_blind()            { return special_abilities._can_cast_blind;            };
             bool get_can_cast_death_blow()       { return special_abilities._can_cast_death_blow;       };
             bool get_can_cast_death_stare()      { return special_abilities._can_cast_death_stare;      };
+            bool get_can_cast_accurate_shot()    { return special_abilities._can_cast_accurate_shot;    };
 
             bool get_casts_fire_shield() { return special_abilities._casts_fire_shield; };
 
