@@ -13,6 +13,16 @@ enum School_of_magic
       Fire     // 4
 };
 
+enum class Spell_level
+{
+      None,   // 0 - for coding purposes
+      First,  // 1
+      Second, // 2
+      Third,  // 3
+      Fourth, // 4
+      Fifth   // 5
+};
+
 enum Effect
 {
       Defensive = 1, // 1
@@ -24,29 +34,32 @@ class Spell
 {
       private:
             std::string _name;
-            School_of_magic _school_of_magic; 
-            Skill_level _level;
+            School_of_magic _school_of_magic;
+            Spell_level _spell_level;
+            Skill_level _skill_level;
             std::string _mana_cost;
             Effect _effect;
-            std::string _definition;
+            std::string _description;
             uint8_t _duration;
 
       public:
-            Spell();
+            Spell() {};
 
-            ~Spell();
+            ~Spell() {};
             
             std::string get_name() { return _name; };
 
             School_of_magic get_school_of_magic() { return _school_of_magic; };
 
-            Skill_level get_level() { return _level; };
+            Spell_level get_spell_level() { return _spell_level; };
+
+            Skill_level get_skill_level() { return _skill_level; };
 
             std::string get_mana_cost() { return _mana_cost; };
 
             Effect get_effect() { return _effect; }; 
 
-            std::string get_definition() { return _definition; };
+            std::string get_description() { return _description; };
 
             uint8_t get_duration() { return _duration; };
 };

@@ -14,6 +14,8 @@ add_library(
     Specialty_List.cpp
 
     Item.h
+    Item.cpp
+    Item_List.cpp
 
     Resources.h
     Team.h

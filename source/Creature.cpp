@@ -9,87 +9,109 @@ Creature::Creature( const std::string name, const Faction faction, const uint8_t
                     cost(resources),  
                     special_abilities(abilities)
 {
-      special_abilities.fill_special_abilities(); 
+      special_abilities.set_special_abilities();
 
       logical_limitations();
 
-      // std::cout << "Creature "<< unit_info._name <<" created." << std::endl;
+      // printf( "Creature %s created.\n", get_name().c_str() );
 }
 
 Creature::Creature(const Creature& creature) : unit_info(creature.unit_info), battle_stats(creature.battle_stats), cost(creature.cost), special_abilities(creature.special_abilities)
 {
-      // std::cout << "Creature "<< unit_info._name <<" created." << std::endl;
+      // printf( "Creature %s created.\n", get_name().c_str() );
 }
 
 Creature::Creature(const Creature* creature) : unit_info(creature->unit_info), battle_stats(creature->battle_stats), cost(creature->cost), special_abilities(creature->special_abilities)
 {
-      // std::cout << "Creature "<< unit_info._name <<" created." << std::endl;
+      // printf( "Creature %s created.\n", get_name().c_str() );
 }
 
 Creature::~Creature()
 {
-      // std::cout << "Creature " << this->get_name() << " destroyed!" << std::endl;
+      // printf( "Creature %s destroyed!\n", get_name().c_str() );
+}
+
+void Creature::special_abilities::set_special_abilities()
+{
+      // Keep that order, because the abilities map should be filled and then the number of casts and spell power should be set.
+      fill_special_abilities();
+      
+      _number_of_casts = 0; 
+      _spell_power = 0;
+      
+      if( _can_cast_ressurection )       { _number_of_casts = 1; return;                   } // Archangel
+      if( _can_cast_advanced_fortune )   { _number_of_casts = 3; _spell_power = 6; return; } // Leprechaun
+      if( _can_cast_advanced_mirth )     { _number_of_casts = 3; _spell_power = 6; return; } // Satyr
+
+      if( _is_spellcaster )
+      {
+            if     ( _hates_efreeti )    { _number_of_casts = 3; _spell_power = 6; return; } // Master Genie
+            else if( _has_magic_mirror ) { _number_of_casts = 5; return;                   } // Faerie Dragon
+            else                         { _number_of_casts = 3; _spell_power = 3; return; } // Enchanter
+      }
+      
+      if( _can_cast_bloodlust )          { _number_of_casts = 3; _spell_power = 3; return; } // Orge Mage
 }
 
 void Creature::logical_limitations()
 {
       if(unit_info._level == 0 || unit_info._level > 7)
       {
-            std::cout<< "Creature level must be in the interval [1;7]!" << std::endl;
+            std::cerr<< "Creature level must be in the interval [1;7]!" << std::endl;
             abort();
       }
 
       if(unit_info._growth == 0)
       {
-            std::cout<< "Creature must have positive growth per week!" << std::endl;
+            std::cerr<< "Creature must have positive growth per week!" << std::endl;
             abort();
       }
 
       if(battle_stats._att == 0)
       {
-            std::cout<< "Creature must have positive attack skill!" << std::endl;
+            std::cerr<< "Creature must have positive attack skill!" << std::endl;
             abort();
       }
 
       if(battle_stats._def == 0)
       {
-            std::cout<< "Creature must have positive defense skill!" << std::endl;
+            std::cerr<< "Creature must have positive defense skill!" << std::endl;
             abort();
       }
 
       if(battle_stats._min_dmg > battle_stats._min_dmg)
       {
-            std::cout<< "Creature min damage mustn't be higher than its max value!" << std::endl;
+            std::cerr<< "Creature min damage mustn't be higher than its max value!" << std::endl;
             abort();
       }
 
       if(battle_stats._hp == 0)
       {
-            std::cout<< "Creature must have positive hp!" << std::endl;
+            std::cerr<< "Creature must have positive hp!" << std::endl;
             abort();
       }
 
       if(battle_stats._speed == 0)
       {
-            std::cout<< "Creature must have positive speed!" << std::endl;
+            std::cerr<< "Creature must have positive speed!" << std::endl;
             abort();
       }
 
       if(battle_stats._fight_value == 0)
       {
-            std::cout<< "Creature must have positive fight value!" << std::endl;
+            std::cerr<< "Creature must have positive fight value!" << std::endl;
             abort();
       }
 
       if(battle_stats._ai_value == 0)
       {
-            std::cout<< "Creature must have positive ai value!" << std::endl;
+            std::cerr<< "Creature must have positive ai value!" << std::endl;
             abort();
       }
 
       if(cost._gold == 0)
       {
-            std::cout<< "Creature must have a price including gold!" << std::endl;
+            std::cerr<< "Creature must have a price including gold!" << std::endl;
             abort();
       }
 
@@ -142,7 +164,7 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
       all_abilities["Hates Efreeti and Efreet Sultans."]     = { &_hates_efreeti               };
       all_abilities["Hates Genies and Master Genies."]       = { &_hates_genies                };
       all_abilities["Hates Devils and Arch Devils."]         = { &_hates_devils                };
-      all_abilities["Hates Angels and Arch Angels."]         = { &_hates_angels                };
+      all_abilities["Hates Angels and Archangels."]         = { &_hates_angels                };
       all_abilities["Hates Black Dragons."]                  = { &_hates_black_dragons         };
       all_abilities["Hates Titans."]                         = { &_hates_titans                };
       all_abilities["Ignores 40% of enemy's defense skill."] = { &_ignore_enemy_defense_40     };
@@ -166,36 +188,36 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
       all_abilities["Casts Disrupting Ray on weakened enemies."]          = { &_casts_disrupting_ray_on_weakened          };
       all_abilities["Casts Advanced Disrupting Ray on weakened enemies."] = { &_casts_advanced_disrupting_ray_on_weakened };
 
-      all_abilities["20% chance to cast Disease per attack."]                       = { &_can_cast_disease          };
-      all_abilities["25% chance to cast Curse per attack."]                         = { &_can_cast_curse            };
-      all_abilities["20% chance to cast Aging per attack."]                         = { &_can_cast_aging            };
-      all_abilities["30% chance to cast Poison per attack."]                        = { &_can_cast_poison           };
-      all_abilities["20% chance to cast Paralyzing Venom per attack."]              = { &_can_cast_paralyzing_venom };
-      all_abilities["20% chance to cast Fear to adjacent enemies before they act."] = { &_can_cast_fear             };
-      all_abilities["20% chance to cast Petrify per melee attack."]                 = { &_can_cast_petrify          };
-      all_abilities["20% chance to cast Petrify per attack."]                       = { &_can_cast_petrify          };
-      all_abilities["20% chance to cast Blind per attack."]                         = { &_can_cast_blind            };
-      all_abilities["20% chance to cast Lightning Strike per attack."]              = { &_can_cast_lightning_strike };
-      all_abilities["20% chance to cast Death Blow per attack."]                    = { &_can_cast_death_blow       };
-      all_abilities["10% chance to cast Death Stare per melee attack."]             = { &_can_cast_death_stare      };
-      all_abilities["10% chance to cast Accurate Shot per ranged attack."]          = { &_can_cast_accurate_shot    };
-      all_abilities["20% chance to cast Acid Breath per attack."]                   = { &_can_cast_acid_breath      };
-      all_abilities["Can cast Hypnotize per attack."]                               = { &_can_cast_hypnotize        };
+      all_abilities["20% chance to cast Disease per attack."]                       = { &_may_cast_disease          };
+      all_abilities["25% chance to cast Curse per attack."]                         = { &_may_cast_curse            };
+      all_abilities["20% chance to cast Aging per attack."]                         = { &_may_cast_aging            };
+      all_abilities["30% chance to cast Poison per attack."]                        = { &_may_cast_poison           };
+      all_abilities["20% chance to cast Paralyzing Venom per attack."]              = { &_may_cast_paralyzing_venom };
+      all_abilities["20% chance to cast Fear to adjacent enemies before they act."] = { &_may_cast_fear             };
+      all_abilities["20% chance to cast Petrify per melee attack."]                 = { &_may_cast_petrify          };
+      all_abilities["20% chance to cast Petrify per attack."]                       = { &_may_cast_petrify          };
+      all_abilities["20% chance to cast Blind per attack."]                         = { &_may_cast_blind            };
+      all_abilities["20% chance to cast Lightning Strike per attack."]              = { &_may_cast_lightning_strike };
+      all_abilities["20% chance to cast Death Blow per attack."]                    = { &_may_cast_death_blow       };
+      all_abilities["10% chance to cast Death Stare per melee attack."]             = { &_may_cast_death_stare      };
+      all_abilities["10% chance to cast Accurate Shot per ranged attack."]          = { &_may_cast_accurate_shot    };
+      all_abilities["20% chance to cast Acid Breath per attack."]                   = { &_may_cast_acid_breath      };
+      all_abilities["Can cast Hypnotize per attack."]                               = { &_may_cast_hypnotize        };
 
       all_abilities["Fire Shield."] = { &_casts_fire_shield };
 
-      all_abilities["Rebirth."] = { &_can_cast_rebirth };
+      all_abilities["Rebirth."] = { &_may_cast_rebirth };
 
-      all_abilities["Spellcaster."]                                  = { &_is_spellcaster                 };
       all_abilities["Can cast Ressurection once per battle."]        = { &_can_cast_ressurection          };
       all_abilities["Can cast Advanced Fortune 3 times per battle."] = { &_can_cast_advanced_fortune      };
       all_abilities["Can cast Advanced Mirth 3 times per battle."]   = { &_can_cast_advanced_mirth        };
-      all_abilities["Summon Demons."]                                = { &_can_cast_summon_demons         };
+      all_abilities["Spellcaster."]                                  = { &_is_spellcaster                 };
       all_abilities["Spellcaster (Bloodlust)."]                      = { &_can_cast_bloodlust             };
       all_abilities["Spellcaster (Protection from Air)."]            = { &_can_cast_protection_from_air   };
       all_abilities["Spellcaster (Protection from Water)."]          = { &_can_cast_protection_from_water };
       all_abilities["Spellcaster (Protection from Fire)."]           = { &_can_cast_protection_from_fire  };
       all_abilities["Spellcaster (Protection from Earth)."]          = { &_can_cast_protection_from_earth };
+      all_abilities["Summon Demons."]                                = { &_can_cast_summon_demons         };
 
       all_abilities["Magic resistance 20%."]         = { &_has_magic_resist_20   };
       all_abilities["Magic resistance 40%."]         = { &_has_magic_resist_40   };
@@ -259,9 +281,9 @@ void Creature::special_abilities::fill_special_abilities()
             counter ++;
             if( counter > max_num_of_special_abilities)
             {
-                  std::cout << "A creature's special ability is not recognized by the algorithm. Make sure that the string in create_map_of_all_abilities() is the same as in Creature_List." << std::endl;
-                  std::cout << "Problematic string : " << helper << std::endl;
-                  std::cout << "Full string : " << _abilities << std::endl;
+                  std::cerr << "A creature's special ability is not recognized by the algorithm. Make sure that the string in create_map_of_all_abilities() is the same as in Creature_List." << std::endl;
+                  std::cerr << "Problematic string : " << helper << std::endl;
+                  std::cerr << "Full string : " << _abilities << std::endl;
                   abort();
             }
 
@@ -301,8 +323,9 @@ std::string Creature::get_faction_as_string()
             case Faction::Tower      : faction = "Tower";      break;
             case Faction::Inferno    : faction = "Inferno";    break;
             case Faction::Necropolis : faction = "Necropolis"; break;
-            case Faction::Fortress   : faction = "Fortress";   break;
+            case Faction::Dungeon    : faction = "Dungeon";    break;
             case Faction::Stronghold : faction = "Stronghold"; break;
+            case Faction::Fortress   : faction = "Fortress";   break;
             case Faction::Conflux    : faction = "Conflux";    break;
             case Faction::Cove       : faction = "Cove";       break;
       }
@@ -342,6 +365,7 @@ void Creature::print_full_info()
             printf("Damage : %d\n", get_min_dmg());
 
       printf("Health : %d\n", get_hp());
+      printf("Speed : %d\n", get_speed());
       printf("Morale : %d\n", get_morale());
       printf("Luck : %d\n", get_luck());
       printf("Fight value : %d\n", get_fight_value());

@@ -3,41 +3,33 @@
 
 #include "Creature_Stack.h"
 
-// Stack::Stack(const Hero& hero, const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y) :
-//              _hero(hero), _creature(creature), _number(number), _pos(pos_x, pos_y),
-//              battle_stats(creature, hero),
-//              hero_attributes(hero)
-//              {
-//                 _team = _hero.get_team();
-//              };
-
 Stack::Stack(const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y, const Team team = Team::Neutral) :
              _creature(creature), _number(number), _pos(pos_x, pos_y), _team(team),
              battle_stats(creature), 
-             hero_attributes()
+             hero_secondary_skills()
              {};
 
 Stack::Stack(const Creature creature, const uint32_t number, const Team team = Team::Neutral) :
              _creature(creature), _number(number), _team(team),
              battle_stats(creature),
-             hero_attributes()
+             hero_secondary_skills()
              {};
 
 Stack::Stack(const Stack& stack, const uint32_t number) :
              _creature(stack._creature), _number(std::min(stack._number, number)), _team(stack._team),
              battle_stats(stack._creature),
-             hero_attributes(stack.hero_attributes)
+             hero_secondary_skills(stack.hero_secondary_skills)
              {};
 
 Stack::Stack(const Stack* stack, const uint32_t number) :
              _creature(stack->_creature), _number(std::min(stack->_number, number)), _team(stack->_team),
              battle_stats(stack->_creature),
-             hero_attributes(stack->hero_attributes)
+             hero_secondary_skills(stack->hero_secondary_skills)
              {};
 
 Stack::~Stack()
 {
-    // std::cout << "Stack destroyed!" << std::endl;
+    // printf( "Stack %s destroyed!\n", get_creature().get_name().c_str() );
 }
 
 std::string Stack::get_team_as_string()
@@ -92,7 +84,7 @@ void Stack::recieve_damage(uint32_t damage)
         set_hp_left(static_cast<uint16_t>(hp_last - damage));
 
         #if SHOW_DEBUG_INFO == 1
-            std::cout << _creature.get_name() << " has " << get_hp_left() << " hp left." << std::endl;
+            printf( "%s has %d hp left.\n", _creature.get_name().c_str(), get_hp_left() );
         #endif
 
         return;
@@ -103,13 +95,13 @@ void Stack::recieve_damage(uint32_t damage)
         if(get_number() == 0)
         {
             set_has_perished(true);
-            std::cout << _creature.get_name() << " has perished!" << std::endl;
+            printf( "%s has perished!\n", _creature.get_name().c_str() );
 
             set_action(Stack_Action::Skip);
             return;
         }
         set_hp_left(hp);
-        std::cout << "One " << _creature.get_name() << " has perished!" << std::endl;
+        printf( "One %s has perished!\n", _creature.get_name().c_str() );
         return;
     }
     else
@@ -120,7 +112,7 @@ void Stack::recieve_damage(uint32_t damage)
         {
             set_number(0);
             set_has_perished(true);
-            std::cout << "The whole " << _creature.get_name() << " stack has perished!" << std::endl;
+            printf( "The whole %s stack has perished!\n", _creature.get_name().c_str() );
 
             set_action(Stack_Action::Skip);
             return;
@@ -133,10 +125,10 @@ void Stack::recieve_damage(uint32_t damage)
             set_hp_left( static_cast<uint16_t>( (capacity - damage) % hp ) );
             set_number(new_num);
 
-            std::cout << initial_num - new_num << _creature.get_name() << " has perished!" << std::endl;
+            printf( "%d %s has perished!\n", initial_num - new_num, _creature.get_name().c_str() );
 
             #if SHOW_DEBUG_INFO == 1
-                std::cout << _creature.get_name() << " has " << get_hp_left() << " hp left." << std::endl;
+                printf( "%s has %d hp left.\n", _creature.get_name().c_str(), get_hp_left() );
             #endif
 
             return;
@@ -243,7 +235,7 @@ void Stack::attack(Stack& defender)
     if(_creature.get_is_ranged() && can_shoot())
     {
         // implement positioning, distance to target and adjacency
-        switch(get_level_of_archery())
+        switch(get_hero_level_of_archery())
         {
                 case Skill_level::None :     I2 = 0.00f; break;
                 case Skill_level::Basic :    I2 = 0.10f; break;
@@ -251,13 +243,14 @@ void Stack::attack(Stack& defender)
                 case Skill_level::Expert :   I2 = 0.50f; break;
         }
 
-        I3 = 0.05 * I2 * static_cast<int8_t>(get_level_of_archery());
+        I3 = 0.05 * I2 * static_cast<int8_t>(get_hero_level_of_archery());
     }
     else // is ranged but has melee penalty or is not ranged
     {
         if(_creature.get_is_ranged() && !can_shoot())
             melee_penalty = true;
-        switch(get_level_of_offence())
+            
+        switch(get_hero_level_of_offence())
         {
                 case Skill_level::None :     I2 = 0.0f; break;
                 case Skill_level::Basic :    I2 = 0.1f; break;
@@ -265,7 +258,7 @@ void Stack::attack(Stack& defender)
                 case Skill_level::Expert :   I2 = 0.3f; break;
         }
 
-        I3 = 0.05 * I2 * static_cast<int8_t>(get_level_of_offence());
+        I3 = 0.05 * I2 * static_cast<int8_t>(get_hero_level_of_offence());
     }
 
     // calculate I4
@@ -321,21 +314,9 @@ void Stack::attack(Stack& defender)
     }
 
 #if SHOW_DEBUG_INFO == 1
-    std::cout << std::endl;
-    std::cout << "Damage parameter I1 = " << I1 << std::endl;
-    std::cout << "Damage parameter I2 = " << I2 << std::endl;
-    std::cout << "Damage parameter I3 = " << I3 << std::endl;
-    std::cout << "Damage parameter I4 = " << I4 << std::endl;
-    std::cout << "Damage parameter I5 = " << I5 << std::endl;
-    std::cout << "Damage parameter R1 = " << R1 << std::endl;
-    std::cout << "Damage parameter R2 = " << R2 << std::endl;
-    std::cout << "Damage parameter R3 = " << R3 << std::endl;
-    std::cout << "Damage parameter R4 = " << R4 << std::endl;
-    std::cout << "Damage parameter R5 = " << R5 << std::endl;
-    std::cout << "Damage parameter R6 = " << R6 << std::endl;
-    std::cout << "Damage parameter R7 = " << R7 << std::endl;
-    std::cout << "Damage parameter R8 = " << R8 << std::endl;
-    std::cout << std::endl;
+    printf( "\nDamage parameters:\n" );
+    printf( "\t- I1 = %.3f\n\t- I2 = %.3f\n\t- I3 = %.3f\n\t- I4 = %.3f\n\t- I5 = %.3f\n", I1, I2, I3, I4, I5 );
+    printf( "\t- R1 = %.3f\n\t- R2 = %.3f\n\t- R3 = %.3f\n\t- R4 = %.3f\n\t- R5 = %.3f\n\t- R6 = %.3f\n\t- R7 = %.3f\n\t- R8 = %.3f\n\n", R1, R2, R3, R4, R5, R6, R7, R8 );
 #endif
 
     final_damage = static_cast<int32_t>( base_damage * (1 + I1 + I2 + I3 + I4 + I5) * (1 - R1) * (1 - R2 - R3) * (1 - R4) * (1 - R5) * (1 - R6) * (1 - R7) * (1 - R8) );
@@ -405,7 +386,8 @@ void Stack::print_full_info()
     else
         printf("Damage : %d\n", c.get_min_dmg());
 
-    printf("Health : %d\n", c.get_hp());
+    printf("Health : %d(%d)\n", get_hp_left(), get_hp());
+    printf("Speed : %d(%d)\n", c.get_speed(), get_speed());
     printf("Morale : %d\n", c.get_morale());
     printf("Luck : %d\n", c.get_luck());
     printf("Fight value : %d\n", c.get_fight_value());

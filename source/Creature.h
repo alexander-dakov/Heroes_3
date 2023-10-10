@@ -108,7 +108,7 @@ struct Creature
                   bool _has_breath_attack           = false; // Firebird, Pheonix, Dragons: Green + Gold + Red + Black + Faerie + Rust + Azure
                   bool _hates_efreeti               = false; // Genie, Master Genie
                   bool _hates_genies                = false; // Efreet, Efreet Sultan
-                  bool _hates_devils                = false; // Angel, Arch Angel
+                  bool _hates_devils                = false; // Angel, Archangel
                   bool _hates_angels                = false; // Devil, Arch Devil
                   bool _hates_black_dragons         = false; // Titan
                   bool _hates_titans                = false; // Black Dragon
@@ -129,7 +129,7 @@ struct Creature
                   bool _casts_mana_drain   = false; // Wraith; Effect = enemy hero's spell points are reduced by 2.
 
                   // casts after attack
-                  bool _casts_binding                             = false; // Dendroid Guard, Dendroid Soldier
+                  bool _casts_binding                             = false; // Dendroid Guard, Dendroid Soldier; Effect = snare until Dendroids die or move.
                   bool _casts_life_drain                          = false; // Vampire Lord
                   bool _casts_dispell_on_buffs                    = false; // Serpent Fly, Dragon Fly
                   bool _casts_weakness                            = false; // Sea Witch
@@ -138,39 +138,39 @@ struct Creature
                   bool _casts_advanced_disrupting_ray_on_weakened = false; // Sorceress
 
                   // some chance of cast per attack
-                  bool _can_cast_disease          = false; // Zombie
-                  bool _can_cast_curse            = false; // Black Knigt, Dread Knight
-                  bool _can_cast_aging            = false; // Ghost Dragon
-                  bool _can_cast_poison           = false; // Wyvern Monarch, Sea Serpent, Haspid
-                  bool _can_cast_paralyzing_venom = false; // Scorpicore
-                  bool _can_cast_fear             = false; // Azure Dragon
-                  bool _can_cast_petrify          = false; // Medusa, Medusa Queen, Basilisk, Greater Basilisk
-                  bool _can_cast_blind            = false; // Unicorn, War Unicorn
-                  bool _can_cast_lightning_strike = false; // Thunderbird
-                  bool _can_cast_death_blow       = false; // Dread Knight
-                  bool _can_cast_death_stare      = false; // Mighty Gorgon
-                  bool _can_cast_accurate_shot    = false; // Sea Dog
-                  bool _can_cast_acid_breath      = false; // Rust Dragon
-                  bool _can_cast_hypnotize        = false; // Fangarm; Effect = like the spell but occurs according to formula
+                  bool _may_cast_disease          = false; // Zombie
+                  bool _may_cast_curse            = false; // Black Knigt, Dread Knight
+                  bool _may_cast_aging            = false; // Ghost Dragon
+                  bool _may_cast_poison           = false; // Wyvern Monarch, Sea Serpent, Haspid
+                  bool _may_cast_paralyzing_venom = false; // Scorpicore
+                  bool _may_cast_fear             = false; // Azure Dragon
+                  bool _may_cast_petrify          = false; // Medusa, Medusa Queen, Basilisk, Greater Basilisk
+                  bool _may_cast_blind            = false; // Unicorn, War Unicorn
+                  bool _may_cast_lightning_strike = false; // Thunderbird
+                  bool _may_cast_death_blow       = false; // Dread Knight
+                  bool _may_cast_death_stare      = false; // Mighty Gorgon
+                  bool _may_cast_accurate_shot    = false; // Sea Dog
+                  bool _may_cast_acid_breath      = false; // Rust Dragon; Effect = additional damage of 25 points per attacking unit.
+                  bool _may_cast_hypnotize        = false; // Fangarm; Effect = like the spell but occurs according to formula
 
                   // casts when attacked
                   bool _casts_fire_shield = false; // Efreet Sultan
 
                   // some chance of cast upon first death
-                  bool _can_cast_rebirth = false; // Pheonix
+                  bool _may_cast_rebirth = false; // Pheonix
 
                   // can cast spell in battle - player's choice
-                  bool _is_spellcaster                 = false; // Master Genie
-                  bool _can_cast_ressurection          = false; // Arch Angel
+                  bool _can_cast_ressurection          = false; // Archangel
                   bool _can_cast_advanced_fortune      = false; // Leprechaun
                   bool _can_cast_advanced_mirth        = false; // Satyr
-                  bool _can_cast_summon_demons         = false; // Pit Lord
+                  bool _is_spellcaster                 = false; // Master Genie, Enchanter, Faerie Dragon
                   bool _can_cast_bloodlust             = false; // Ogre Mage
                   bool _can_cast_protection_from_air   = false; // Storm Elemental
                   bool _can_cast_protection_from_water = false; // Ice Elemental
                   bool _can_cast_protection_from_fire  = false; // Energy Elemental
                   bool _can_cast_protection_from_earth = false; // Magma Elemental
-                  
+                  bool _can_cast_summon_demons         = false; // Pit Lord
+
                   // resistances
                   bool _has_magic_resist_20   = false; // Dwarf
                   bool _has_magic_resist_40   = false; // Battle Dwarf
@@ -217,7 +217,7 @@ struct Creature
                   bool _luck_is_always_1 = false; // Halfling
 
                   // whole army morale and luck modifiers
-                  bool _increases_alias_morale_1 = false; // Angel, Arch Angel
+                  bool _increases_alias_morale_1 = false; // Angel, Archangel
                   bool _decreases_enemy_morale_1 = false; // Bone Dragon, Ghost Dragon
                   bool _decreases_enemy_luck_1   = false; // Devil
                   bool _decreases_enemy_luck_2   = false; // Arch Devil
@@ -233,11 +233,17 @@ struct Creature
                   bool _is_sandwalker      = false; // Nomad
                   bool _generates_crystals = false; // Crystal Dragon
                   
+                  uint8_t _number_of_casts = 0; // only for Archangel, Leprechaun, Satyr, Master Genie, Enchanter, Faerie Dragon, Ogre Mage
+                  uint8_t _spell_power = 0;     // only for Leprechaun, Satyr, Master Genie, Enchanter, Ogre Mage
+
                   // Create a map of all special abilities, refering to the fields in the struct accordingly.
                   std::map< std::string, std::vector<bool*> > create_map_of_all_abilities();
 
                   // Fill the special abilities struct according to the passed special abilities string.
                   void fill_special_abilities();
+
+                  // Sets the special abilities for each creature by calling fill_special_abilities() and then sets the number of casts and spell power.
+                  void set_special_abilities();
 
                   // Fill the string in the field
                   special_abilities(std::string abilities) : _abilities(abilities) {};
@@ -250,10 +256,10 @@ struct Creature
                       const Resources resources, 
                       const std::string abilities );
             
-            // Copy constructors by reference. Calls Logical_Limitations_When_Constructing().
+            // Copy constructors by reference.
             Creature(const Creature& creature);
 
-            // Copy constructors by pointer. Calls Logical_Limitations_When_Constructing().
+            // Copy constructors by pointer.
             Creature(const Creature* creature);
 
             // Destructor
@@ -365,34 +371,35 @@ struct Creature
             bool get_casts_disrupting_ray_on_weakened()          { return special_abilities._casts_disrupting_ray_on_weakened;          };
             bool get_casts_advanced_disrupting_ray_on_weakened() { return special_abilities._casts_advanced_disrupting_ray_on_weakened; };
 
-            bool get_can_cast_disease()          { return special_abilities._can_cast_disease;          };
-            bool get_can_cast_curse()            { return special_abilities._can_cast_curse;            };
-            bool get_can_cast_aging()            { return special_abilities._can_cast_aging;            };
-            bool get_can_cast_poison()           { return special_abilities._can_cast_poison;           };
-            bool get_can_cast_lightning_strike() { return special_abilities._can_cast_lightning_strike; };
-            bool get_can_cast_paralyzing_venom() { return special_abilities._can_cast_paralyzing_venom; };
-            bool get_can_cast_fear()             { return special_abilities._can_cast_fear;             };
-            bool get_can_cast_petrify()          { return special_abilities._can_cast_petrify;          };
-            bool get_can_cast_blind()            { return special_abilities._can_cast_blind;            };
-            bool get_can_cast_death_blow()       { return special_abilities._can_cast_death_blow;       };
-            bool get_can_cast_death_stare()      { return special_abilities._can_cast_death_stare;      };
-            bool get_can_cast_accurate_shot()    { return special_abilities._can_cast_accurate_shot;    };
-            bool get_can_cast_acid_breath()      { return special_abilities._can_cast_acid_breath;      };
-            bool get_can_cast_hypnotize()        { return special_abilities._can_cast_hypnotize;        };
+            bool get_may_cast_disease()          { return special_abilities._may_cast_disease;          };
+            bool get_may_cast_curse()            { return special_abilities._may_cast_curse;            };
+            bool get_may_cast_aging()            { return special_abilities._may_cast_aging;            };
+            bool get_may_cast_poison()           { return special_abilities._may_cast_poison;           };
+            bool get_may_cast_lightning_strike() { return special_abilities._may_cast_lightning_strike; };
+            bool get_may_cast_paralyzing_venom() { return special_abilities._may_cast_paralyzing_venom; };
+            bool get_may_cast_fear()             { return special_abilities._may_cast_fear;             };
+            bool get_may_cast_petrify()          { return special_abilities._may_cast_petrify;          };
+            bool get_may_cast_blind()            { return special_abilities._may_cast_blind;            };
+            bool get_may_cast_death_blow()       { return special_abilities._may_cast_death_blow;       };
+            bool get_may_cast_death_stare()      { return special_abilities._may_cast_death_stare;      };
+            bool get_may_cast_accurate_shot()    { return special_abilities._may_cast_accurate_shot;    };
+            bool get_may_cast_acid_breath()      { return special_abilities._may_cast_acid_breath;      };
+            bool get_may_cast_hypnotize()        { return special_abilities._may_cast_hypnotize;        };
 
             bool get_casts_fire_shield() { return special_abilities._casts_fire_shield; };
 
-            bool get_can_cast_rebirth() { return special_abilities._can_cast_rebirth; };
+            bool get_may_cast_rebirth() { return special_abilities._may_cast_rebirth; };
 
-            bool get_is_spellcaster()                 { return special_abilities._is_spellcaster;                 };
             bool get_can_cast_ressurection()          { return special_abilities._can_cast_ressurection;          };
             bool get_can_cast_advanced_fortune()      { return special_abilities._can_cast_advanced_fortune;      };
             bool get_can_cast_advanced_mirth()        { return special_abilities._can_cast_advanced_mirth;        };
+            bool get_is_spellcaster()                 { return special_abilities._is_spellcaster;                 };
             bool get_can_cast_bloodlust()             { return special_abilities._can_cast_bloodlust;             };
             bool get_can_cast_protection_from_air()   { return special_abilities._can_cast_protection_from_air;   };
             bool get_can_cast_protection_from_water() { return special_abilities._can_cast_protection_from_water; };
             bool get_can_cast_protection_from_fire()  { return special_abilities._can_cast_protection_from_fire;  };
             bool get_can_cast_protection_from_earth() { return special_abilities._can_cast_protection_from_earth; };
+            bool get_can_cast_summon_demons()         { return special_abilities._can_cast_summon_demons;         };
             
             bool get_has_magic_resist_20()   { return special_abilities._has_magic_resist_20;   };
             bool get_has_magic_resist_40()   { return special_abilities._has_magic_resist_40;   };
@@ -438,6 +445,9 @@ struct Creature
             bool get_has_spying()         { return special_abilities._has_spying;         };
             bool get_is_sandwalker()      { return special_abilities._is_sandwalker;      };
             bool get_generates_crystals() { return special_abilities._generates_crystals; };
+
+            uint8_t get_number_of_casts() { return special_abilities._number_of_casts; };
+            uint8_t get_spell_power()     { return special_abilities._spell_power;     };
 
             // Returns a string with the cost of a creature.
             std::string get_cost();
