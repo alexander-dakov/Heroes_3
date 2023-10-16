@@ -51,15 +51,28 @@ std::string Stack::get_team_as_string()
       return team;
 }
 
+void Stack::reset_stats()
+{
+    battle_stats._att        = get_creature()->get_att();
+    battle_stats._def        = get_creature()->get_def();
+    battle_stats._shots_left = get_creature()->get_shots();
+    battle_stats._hp         = get_creature()->get_hp();
+    battle_stats._hp_left    = battle_stats._hp;
+    battle_stats._speed      = get_creature()->get_speed();
+    battle_stats._morale     = get_creature()->get_morale();
+    battle_stats._luck       = get_creature()->get_luck();
+    battle_stats._number_of_casts_left = get_creature()->get_number_of_casts();
+}
+
 void Stack::new_turn()
 {
-    if(_has_perished)
+    if( _has_perished )
     {
         set_action(Stack_Action::Skip);
         return;
     }
     
-    if(true) // if creature is not blinded its status should be returned to default
+    if( true ) // if creature is not blinded its status should be returned to default
         set_action(Stack_Action::Skip); // default value for normal turns
     else
         set_action(Stack_Action::Attack); // default value for normal turns
@@ -79,7 +92,7 @@ void Stack::recieve_damage(uint32_t damage)
     uint16_t hp_last = get_hp_left(); // hp of last unit
     uint32_t num = get_number();     // amount of creatures in stack
 
-    if(damage < hp_last)
+    if( damage < hp_last )
     {
         set_hp_left(static_cast<uint16_t>(hp_last - damage));
 
@@ -89,10 +102,10 @@ void Stack::recieve_damage(uint32_t damage)
 
         return;
     }
-    else if(damage == hp_last)
+    else if( damage == hp_last )
     {
         set_number(num - 1);
-        if(get_number() == 0)
+        if( get_number() == 0 )
         {
             set_has_perished(true);
             printf( "%s has perished!\n", _creature.get_name().c_str() );
@@ -108,7 +121,7 @@ void Stack::recieve_damage(uint32_t damage)
     {
         uint64_t capacity = hp*(num - 1) + hp_last;
 
-        if(damage >= capacity)
+        if( damage >= capacity )
         {
             set_number(0);
             set_has_perished(true);
@@ -205,10 +218,10 @@ void Stack::move(uint8_t x, uint8_t y)
 
 void Stack::attack(Stack& defender)
 {
-    if(get_team() == defender.get_team() /* && not berserk*/)
+    if( get_team() == defender.get_team() /* && not berserk*/ )
         return;
 
-    if(defender.get_has_perished())
+    if( defender.get_has_perished() )
         return;
 
     if(!target(defender))
@@ -228,11 +241,11 @@ void Stack::attack(Stack& defender)
     float R1(0.f), R2(0.f), R3(0.f), R4(0.f), R5(0.f), R6(0.f), R7(0.f), R8(0.f); // reduce damage
 
     // calculate I1
-    if(get_att() >= defender.get_def())
+    if( get_att() >= defender.get_def() )
         I1 = 0.05 * (get_att() - defender.get_def());
 
     // calculate I2 and I3
-    if(_creature.get_is_ranged() && can_shoot())
+    if( _creature.get_is_ranged() && can_shoot() )
     {
         // implement positioning, distance to target and adjacency
         switch(get_hero_level_of_archery())
@@ -247,7 +260,7 @@ void Stack::attack(Stack& defender)
     }
     else // is ranged but has melee penalty or is not ranged
     {
-        if(_creature.get_is_ranged() && !can_shoot())
+        if( _creature.get_is_ranged() && !can_shoot() )
             melee_penalty = true;
             
         switch(get_hero_level_of_offence())
@@ -295,13 +308,13 @@ void Stack::attack(Stack& defender)
     // calculate R8
     // if special abilities
 
-    if(min_dmg == max_dmg)
+    if( min_dmg == max_dmg )
         base_damage = min_dmg * get_number();
     else
     {
         uint8_t range = max_dmg - min_dmg + 1;
         
-        if(get_number() <= 10)
+        if( get_number() <= 10 )
             for(int i = 0; i < get_number(); i++)
                 base_damage += rand() % range + min_dmg;
         else
@@ -355,7 +368,7 @@ void Stack::print_battle_info()
     printf("Attack : %d(%d)\n", c.get_att(), get_att());
     printf("Defense : %d(%d)\n", c.get_def(), get_def());
 
-    if(c.get_is_ranged())
+    if( c.get_is_ranged() )
         printf("Shots : %d(%d)\n", c.get_shots(), get_shots_left());
     
     printf("Damage : %d - %d\n", c.get_min_dmg(), c.get_max_dmg());
@@ -363,39 +376,41 @@ void Stack::print_battle_info()
     printf("Morale : %d\n", c.get_morale());
     printf("Luck : %d\n", c.get_luck());
 
-    if(c.get_special_abilities().length() != 0)
+    if( c.get_special_abilities().length() != 0 )
         printf("Special abilities : %s\n", c.get_special_abilities().c_str());
 }
 
 void Stack::print_full_info()
 {
     auto c = _creature;
-    printf("Name : %s\n", c.get_name().c_str());
-    printf("Faction : %s\n", c.get_faction_as_string().c_str());
-    printf("Level : %d\n", c.get_level());
-    printf("Upgrade level : %d\n", c.get_upgrade());
-    printf("Growth per week : %d\n", c.get_growth());
-    printf("Attack : %d(%d)\n", c.get_att(), get_att());
-    printf("Defense : %d(%d)\n", c.get_def(), get_def());
+    printf( "\n" );
+    printf( "Number : %d\n",  get_number() );
+    printf( "Name : %s\n",    c.get_name().c_str() );
+    printf( "Faction : %s\n", c.get_faction_as_string().c_str() );
+    printf( "Level : %d\n",   c.get_level() );
+    printf( "Upgrade level : %d\n",   c.get_upgrade() );
+    printf( "Growth per week : %d\n", c.get_growth()  );
+    printf( "Attack : %d(%d)\n",  c.get_att(), get_att() );
+    printf( "Defense : %d(%d)\n", c.get_def(), get_def() );
 
-    if(c.get_is_ranged())
-        printf("Shots : %d\n", c.get_shots());
+    if( c.get_is_ranged() )
+        printf( "Shots : %d\n", c.get_shots() );
     
-    if(c.get_min_dmg() != c.get_max_dmg())
-        printf("Damage : %d - %d\n", c.get_min_dmg(), c.get_max_dmg());
+    if( c.get_min_dmg() != c.get_max_dmg() )
+        printf( "Damage : %d - %d\n", c.get_min_dmg(), c.get_max_dmg() );
     else
-        printf("Damage : %d\n", c.get_min_dmg());
+        printf( "Damage : %d\n", c.get_min_dmg() );
 
-    printf("Health : %d(%d)\n", get_hp_left(), get_hp());
-    printf("Speed : %d(%d)\n", c.get_speed(), get_speed());
-    printf("Morale : %d\n", c.get_morale());
-    printf("Luck : %d\n", c.get_luck());
-    printf("Fight value : %d\n", c.get_fight_value());
-    printf("AI value : %d\n", c.get_ai_value());
+    printf("Health : %d(%d)\n",  get_hp_left(), get_hp() );
+    printf("Speed : %d(%d)\n",   c.get_speed(), get_speed() );
+    printf("Morale : %d\n",      c.get_morale() );
+    printf("Luck : %d\n",        c.get_luck() );
+    printf("Fight value : %d\n", c.get_fight_value() );
+    printf("AI value : %d\n",    c.get_ai_value() );
     printf("%s", c.get_cost().c_str());
 
-    if(c.get_special_abilities().length() != 0)
-        printf("Special abilities : %s\n", c.get_special_abilities().c_str());
+    if( c.get_special_abilities().length() != 0 )
+        printf( "Special abilities : %s\n", c.get_special_abilities().c_str() );
 }
 
 #endif

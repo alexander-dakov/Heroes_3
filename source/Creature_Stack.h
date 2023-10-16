@@ -110,6 +110,9 @@ class Stack
         std::string get_team_as_string();
 
         Creature* get_creature() { return &_creature; };
+        
+        // Used when stacks are removed from an army or move from one army to another;
+        void reset_stats();
 
         void set_att(const uint8_t att) { battle_stats._att = att; };
         uint8_t get_att() { return battle_stats._att; };

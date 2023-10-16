@@ -11,7 +11,7 @@
 #include "Resources.h"
 #include "Skill_level.h"
 
-constexpr uint8_t max_num_of_special_abilities = 6;
+constexpr uint8_t MAX_NUM_OF_SPECIAL_ABILITIES = 6; // used to catch inaccuracies when constructing objects in Creature_List.cpp
 
 enum class Upgrade_level
 {
@@ -112,12 +112,13 @@ struct Creature
                   bool _hates_angels                = false; // Devil, Arch Devil
                   bool _hates_black_dragons         = false; // Titan
                   bool _hates_titans                = false; // Black Dragon
-                  bool _ignore_enemy_defense_40     = false; // Behemoth
-                  bool _ignore_enemy_defense_80     = false; // Ancient Behemoth
+
+                  bool    _ignore_enemy_defense     = false;    // Behemoth, Ancient Behemoth
+                  uint8_t _ignore_enemy_defense_by_percent = 0; // Behemoth, Ancient Behemoth
 
                   // defense bonus
-                  bool _ignore_enemy_attack_30     = false; // Nix
-                  bool _ignore_enemy_attack_60     = false; // Nix Warrior
+                  bool    _ignore_enemy_attack = false;        // Nix, Nix Warrior
+                  uint8_t _ignore_enemy_attack_by_percent = 0; // Nix, Nix Warrior
 
                   // retaliation
                   bool _has_two_retaliations       = false; // Griffin
@@ -172,35 +173,33 @@ struct Creature
                   bool _can_cast_summon_demons         = false; // Pit Lord
 
                   // resistances
-                  bool _has_magic_resist_20   = false; // Dwarf
-                  bool _has_magic_resist_40   = false; // Battle Dwarf
+                  bool    _has_magic_resist = false;        // Dwarf, Battle Dwarf
+                  uint8_t _has_magic_resist_by_percent = 0; // Dwarf, Battle Dwarf
+
                   bool _has_magic_resist_aura = false; // Battle Dwarf
                   bool _has_magic_mirror      = false; // Faerie Dragon
 
                   // damage reduciton
-                  bool _reduce_magic_damage_50 = false; // Stone Golem
-                  bool _reduce_magic_damage_75 = false; // Iron Golem
-                  bool _reduce_magic_damage_80 = false; // Steel Golem
-                  bool _reduce_magic_damage_85 = false; // Gold Golem
-                  bool _reduce_magic_damage_95 = false; // Diamond Golem
+                  bool    _reduce_magic_damage = false;        // Stone, Iron, Steel, Gold & Diamond Golem
+                  uint8_t _reduce_magic_damage_by_percent = 0; // Stone, Iron, Steel, Gold & Diamond Golem
 
                   // immunities
-                  bool _is_immune_to_jousting             = false; // Pikeman, Halberdier
-                  bool _is_immune_to_fear                 = false; // Azure Dragon
-                  bool _is_immune_to_blind                = false; // Troglodyte
-                  bool _is_immune_to_petrify              = false; // Infernal Troglodyte
-                  bool _is_immune_to_magic_arrow          = false; // Efreet, Efreet Sultan, Fire & Energy Elemental
-                  bool _is_immune_to_ice_bolt             = false; // Water & Ice Elemental
-                  bool _is_immune_to_frost_ring           = false; // Water & Ice Elemental
-                  bool _is_immune_to_lightning_bolt       = false; // Earth & Magma Elemental
-                  bool _is_immune_to_chain_lightning      = false; // Earth & Magma Elemental
-                  bool _is_immune_to_meteor_shower        = false; // Air & Storm Elemental
-                  bool _is_immune_to_armageddon           = false; // Earth & Magma Elemental
-                  bool _is_immune_to_fire_spells          = false; // Efreet, Efreet Sultan, Fire & Energy Elemental
-                  bool _is_immune_to_mind_spells          = false; // Giant, Titan
-                  bool _is_immune_to_spells_level_1_3     = false; // Green Dragon, Red Dragon
-                  bool _is_immune_to_spells_level_1_4     = false; // Gold Dragon
-                  bool _is_immune_to_all_spells           = false; // Black Dragon
+                  bool _is_immune_to_jousting         = false; // Pikeman, Halberdier
+                  bool _is_immune_to_fear             = false; // Azure Dragon
+                  bool _is_immune_to_blind            = false; // Troglodyte
+                  bool _is_immune_to_petrify          = false; // Infernal Troglodyte
+                  bool _is_immune_to_magic_arrow      = false; // Efreet, Efreet Sultan, Fire & Energy Elemental
+                  bool _is_immune_to_ice_bolt         = false; // Water & Ice Elemental
+                  bool _is_immune_to_frost_ring       = false; // Water & Ice Elemental
+                  bool _is_immune_to_lightning_bolt   = false; // Earth & Magma Elemental
+                  bool _is_immune_to_chain_lightning  = false; // Earth & Magma Elemental
+                  bool _is_immune_to_meteor_shower    = false; // Air & Storm Elemental
+                  bool _is_immune_to_armageddon       = false; // Earth & Magma Elemental
+                  bool _is_immune_to_fire_spells      = false; // Efreet, Efreet Sultan, Fire & Energy Elemental
+                  bool _is_immune_to_mind_spells      = false; // Giant, Titan
+                  bool _is_immune_to_spells_level_1_3 = false; // Green Dragon, Red Dragon
+                  bool _is_immune_to_spells_level_1_4 = false; // Gold Dragon
+                  bool _is_immune_to_all_spells       = false; // Black Dragon
                   
                   // vulnerabilities
                   bool _is_vulnerable_to_ice_bolt        = false; // Fire & Energy Elemental
@@ -341,11 +340,12 @@ struct Creature
             bool get_hates_angels()                { return special_abilities._hates_angels;                };
             bool get_hates_black_dragons()         { return special_abilities._hates_black_dragons;         };
             bool get_hates_titans()                { return special_abilities._hates_titans;                };
-            bool get_ignore_enemy_defense_40()     { return special_abilities._ignore_enemy_defense_40;     };
-            bool get_ignore_enemy_defense_80()     { return special_abilities._ignore_enemy_defense_80;     };
 
-            bool get_ignore_enemy_attack_30() { return special_abilities._ignore_enemy_attack_30; };
-            bool get_ignore_enemy_attack_60() { return special_abilities._ignore_enemy_attack_60; };
+            bool    get_ignore_enemy_defense()            { return special_abilities._ignore_enemy_defense;            };
+            uint8_t get_ignore_enemy_defense_by_percent() { return special_abilities._ignore_enemy_defense_by_percent; };
+
+            bool    get_ignore_enemy_attack()             { return special_abilities._ignore_enemy_attack;             };
+            uint8_t get_ignore_enemy_attack_by_percent()  { return special_abilities._ignore_enemy_attack_by_percent;  };
 
             bool get_has_two_retaliations()       { return special_abilities._has_two_retaliations;       };
             bool get_has_unlimited_retaliations() { return special_abilities._has_unlimited_retaliations; };
@@ -401,16 +401,14 @@ struct Creature
             bool get_can_cast_protection_from_earth() { return special_abilities._can_cast_protection_from_earth; };
             bool get_can_cast_summon_demons()         { return special_abilities._can_cast_summon_demons;         };
             
-            bool get_has_magic_resist_20()   { return special_abilities._has_magic_resist_20;   };
-            bool get_has_magic_resist_40()   { return special_abilities._has_magic_resist_40;   };
+            bool    get_has_magic_resist()            { return special_abilities._has_magic_resist;            };
+            uint8_t get_has_magic_resist_by_percent() { return special_abilities._has_magic_resist_by_percent; };
+
             bool get_has_magic_resist_aura() { return special_abilities._has_magic_resist_aura; };
             bool get_has_magic_mirror()      { return special_abilities._has_magic_mirror;      };
 
-            bool get_reduce_magic_damage_50() { return special_abilities._reduce_magic_damage_50; };
-            bool get_reduce_magic_damage_75() { return special_abilities._reduce_magic_damage_75; };
-            bool get_reduce_magic_damage_80() { return special_abilities._reduce_magic_damage_80; };
-            bool get_reduce_magic_damage_85() { return special_abilities._reduce_magic_damage_85; };
-            bool get_reduce_magic_damage_95() { return special_abilities._reduce_magic_damage_95; };
+            bool    get_reduce_magic_damage()            { return special_abilities._reduce_magic_damage;            };
+            uint8_t get_reduce_magic_damage_by_percent() { return special_abilities._reduce_magic_damage_by_percent; };
 
             bool get_is_immune_to_jousting()         { return special_abilities._is_immune_to_jousting;         };
             bool get_is_immune_to_fear()             { return special_abilities._is_immune_to_fear;             };

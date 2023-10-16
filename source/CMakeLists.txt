@@ -31,6 +31,8 @@ add_library(
     Creature_Stack.h
     Creature_Stack.cpp
 
+    Level_Experience.h
+    Skills_Probability.h
     Hero.h
     Hero.cpp
     Hero_List.cpp

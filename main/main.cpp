@@ -67,6 +67,8 @@
 
 
 TO DO:
+-2) Make stacks not able to be part of more than one army (unique_ptr).
+-1) When you try to add a stack into an army/slot, if there is already such creature - add the new stack to the existing one.
  0) Implement morale and luck ignores for undead, non-living, etc.
  1) Test a creature vs creature battle (all special abilities should be taken into account)
  2) Test a hero vs creature battle (no spells) + implemet hero equipping items
@@ -91,11 +93,13 @@ int main()
 {
     // test_create_creature();
     // test_create_creature_stack();
-    test_creature_stack_vs_creature_stack();
+    // test_creature_stack_vs_creature_stack();
+    // test_create_item();
     // test_create_hero();
-    // test_hero_army_bonuses();
-    test_hero_vs_creature_stack();
-    
+    test_hero_item_bonuses();
+    // test_army_hero_bonuses();
+    // test_hero_vs_creature_stack();
+
     system("pause");
     return 0;
 }

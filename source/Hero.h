@@ -11,9 +11,17 @@
 #include "Creature_stack.h"
 #include "Faction.h"
 #include "Position.h"
+#include "Level_Experience.h"
+#include "Skills_Probability.h"
 
-#define SECONDARY_SKILLS (8)
-#define ARMY_SLOTS (7)
+constexpr uint8_t SECONDARY_SKILL_SLOTS = 10;
+
+constexpr uint8_t ARMY_SLOTS = 7;
+
+constexpr uint8_t HAND_SLOTS = 2;    // one slot on each hand for rings and gloves
+constexpr uint8_t POCKET_SLOTS = 5;  // for orbs, tomes, figurines, badges and others 
+constexpr uint8_t CHEST_SLOTS = 100; // for storing unequipped items
+
 
 enum Gender
 {
@@ -21,10 +29,34 @@ enum Gender
       Female // 1
 };
 
-enum Class
+enum Role
 {
       Might, // 0
       Magic  // 1
+};
+
+enum Class
+{
+      Knight,       // Castle
+      Cleric,       // Castle
+      Ranger,       // Rampart
+      Druid,        // Rampart
+      Alchemist,    // Tower
+      Wizard,       // Tower      
+      Demoniac,     // Inferno
+      Heretic,      // Inferno
+      Death_Knight, // Necropolis
+      Necromancer,  // Necropolis
+      Overlord,     // Dungeon
+      Warlock,      // Dungeon
+      Barbarian,    // Stronghold
+      Battle_Mage,  // Stronghold     
+      Beastmaster,  // Fortress
+      Witch,        // Fortress
+      Planeswalker, // Conflux
+      Elementalist, // Conflux
+      Captain,      // Cove
+      Navigator     // Cove
 };
 
 class Hero
@@ -32,6 +64,7 @@ class Hero
       private:
             std::string _name;
             Gender _gender;
+            Role _role;
             Class _class;
             Faction _faction;
             Team _team;
@@ -52,7 +85,7 @@ class Hero
 
             Specialty _specialty;
 
-            Secondary_Skill* _secondary_skills[SECONDARY_SKILLS] = {nullptr};
+            Secondary_Skill* _secondary_skills[SECONDARY_SKILL_SLOTS] = {nullptr};
 
             Morale _morale;
             Luck _luck;
@@ -77,6 +110,21 @@ class Hero
 
             bool _has_spellbook;
 
+            struct items
+            {
+                  Item* helmet   = nullptr;
+                  Item* cape     = nullptr;
+                  Item* necklace = nullptr;
+                  Item* weapon   = nullptr;
+                  Item* shield   = nullptr;
+                  Item* armor    = nullptr;
+                  Item* hand[HAND_SLOTS] = {nullptr};
+                  Item* boots = nullptr;
+                  Item* pocket[POCKET_SLOTS] = {nullptr};
+            }items;
+
+            Item* chest[CHEST_SLOTS] = {nullptr};
+
             // items - implement a structure with flags for possible effects from items, analogical to special abilities
             bool _has_equipped_ring_of_life          = false;
             bool _has_equipped_ring_of_vitality      = false;
@@ -86,15 +134,13 @@ class Hero
             bool _has_equipped_necklace_of_swiftness = false;
             bool _has_equipped_cape_of_velocity      = false;
 
-            // treasure chest
-
             Stack* army[ARMY_SLOTS] = {nullptr}; // probably would be better with unique_ptr
             // std::array<std::unique_ptr, ARMY_SLOTS> army;
 
             Position _position = Position(0, 0);
 
       public:
-            Hero( const std::string name, const Gender gender, const Class hero_class, const Faction faction, const Team team, const uint8_t level, const uint32_t experience, 
+            Hero( const std::string name, const Gender gender, const Role hero_role, const Faction faction, const Team team, const uint8_t level, const uint32_t experience, 
                   const uint8_t attack, const uint8_t defense, const uint8_t power, const uint8_t knowledge,
                   const Specialty& specialty,
                   const Morale morale, const Luck luck,
@@ -109,6 +155,9 @@ class Hero
             Gender get_gender(){ return _gender; };
             std::string get_gender_as_string();
 
+            Role get_role(){ return _role; };
+            std::string get_role_as_string();
+
             Class get_class(){ return _class; };
             std::string get_class_as_string();
 
@@ -118,22 +167,30 @@ class Hero
             Team get_team(){ return _team; };
             std::string get_team_as_string();
 
+            void set_level(const uint8_t level) { _level = level; };
             void add_level(const uint8_t level);
             uint8_t get_level(){ return _level; };
 
+            void add_to_primary_on_level_up(uint8_t probability, const uint8_t* array);
+
+            void set_experience(const uint32_t experience) { _experience = experience; };
             void add_experience(const uint32_t experience);
             uint32_t get_experience(){ return _experience; };
 
             void set_attack(const uint8_t attack) { primary_skills._attack = attack; };
+            void add_attack(const  int8_t attack) { primary_skills._attack = std::max(0, primary_skills._attack + attack); }; // bug prone
             uint8_t get_attack() {return primary_skills._attack; };
 
             void set_defense(const uint8_t defense) { primary_skills._defense = defense; };
+            void add_defense(const  int8_t defense) { primary_skills._defense = std::max(0, primary_skills._defense + defense); }; // bug prone
             uint8_t get_defense() {return primary_skills._defense; };
 
             void set_power(const uint8_t power) { primary_skills._power = power; };
+            void add_power(const  int8_t power) { primary_skills._power = std::max(0, primary_skills._power + power); }; // bug prone
             uint8_t get_power() {return primary_skills._power; };
 
             void set_knowledge(const uint8_t knowledge) { primary_skills._knowledge = knowledge; };
+            void add_knowledge(const  int8_t knowledge) { primary_skills._knowledge = std::max(0, primary_skills._knowledge + knowledge); }; // bug prone
             uint8_t get_knowledge() {return primary_skills._knowledge; };
 
             Specialty get_specialty() { return _specialty; };
@@ -149,9 +206,12 @@ class Hero
             Luck get_luck() { return _luck; };
 
             void set_mana(const uint16_t mana) { _mana = mana; };
+            void update_mana() { _mana = 10*get_knowledge(); };
             uint16_t get_mana() { return _mana; };
 
             void set_mana_left(const uint16_t mana_left) { _mana_left = mana_left; };
+            void add_mana_left(const uint16_t mana) { _mana_left += mana; };
+            void reset_mana_left() { _mana_left = _mana; };
             uint16_t get_mana_left() { return _mana_left; };
 
             void set_movement_points(const uint16_t movement_points) { _movement_points = movement_points; };
@@ -166,11 +226,32 @@ class Hero
 
             bool get_has_spellbook() { return _has_spellbook; };
 
-            // Checks if item is in treasure chest and places it in the according slot. If another item is there the other item gets moved to the treasure chest.
-            void equip_item(Item& item);
+            // Checks if slot is taken - if yes - tries to send the item to chest. If not - places it in slot.
+            void pick_up_item(Item* item);
+
+            // Checks if item is in treasure chest and if yes, checks if the item slot is empty. If empty - calls equip_item(), if not empty - calls unequip_item() on the artifact in the slot and than calls equip_item() on the parsed one.
+            void equip_item_from_chest(Item* item);
+
+            // Assigns the item to the correct slot and allows hero to gain the item's bonuses.
+            void equip_item(Item* item);
+
+            // Checks if item is equiped, places it in the treasure chest and hero losses the item's bonuses.
+            void unequip_item(Item* item);
+
+            // Checks if chest has a free slot. If yes - places the item there. If not - prints a message.
+            bool add_item_to_chest(Item* item);
+
+            // Prints the names and effects of all equipped items.
+            void print_equipped_items();
             
-            // Checks if item is in slot and places it in the treasure chest.
-            void unequip_item(Item& item);
+            // Prints the names and effects of all equipped items.
+            void print_unequipped_items();
+
+            // Adds to max hp of each unit in a creature stack in hero's army.
+            void set_army_hp_bonus(const uint8_t hp);
+
+            // Adds to speed of each unit in a creature stack in hero's army.
+            void set_army_speed_bonus(const uint8_t hp);
 
             // Adds a stack to the first empty slot in army.
             void add_stack_to_army(Stack* stack);

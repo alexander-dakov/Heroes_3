@@ -55,79 +55,79 @@ void Creature::special_abilities::set_special_abilities()
 
 void Creature::logical_limitations()
 {
-      if(unit_info._level == 0 || unit_info._level > 7)
+      if( unit_info._level == 0 || unit_info._level > 7 )
       {
             std::cerr<< "Creature level must be in the interval [1;7]!" << std::endl;
             abort();
       }
 
-      if(unit_info._growth == 0)
+      if( unit_info._growth == 0 )
       {
             std::cerr<< "Creature must have positive growth per week!" << std::endl;
             abort();
       }
 
-      if(battle_stats._att == 0)
+      if( battle_stats._att == 0 )
       {
             std::cerr<< "Creature must have positive attack skill!" << std::endl;
             abort();
       }
 
-      if(battle_stats._def == 0)
+      if( battle_stats._def == 0 )
       {
             std::cerr<< "Creature must have positive defense skill!" << std::endl;
             abort();
       }
 
-      if(battle_stats._min_dmg > battle_stats._min_dmg)
+      if( battle_stats._min_dmg > battle_stats._min_dmg )
       {
             std::cerr<< "Creature min damage mustn't be higher than its max value!" << std::endl;
             abort();
       }
 
-      if(battle_stats._hp == 0)
+      if( battle_stats._hp == 0 )
       {
             std::cerr<< "Creature must have positive hp!" << std::endl;
             abort();
       }
 
-      if(battle_stats._speed == 0)
+      if( battle_stats._speed == 0 )
       {
             std::cerr<< "Creature must have positive speed!" << std::endl;
             abort();
       }
 
-      if(battle_stats._fight_value == 0)
+      if( battle_stats._fight_value == 0 )
       {
             std::cerr<< "Creature must have positive fight value!" << std::endl;
             abort();
       }
 
-      if(battle_stats._ai_value == 0)
+      if( battle_stats._ai_value == 0 )
       {
             std::cerr<< "Creature must have positive ai value!" << std::endl;
             abort();
       }
 
-      if(cost._gold == 0)
+      if( cost._gold == 0 )
       {
             std::cerr<< "Creature must have a price including gold!" << std::endl;
             abort();
       }
 
-      if(unit_info._faction == Faction::Necropolis)
+      if( unit_info._faction == Faction::Necropolis )
       {
             special_abilities._is_undead = true;
             special_abilities._is_bloodless = false;
       }
 
-      if(special_abilities._is_undead == true)
+      if( special_abilities._is_undead == true )
             special_abilities._is_bloodless = false;
 
-      if(special_abilities._is_bloodless == true)
+      if( special_abilities._is_bloodless == true )
             special_abilities._is_undead = false;
 
-      if(!special_abilities._is_ranged)
+      if( !special_abilities._is_ranged )
             battle_stats._shots = 0;
 
 }
@@ -164,14 +164,14 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
       all_abilities["Hates Efreeti and Efreet Sultans."]     = { &_hates_efreeti               };
       all_abilities["Hates Genies and Master Genies."]       = { &_hates_genies                };
       all_abilities["Hates Devils and Arch Devils."]         = { &_hates_devils                };
-      all_abilities["Hates Angels and Archangels."]         = { &_hates_angels                };
+      all_abilities["Hates Angels and Archangels."]          = { &_hates_angels                };
       all_abilities["Hates Black Dragons."]                  = { &_hates_black_dragons         };
       all_abilities["Hates Titans."]                         = { &_hates_titans                };
-      all_abilities["Ignores 40% of enemy's defense skill."] = { &_ignore_enemy_defense_40     };
-      all_abilities["Ignores 80% of enemy's defense skill."] = { &_ignore_enemy_defense_80     };
+      all_abilities["Ignores 40% of enemy's defense skill."] = { &_ignore_enemy_defense        };
+      all_abilities["Ignores 80% of enemy's defense skill."] = { &_ignore_enemy_defense        };
 
-      all_abilities["Ignores 30% of enemy's attack skill."] = { &_ignore_enemy_attack_30 };
-      all_abilities["Ignores 60% of enemy's attack skill."] = { &_ignore_enemy_attack_60 };
+      all_abilities["Ignores 30% of enemy's attack skill."] = { &_ignore_enemy_attack };
+      all_abilities["Ignores 60% of enemy's attack skill."] = { &_ignore_enemy_attack };
 
       all_abilities["Two retaliations."]       = { &_has_two_retaliations       };
       all_abilities["Unlimited retaliations."] = { &_has_unlimited_retaliations };
@@ -219,16 +219,16 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
       all_abilities["Spellcaster (Protection from Earth)."]          = { &_can_cast_protection_from_earth };
       all_abilities["Summon Demons."]                                = { &_can_cast_summon_demons         };
 
-      all_abilities["Magic resistance 20%."]         = { &_has_magic_resist_20   };
-      all_abilities["Magic resistance 40%."]         = { &_has_magic_resist_40   };
+      all_abilities["Magic resistance 20%."]         = { &_has_magic_resist      };
+      all_abilities["Magic resistance 40%."]         = { &_has_magic_resist      };
       all_abilities["Aura of magic resistance 20%."] = { &_has_magic_resist_aura };
       all_abilities["Naturally has Magic Mirror."]   = { &_has_magic_mirror      };
 
-      all_abilities["Spell damage reduction 50%."] = { &_reduce_magic_damage_50 };
-      all_abilities["Spell damage reduction 75%."] = { &_reduce_magic_damage_75 };
-      all_abilities["Spell damage reduction 80%."] = { &_reduce_magic_damage_80 };
-      all_abilities["Spell damage reduction 85%."] = { &_reduce_magic_damage_85 };
-      all_abilities["Spell damage reduction 95%."] = { &_reduce_magic_damage_95 };
+      all_abilities["Spell damage reduction 50%."] = { &_reduce_magic_damage };
+      all_abilities["Spell damage reduction 75%."] = { &_reduce_magic_damage };
+      all_abilities["Spell damage reduction 80%."] = { &_reduce_magic_damage };
+      all_abilities["Spell damage reduction 85%."] = { &_reduce_magic_damage };
+      all_abilities["Spell damage reduction 95%."] = { &_reduce_magic_damage };
 
       all_abilities["Immune to jousting."]                    = { &_is_immune_to_jousting };
       all_abilities["Immune to Fear."]                        = { &_is_immune_to_fear     };
@@ -237,7 +237,7 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
       all_abilities["Immune to Ice Bolt and Frost Ring."]     = { &_is_immune_to_ice_bolt, &_is_immune_to_frost_ring };
       all_abilities["Immune to Meteor Shower."]               = { &_is_immune_to_meteor_shower };
       all_abilities["Immune to Lightning Bolt, Chain Lightning and Armageddon."] = { &_is_immune_to_lightning_bolt, &_is_immune_to_chain_lightning, &_is_immune_to_armageddon };
-      all_abilities["Immune to fire (Magic Arrow included)."] = { &_is_immune_to_fire_spells, &_is_immune_to_magic_arrow };
+      all_abilities["Immune to fire spells (Magic Arrow included)."] = { &_is_immune_to_fire_spells, &_is_immune_to_magic_arrow };
       all_abilities["Immune to mind spells."]                 = { &_is_immune_to_mind_spells      };
       all_abilities["Immune to spells level 1-3."]            = { &_is_immune_to_spells_level_1_3 };
       all_abilities["Immune to spells level 1-4."]            = { &_is_immune_to_spells_level_1_4 };
@@ -279,7 +279,7 @@ void Creature::special_abilities::fill_special_abilities()
       while( helper.length() > 1) // no need to enter helper when an empty space remains
       {
             counter ++;
-            if( counter > max_num_of_special_abilities)
+            if( counter > MAX_NUM_OF_SPECIAL_ABILITIES )
             {
                   std::cerr << "A creature's special ability is not recognized by the algorithm. Make sure that the string in create_map_of_all_abilities() is the same as in Creature_List." << std::endl;
                   std::cerr << "Problematic string : " << helper << std::endl;
@@ -297,7 +297,7 @@ void Creature::special_abilities::fill_special_abilities()
                   for(auto abilities : all_abilities) // key-value pair
                   {
                         pos = helper.find(abilities.first);
-                        if(pos != std::string::npos)
+                        if( pos != std::string::npos )
                         {
                               for(auto ability : abilities.second)
                                     *ability = true;
@@ -309,6 +309,24 @@ void Creature::special_abilities::fill_special_abilities()
                   }
             }
       }
+      if( _ignore_enemy_defense )
+            _ignore_enemy_defense_by_percent = 40*(_abilities.find("Ignores 40% of enemy's defense skill.") != std::string::npos)
+                                             + 80*(_abilities.find("Ignores 80% of enemy's defense skill.") != std::string::npos);
+
+      if( _ignore_enemy_attack )
+            _ignore_enemy_attack_by_percent = 30*(_abilities.find("Ignores 30% of enemy's attack skill.") != std::string::npos)
+                                            + 60*(_abilities.find("Ignores 60% of enemy's attack skill.") != std::string::npos);
+
+      if( _reduce_magic_damage )
+            _reduce_magic_damage_by_percent = 50*(_abilities.find("Spell damage reduction 50%.") != std::string::npos)
+                                            + 75*(_abilities.find("Spell damage reduction 75%.") != std::string::npos)
+                                            + 80*(_abilities.find("Spell damage reduction 80%.") != std::string::npos)
+                                            + 85*(_abilities.find("Spell damage reduction 85%.") != std::string::npos)
+                                            + 95*(_abilities.find("Spell damage reduction 95%.") != std::string::npos);
+
+      if( _has_magic_resist )
+            _has_magic_resist_by_percent = 20*(_abilities.find("Magic resistance 20%.") != std::string::npos)
+                                         + 40*(_abilities.find("Magic resistance 40%.") != std::string::npos);
 }
 
 std::string Creature::get_faction_as_string()
@@ -337,41 +355,42 @@ std::string Creature::get_cost()
 {
       std::string str;
 
-      if(cost._gold)          str += "Gold : "     + std::to_string(cost._gold)     + '\n';
-      if(cost._mercury)       str += "Mercury : "  + std::to_string(cost._mercury)  + '\n';
-      if(cost._sulfur)        str += "Sulfur : "   + std::to_string(cost._sulfur)   + '\n';
-      if(cost._crystals)      str += "Crystals : " + std::to_string(cost._crystals) + '\n';
-      if(cost._gems)          str += "Gems : "     + std::to_string(cost._gems)     + '\n';
+      if( cost._gold     )    str += "Gold : "     + std::to_string(cost._gold)     + '\n';
+      if( cost._mercury  )    str += "Mercury : "  + std::to_string(cost._mercury)  + '\n';
+      if( cost._sulfur   )    str += "Sulfur : "   + std::to_string(cost._sulfur)   + '\n';
+      if( cost._crystals )    str += "Crystals : " + std::to_string(cost._crystals) + '\n';
+      if( cost._gems     )    str += "Gems : "     + std::to_string(cost._gems)     + '\n';
 
       return str;
 }
 
 void Creature::print_full_info()
 {
-      printf("Name : %s\n", get_name().c_str());
-      printf("Faction : %s\n", get_faction_as_string().c_str());
-      printf("Level : %d\n", get_level());
-      printf("Level of upgrade : %d\n", get_upgrade());
-      printf("Growth per week : %d\n", get_growth());
-      printf("Attack : %d\n", get_att());
-      printf("Defense : %d\n", get_def());
+      printf( "\n" );
+      printf( "Name : %s\n",    get_name().c_str() );
+      printf( "Faction : %s\n", get_faction_as_string().c_str() );
+      printf( "Level : %d\n",   get_level() );
+      printf( "Level of upgrade : %d\n", get_upgrade() );
+      printf( "Growth per week : %d\n",  get_growth()  );
+      printf( "Attack : %d\n",  get_att() );
+      printf( "Defense : %d\n", get_def() );
 
-      if(get_is_ranged())
-            printf("Shots : %d\n", get_shots());
+      if( get_is_ranged() )
+            printf( "Shots : %d\n", get_shots() );
       
-      if(get_min_dmg() != get_max_dmg())
-            printf("Damage : %d - %d\n", get_min_dmg(), get_max_dmg());
+      if( get_min_dmg() != get_max_dmg() )
+            printf( "Damage : %d - %d\n", get_min_dmg(), get_max_dmg() );
       else
-            printf("Damage : %d\n", get_min_dmg());
+            printf( "Damage : %d\n", get_min_dmg() );
 
-      printf("Health : %d\n", get_hp());
-      printf("Speed : %d\n", get_speed());
-      printf("Morale : %d\n", get_morale());
-      printf("Luck : %d\n", get_luck());
-      printf("Fight value : %d\n", get_fight_value());
-      printf("AI value : %d\n", get_ai_value());
-      printf("%s", get_cost().c_str());
+      printf( "Health : %d\n", get_hp()     );
+      printf( "Speed : %d\n",  get_speed()  );
+      printf( "Morale : %d\n", get_morale() );
+      printf( "Luck : %d\n",   get_luck()   );
+      printf( "Fight value : %d\n", get_fight_value() );
+      printf( "AI value : %d\n",    get_ai_value()    );
+      printf( "%s", get_cost().c_str() );
 
-      if(get_special_abilities().length() != 0)
-            printf("Special abilities : %s\n", get_special_abilities().c_str());
+      if( get_special_abilities().length() != 0 )
+            printf( "Special abilities : %s\n", get_special_abilities().c_str() );
 }
