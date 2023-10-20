@@ -103,63 +103,35 @@ void Stack::recieve_damage(uint32_t damage)
 {
     uint16_t hp = get_hp();           // hp per unit
     uint16_t hp_last = get_hp_left(); // hp of last unit
-    uint32_t num = get_number();     // amount of creatures in stack
+    uint32_t initial_num = get_number();      // amount of creatures in stack
 
-    if( damage < hp_last )
+    uint64_t capacity = hp*(initial_num - 1) + hp_last;
+
+    if( damage >= capacity )
     {
-        set_hp_left(static_cast<uint16_t>(hp_last - damage));
+        set_number(0);
+        set_has_perished(true);
+        printf( "The whole %s stack has perished!\n", get_creature()->get_name().c_str() );
 
-        #if SHOW_DEBUG_INFO == 1
-            printf( "Last %s has %d hp left.\n", get_creature()->get_name().c_str(), get_hp_left() );
-        #endif
-
-        return;
-    }
-    else if( damage == hp_last )
-    {
-        set_number(num - 1);
-        if( get_number() == 0 )
-        {
-            set_has_perished(true);
-            printf( "%s has perished!\n", get_creature()->get_name().c_str() );
-
-            set_action(Stack_Action::Skip);
-            return;
-        }
-        set_hp_left(hp);
-        printf( "One %s has perished!\n", get_creature()->get_name().c_str() );
+        set_action(Stack_Action::Skip);
         return;
     }
     else
     {
-        uint64_t capacity = hp*(num - 1) + hp_last;
+        set_hp_left( static_cast<uint16_t>( (capacity - damage) % hp ) );
+        uint32_t new_num = static_cast<uint32_t>( (capacity - damage) / hp ) + 1 * ( get_hp_left() != 0 );
 
-        if( damage >= capacity )
+        uint32_t delta_num = initial_num - new_num;
+
+        if(delta_num)
         {
-            set_number(0);
-            set_has_perished(true);
-            printf( "The whole %s stack has perished!\n", get_creature()->get_name().c_str() );
-
-            set_action(Stack_Action::Skip);
-            return;
-        }
-        else
-        {
-            uint32_t initial_num = get_number();
-            uint32_t new_num = static_cast<uint32_t>( (capacity - damage) / hp );
-
-            set_hp_left( static_cast<uint16_t>( (capacity - damage) % hp ) );
             set_number(new_num);
-
-            printf( "%d %s has perished!\n", initial_num - new_num, get_creature()->get_name().c_str() );
-
-            #if SHOW_DEBUG_INFO == 1
-                if( get_hp_left() )
-                    printf( "Last %s has %d hp left.\n", get_creature()->get_name().c_str(), get_hp_left() );
-            #endif
-
-            return;
+            printf( "%d %s perished!\n", delta_num, get_creature()->get_name().c_str() );
         }
+
+        #if SHOW_DEBUG_INFO == 1
+            printf( "Last %s in stack has %d hp left.\n", get_creature()->get_name().c_str(), get_hp_left() );
+        #endif
     }
 }
 
@@ -249,7 +221,7 @@ void Stack::move(uint8_t x, uint8_t y)
 
 }
 
-void Stack::attack(Stack& defender, bool attack_is_retaliation)
+void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_second_attack)
 {
     if( get_team() == defender.get_team() /* && TO DO : not berserk*/ )
         return;
@@ -399,14 +371,14 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation)
 
     final_damage = static_cast<int32_t>( base_damage * (1 + I1 + I2 + I3 + I4 + I5) * (1 - R1) * (1 - R2 - R3) * (1 - R4) * (1 - R5) * (1 - R6) * (1 - R7) * (1 - R8) );
     
-    if( !attack_is_retaliation )
-        printf( "Stack of %d %s attacks and does %d damage to %s.\n", get_number(), get_creature()->get_name().c_str(), final_damage, defender.get_creature()->get_name().c_str() );
-    else
-        printf( "Stack of %d %s retaliates and does %d damage to %s.\n", get_number(), get_creature()->get_name().c_str(), final_damage, defender.get_creature()->get_name().c_str() );
+    if     ( !attack_is_retaliation && !attack_is_second_attack ) printf( "Stack of %d %s attacks and does %d damage to %s.\n", get_number(), get_creature()->get_name().c_str(), final_damage, defender.get_creature()->get_name().c_str() );
+    else if(  attack_is_retaliation && !attack_is_second_attack ) printf( "Stack of %d %s retaliates and does %d damage to %s.\n", get_number(), get_creature()->get_name().c_str(), final_damage, defender.get_creature()->get_name().c_str() );
+    else if( !attack_is_retaliation &&  attack_is_second_attack ) printf( "Stack of %d %s attacks for a second time and does %d damage to %s.\n", get_number(), get_creature()->get_name().c_str(), final_damage, defender.get_creature()->get_name().c_str() );
+    else if(  attack_is_retaliation &&  attack_is_second_attack ) { std::cerr << "\nRetaliation cannot be a double attack!\n"; abort(); }
     
     // TO DO : apply special abilities with pre-hit effects
 
-    // TO DO : if attack can attack surrounding enemies - they should recieve dmg
+    // TO DO : if creature can attack surrounding enemies - they should recieve dmg
     defender.recieve_damage(final_damage);
 
     // TO DO : apply special abilities with hit-on effects
@@ -416,6 +388,9 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation)
     if( !attack_is_retaliation && get_distance_to_target(defender) == 1  )
         if( !get_creature()->get_no_enemy_retaliation() )
             defender.retaliate(*this);
+
+    if( !attack_is_retaliation && ( get_creature()->get_has_double_attack() || get_creature()->get_has_ferocity() ) && !attack_is_second_attack )
+        attack(defender, false, true);
 }
 
 bool Stack::can_shoot()
@@ -436,7 +411,7 @@ void Stack::retaliate(Stack& attacker)
         {
             if( !get_creature()->get_has_unlimited_retaliations() )
                 set_retaliations_left( get_retaliations_left() - 1 );
-            attack(attacker, true);
+            attack(attacker, true, false);
         }
 }
 

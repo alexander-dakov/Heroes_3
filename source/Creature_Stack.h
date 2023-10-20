@@ -214,7 +214,7 @@ class Stack
         void move(uint8_t x, uint8_t y);
 
         // Stack attacks another stack (defender), causing the defender to take damage and occasionaly retaliate.
-        void attack(Stack& defender, bool attack_is_retaliation = false);
+        void attack(Stack& defender, bool attack_is_retaliation = false, bool attack_is_second_attack = false);
 
         // Checks if a ranged stack can shoot = has ammo and is not obstructed by an active enemy.
         bool can_shoot();

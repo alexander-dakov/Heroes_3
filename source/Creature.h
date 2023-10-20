@@ -340,6 +340,7 @@ struct Creature
             bool get_strike_and_return()      { return special_abilities._strike_and_return;      };
             bool get_can_attack_siege_walls() { return special_abilities._can_attack_siege_walls; };
 
+            bool get_has_ferocity()                { return special_abilities._has_ferocity;                };
             bool get_has_double_attack()           { return special_abilities._has_double_attack;           };
             bool get_has_jousting()                { return special_abilities._has_jousting;                };
             bool get_has_revenge()                 { return special_abilities._has_revenge;                 };
