@@ -130,6 +130,8 @@ void Creature::logical_limitations()
       if( !special_abilities._is_ranged )
             battle_stats._shots = 0;
 
+      if( special_abilities._is_undead == true || special_abilities._is_bloodless == true ) // all undead, golems and elementals
+            special_abilities._is_immune_to_mind_spells = true;            
 }
 
 std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_map_of_all_abilities()

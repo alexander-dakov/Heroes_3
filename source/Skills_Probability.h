@@ -4,8 +4,9 @@
 #include <iostream>
 #include "../utilities/types.h"
 
-// primary skills for each class ordered in 2 groups - before and after 10 level
-// primary skills ordered         = {  a,  d,  p,  k,a10,d10,p10,k10 }
+// whenever hero levels up he/she gains a primary skill bonus depending on the class
+// primary skills for each class ordered in 2 groups - before and after hero reaches level 10
+// primary skills ordered            = { {  a,  d,  p,  k,}, {a10,d10,p10,k10 } }
 const uint8_t p_s_knight[2][4]       = { { 35, 45, 10, 10 }, { 30, 30, 20, 20 } };
 const uint8_t p_s_cleric[2][4]       = { { 20, 15, 30, 35 }, { 20, 20, 30, 30 } };
 const uint8_t p_s_ranger[2][4]       = { { 35, 45, 10, 10 }, { 30, 30, 20, 20 } };

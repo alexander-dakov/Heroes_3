@@ -3,8 +3,8 @@
 
 #include <iostream>
 #include "../utilities/types.h"
-#include "Adventure_Map/Terrains.h" 
-#include "Heroes/Hero.h"
+#include "Terrains.h" 
+#include "Hero.h"
 
 
 class Battle

@@ -56,25 +56,28 @@ class Stack
 
         struct hero_secondary_skills
         {
+            uint8_t _hero_level = 0;
             std::string _hero_specialty_name = "";
             Skill_level _hero_level_of_archery    = Skill_level::None;
-            Skill_level _hero_level_of_offence    = Skill_level::None;
+            Skill_level _hero_level_of_offense    = Skill_level::None;
             Skill_level _hero_level_of_armorer    = Skill_level::None;
             Skill_level _hero_level_of_resistance = Skill_level::None;
             Skill_level _hero_level_of_leadership = Skill_level::None;
             Skill_level _hero_level_of_luck       = Skill_level::None;
 
             // Constructs a private structure containing data affecting battles.
-            hero_secondary_skills( const std::string specialty_name = "",
+            hero_secondary_skills( const uint8_t hero_level = 0,
+                                   const std::string specialty_name = "",
                                    const Skill_level level_of_archery = Skill_level::None,
-                                   const Skill_level level_of_offence = Skill_level::None,
+                                   const Skill_level level_of_offense = Skill_level::None,
                                    const Skill_level level_of_armorer = Skill_level::None,
                                    const Skill_level level_of_resistance = Skill_level::None,
                                    const Skill_level level_of_leadership = Skill_level::None,
                                    const Skill_level level_of_luck = Skill_level::None ) :
+                                   _hero_level(hero_level),
                                    _hero_specialty_name(specialty_name),
                                    _hero_level_of_archery(level_of_archery),
-                                   _hero_level_of_offence(level_of_offence),
+                                   _hero_level_of_offense(level_of_offense),
                                    _hero_level_of_armorer(level_of_armorer),
                                    _hero_level_of_resistance(level_of_resistance),
                                    _hero_level_of_leadership(level_of_leadership),
@@ -84,7 +87,9 @@ class Stack
 
         uint32_t _number;
         Position _pos = Position(0, 0);
+        uint8_t _distance_traveled = 0;
         bool _has_perished = false;
+        uint8_t _retaliations_left = 1; // not applicable for special ability 'unlimited retaliations'
         Stack_Action _action = Stack_Action::Attack;
 
         // Each creature can hold up to 3 spell effects at the same time.
@@ -132,8 +137,8 @@ class Stack
         void set_speed(const uint8_t speed) { battle_stats._speed = speed; };
         uint8_t get_speed() { return battle_stats._speed; };
 
-        void set_morale(const Morale morale) { battle_stats._morale = morale; };
-        void add_morale(const Morale morale) { battle_stats._morale = static_cast<Morale>( std::min( std::max( static_cast<int8_t>(battle_stats._morale) + static_cast<int8_t>(morale), -3), 3) ); };
+        void set_morale(const Morale morale);
+        void add_morale(const Morale morale);
         Morale get_morale() { return battle_stats._morale; };
 
         void set_luck(const Luck luck) { battle_stats._luck = luck; };
@@ -145,14 +150,23 @@ class Stack
         void set_number(uint32_t number) { _number = number; _has_perished = !number; set_action(Stack_Action::Skip); }; // when receiving damage
         uint32_t get_number() {return _number; };
 
-        void set_initial_position(Position initial_position) { _pos = initial_position; };
-        Position get_initial_position() { return _pos; };
+        void set_position(Position position) { _pos = position; };
+        void set_position(uint8_t x, uint8_t y) { _pos = {x, y}; };
+        Position get_position() { return _pos; };
 
-        void set_has_perished(bool has_perished) { _has_perished = has_perished; } // when a stack dies
-        bool get_has_perished() { return _has_perished; } // to skip turns during battle, forbid attacks and reduce retaliation
+        uint8_t get_distance_traveled() { return _distance_traveled; };
+
+        void set_has_perished(bool has_perished) { _has_perished = has_perished; }; // when a stack dies
+        bool get_has_perished() { return _has_perished; }; // to skip turns during battle, forbid attacks and reduce retaliation
+
+        void set_retaliations_left(uint8_t retaliations) { _retaliations_left = retaliations; };
+        uint8_t get_retaliations_left() { return _retaliations_left; };
 
         void set_action(Stack_Action action) { _action = action; };
         Stack_Action get_action() { return _action; };
+
+        void set_hero_level(const uint8_t level) { hero_secondary_skills._hero_level = level; };
+        uint8_t get_hero_level()                 { return hero_secondary_skills._hero_level; };
 
         void set_hero_specialty_name(const std::string name) { hero_secondary_skills._hero_specialty_name = name; };
         std::string get_hero_specialty_name()                { return hero_secondary_skills._hero_specialty_name; };
@@ -160,8 +174,8 @@ class Stack
         void set_hero_level_of_archery(const Skill_level level)    { hero_secondary_skills._hero_level_of_archery = level; };
         Skill_level get_hero_level_of_archery()                    { return hero_secondary_skills._hero_level_of_archery;  };
 
-        void set_hero_level_of_offence(const Skill_level level)    { hero_secondary_skills._hero_level_of_offence = level; };
-        Skill_level get_hero_level_of_offence()                    { return hero_secondary_skills._hero_level_of_offence;  };
+        void set_hero_level_of_offense(const Skill_level level)    { hero_secondary_skills._hero_level_of_offense = level; };
+        Skill_level get_hero_level_of_offense()                    { return hero_secondary_skills._hero_level_of_offense;  };
 
         void set_hero_level_of_armorer(const Skill_level level)    { hero_secondary_skills._hero_level_of_armorer = level; };
         Skill_level get_hero_level_of_armorer()                    { return hero_secondary_skills._hero_level_of_armorer;  };
@@ -200,7 +214,7 @@ class Stack
         void move(uint8_t x, uint8_t y);
 
         // Stack attacks another stack (defender), causing the defender to take damage and occasionaly retaliate.
-        void attack(Stack& defender);
+        void attack(Stack& defender, bool attack_is_retaliation = false);
 
         // Checks if a ranged stack can shoot = has ammo and is not obstructed by an active enemy.
         bool can_shoot();
@@ -208,6 +222,8 @@ class Stack
         // Checks if target is reachable for melee attack.
         bool target(Stack& stack);
 
+        uint8_t get_distance_to_target(Stack& stack) { return std::abs(stack.get_position().x - get_position().x) + std::abs(stack.get_position().y - get_position().y); };
+        
         // Returns a unlucky/non-lucky/lucky strike to the initial attacker.
         void retaliate(Stack& attacker);
 

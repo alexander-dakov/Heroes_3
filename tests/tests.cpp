@@ -106,12 +106,14 @@ void test_creature_stack_vs_creature_stack()
     Stack attacker(Creature_List::Angel, 1, Team::Red);
     printf( "%s stack is comprised of : %d %s\n", attacker.get_team_as_string().c_str(), attacker.get_number(), attacker.get_creature()->get_name().c_str() );
 
-    // Stack defender(Creature_List::Skeleton, 20, Team::Blue);
-    Stack defender(Creature_List::Ghost_Dragon, 1, Team::Blue);
+    Stack defender(Creature_List::Skeleton, 50, Team::Blue);
+    // Stack defender(Creature_List::Ghost_Dragon, 1, Team::Blue);
     printf( "%s stack is comprised of : %d %s\n", defender.get_team_as_string().c_str(), defender.get_number(), defender.get_creature()->get_name().c_str() );
 
-    // all special abilities have to be added in : attack(), defend(), recieve_damage()
+    // TO DO : all special abilities have to be added in : attack(), defend(), recieve_damage()
     attacker.attack(defender);
+
+    defender.attack(attacker);
 }
 
 void test_create_item()
@@ -171,96 +173,96 @@ void test_create_hero()
 
 void test_hero_item_bonuses()
 {
-    Hero& Orrin = Hero_List::Orrin; // second hero should modify army
+    Hero& hero = Hero_List::Orrin; // second hero should modify army
 
     // Helmet
-    Orrin.pick_up_item(&Item_List::Helm_of_Heavenly_Enlightenment);    // primary +6
+    hero.pick_up_item(&Item_List::Helm_of_Heavenly_Enlightenment);    // primary +6
 
     // Cape
-    // Orrin.pick_up_item(&Item_List::Dragon_Wing_Tabard);                // power +2, knowledge +2
+    // hero.pick_up_item(&Item_List::Dragon_Wing_Tabard);                // power +2, knowledge +2
 
     // Necklace
-    // Orrin.pick_up_item(&Item_List::Necklace_of_Dragonteeth);           // power +3, knowledge +3
+    // hero.pick_up_item(&Item_List::Necklace_of_Dragonteeth);           // power +3, knowledge +3
 
     // Weapon
-    Orrin.pick_up_item(&Item_List::Sword_of_Judgement);                // primary +5
+    hero.pick_up_item(&Item_List::Sword_of_Judgement);                // primary +5
 
     // Shield
-    Orrin.pick_up_item(&Item_List::Sentinels_Shield);                  // defense +12, attack -3
+    hero.pick_up_item(&Item_List::Sentinels_Shield);                  // defense +12, attack -3
 
     // Armor
-    Orrin.pick_up_item(&Item_List::Titans_Cuirass);                    // power +10, knowledge -2
+    hero.pick_up_item(&Item_List::Titans_Cuirass);                    // power +10, knowledge -2
 
     // Hand
-    // Orrin.pick_up_item(&Item_List::Quiet_Eye_of_the_Dragon);           // attack +1, defense +1
-    // Orrin.pick_up_item(&Item_List::Equestrians_Gloves);                // movement points +200
+    // hero.pick_up_item(&Item_List::Quiet_Eye_of_the_Dragon);           // attack +1, defense +1
+    // hero.pick_up_item(&Item_List::Equestrians_Gloves);                // movement points +200
 
     // Boots
-    Orrin.pick_up_item(&Item_List::Sandals_of_the_Saint);              // primary +2
+    hero.pick_up_item(&Item_List::Sandals_of_the_Saint);              // primary +2
 
     // Pocket
-    // Orrin.pick_up_item(&Item_List::Crest_of_Valor);                    // morale +1
-    // Orrin.pick_up_item(&Item_List::Cards_of_Prophecy);                 // luck +1
+    // hero.pick_up_item(&Item_List::Crest_of_Valor);                    // morale +1
+    // hero.pick_up_item(&Item_List::Cards_of_Prophecy);                 // luck +1
     
-    Orrin.print_full_info();
+    hero.print_full_info();
 
-    Orrin.unequip_item(&Item_List::Helm_of_Heavenly_Enlightenment);    // primary +6
+    hero.unequip_item(&Item_List::Helm_of_Heavenly_Enlightenment);    // primary +6
 
-    Orrin.print_full_info();
+    hero.print_full_info();
 
-    Orrin.print_equipped_items();
-    Orrin.print_unequipped_items();
+    hero.print_equipped_items();
+    hero.print_unequipped_items();
 
-    Orrin.print_full_info();
+    hero.print_full_info();
 
-    Orrin.add_experience(5000);
+    hero.add_experience(5000);
     
-    Orrin.print_full_info();
+    hero.print_full_info();
 }
 
 void test_army_hero_bonuses()
 {
     print_before_testing_output();
 
-    Hero& None = Hero_List::None;   // first hero should not modify army
-    Hero& Orrin = Hero_List::Orrin; // second hero should modify army
+    Hero& first_hero  = Hero_List::None;  // should not modify army
+    Hero& second_hero = Hero_List::Orrin; // should modify army
 
-    None.print_full_info();
-    Orrin.print_full_info();
+    first_hero.print_full_info();
+    second_hero.print_full_info();
 
     // Helmet
-    Orrin.pick_up_item(&Item_List::Helm_of_Heavenly_Enlightenment);    // primary +6
+    second_hero.pick_up_item(&Item_List::Helm_of_Heavenly_Enlightenment);    // primary +6
 
     // Cape
-    Orrin.pick_up_item(&Item_List::Cape_of_Velocity);                  // unit speed +2
+    second_hero.pick_up_item(&Item_List::Cape_of_Velocity);                  // unit speed +2
 
     // Necklace
-    Orrin.pick_up_item(&Item_List::Necklace_of_Swiftness);             // unit speed +3
+    second_hero.pick_up_item(&Item_List::Necklace_of_Swiftness);             // unit speed +3
 
     // Weapon
-    Orrin.pick_up_item(&Item_List::Sword_of_Judgement);                // primary +5
+    second_hero.pick_up_item(&Item_List::Sword_of_Judgement);                // primary +5
 
     // Shield
-    Orrin.pick_up_item(&Item_List::Sentinels_Shield);                  // defense +12, attack -3
+    second_hero.pick_up_item(&Item_List::Sentinels_Shield);                  // defense +12, attack -3
 
     // Armor
-    Orrin.pick_up_item(&Item_List::Titans_Cuirass);                    // power +10, knowledge -2
+    second_hero.pick_up_item(&Item_List::Titans_Cuirass);                    // power +10, knowledge -2
 
     // Hand
-    Orrin.pick_up_item(&Item_List::Ring_of_Wayfarer);                  // unit speed +1
-    // Orrin.pick_up_item(&Item_List::Ring_of_Vitality);               // unit hp +1
-    Orrin.pick_up_item(&Item_List::Ring_of_Life);                      // unit hp +1
+    second_hero.pick_up_item(&Item_List::Ring_of_Wayfarer);                  // unit speed +1
+    // second_hero.pick_up_item(&Item_List::Ring_of_Vitality);               // unit hp +1
+    second_hero.pick_up_item(&Item_List::Ring_of_Life);                      // unit hp +1
 
     // Boots
-    Orrin.pick_up_item(&Item_List::Sandals_of_the_Saint);              // primary +2
+    second_hero.pick_up_item(&Item_List::Sandals_of_the_Saint);              // primary +2
 
     // Pocket
-    Orrin.pick_up_item(&Item_List::Vial_of_Lifeblood);                 // unit hp +2
-    // Orrin.pick_up_item(&Item_List::Elixir_of_Life); // unit hp + 4 + 25% of base hp + regeneration per round
+    second_hero.pick_up_item(&Item_List::Vial_of_Lifeblood);                 // unit hp +2
+    // second_hero.pick_up_item(&Item_List::Elixir_of_Life); // unit hp + 4 + 25% of base hp + regeneration per round
 
-    Orrin.unequip_item(&Item_List::Helm_of_Heavenly_Enlightenment);    // primary +6
+    second_hero.unequip_item(&Item_List::Helm_of_Heavenly_Enlightenment);    // primary +6
     
-    Orrin.print_full_info();
+    second_hero.print_full_info();
 
     // fill an army with the same units
     Stack* army[ARMY_SLOTS] = {nullptr};
@@ -278,24 +280,24 @@ void test_army_hero_bonuses()
    
     // Assign the army to second hero
     for(int i = 0; i < ARMY_SLOTS; i++)
-        Orrin.add_stack_to_slot(army[i], i);
+        second_hero.add_stack_to_slot(army[i], i);
     // Print stats of part of the army
-    printf( "\nFirst and last stacks of army lead by hero %s :\n", Orrin.get_name().c_str() );
+    printf( "\nFirst and last stacks of army lead by hero %s :\n", second_hero.get_name().c_str() );
     army[0]->print_full_info();
     printf("\n");
     army[ARMY_SLOTS - 1]->print_full_info();
 
     // Hero equips an item to boost army
-    Orrin.equip_item_from_chest(&Item_List::Helm_of_Heavenly_Enlightenment);    // primary +6
+    second_hero.equip_item_from_chest(&Item_List::Helm_of_Heavenly_Enlightenment);    // primary +6
     // Print stats of part of the army
-    printf( "\nFirst and last stacks of army lead by hero %s :\n", Orrin.get_name().c_str() );
+    printf( "\nFirst and last stacks of army lead by hero %s :\n", second_hero.get_name().c_str() );
     army[0]->print_full_info();
     printf("\n");
     army[ARMY_SLOTS - 1]->print_full_info();
 
     // Remove army from hero
     for(int i = 0; i < ARMY_SLOTS; i++)
-        Orrin.remove_stack_from_position(i);
+        second_hero.remove_stack_from_position(i);
     // Print stats of part of the army
     printf( "\nFirst and last stacks of army without hero :\n" );
     army[0]->print_full_info();
@@ -304,9 +306,9 @@ void test_army_hero_bonuses()
 
     // Assign army to first hero
     for(int i = 0; i < ARMY_SLOTS; i++)
-        None.add_stack_to_slot(army[i], i);
+        first_hero.add_stack_to_slot(army[i], i);
     // Print stats of part of the army
-    printf( "\nFirst and last stacks of army lead by hero %s :\n", None.get_name().c_str() );
+    printf( "\nFirst and last stacks of army lead by hero %s :\n", first_hero.get_name().c_str() );
     army[0]->print_full_info();
     printf("\n");
     army[ARMY_SLOTS - 1]->print_full_info();
@@ -316,21 +318,23 @@ void test_hero_vs_creature_stack()
 {
     print_before_testing_output();
 
-    Hero& Orrin = Hero_List::Orrin; // should modify army
+    Hero& hero = Hero_List::Crag_Hack; // should modify army
     
-    Orrin.set_attack(5);
-    Orrin.set_defense(5);
+    hero.set_attack(5);
+    hero.set_defense(5);
 
-    // Orrin.equip_item(&Item_List::Ring_of_Vitality);  // unit hp +1
-    // Orrin.equip_item(&Item_List::Ring_of_Life);      // unit hp +1
-    // Orrin.equip_item(&Item_List::Vial_of_Lifeblood); // unit hp +2
+    // hero.equip_item(&Item_List::Ring_of_Vitality);  // unit hp +1
+    // hero.equip_item(&Item_List::Ring_of_Life);      // unit hp +1
+    // hero.equip_item(&Item_List::Vial_of_Lifeblood); // unit hp +2
 
-    // Orrin.equip_item(&Item_List::Elixir_of_Life); // unit hp + 4 + 25% of base hp + regeneration per round
+    // hero.equip_item(&Item_List::Elixir_of_Life); // unit hp + 4 + 25% of base hp + regeneration per round
+
+    hero.print_full_info();
 
     // Stack attacker(Creature_List::Lich, 10, Team::Red);
     Stack attacker(Creature_List::Angel, 1, Team::Red);
-    Orrin.add_stack_to_army(&attacker);
-    printf( "Hero %s is leading the %s stack, comprised of : %d %s\n", Orrin.get_name().c_str(), attacker.get_team_as_string().c_str(), attacker.get_number(), attacker.get_creature()->get_name().c_str() );
+    hero.add_stack_to_army(&attacker);
+    printf( "Hero %s is leading the %s stack, comprised of : %d %s\n", hero.get_name().c_str(), attacker.get_team_as_string().c_str(), attacker.get_number(), attacker.get_creature()->get_name().c_str() );
     attacker.print_full_info();
 
     printf("\n");
@@ -340,6 +344,13 @@ void test_hero_vs_creature_stack()
     printf( "%s stack is comprised of : %d %s\n", defender.get_team_as_string().c_str(), defender.get_number(), defender.get_creature()->get_name().c_str() );
     defender.print_full_info();
 
-    // all special abilities have to be added in : attack(), defend(), recieve_damage()
+    // TO DO : all special abilities have to be added in : attack(), defend(), recieve_damage()
+
+    // to imitate a battle field, the troops must have positions
+    attacker.set_position(0, 0);
+    defender.set_position(1, 0);
+
     attacker.attack(defender);
+
+    defender.attack(attacker);
 }

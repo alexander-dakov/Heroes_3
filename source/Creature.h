@@ -13,6 +13,21 @@
 
 constexpr uint8_t MAX_NUM_OF_SPECIAL_ABILITIES = 6; // used to catch inaccuracies when constructing objects in Creature_List.cpp
 
+// Special abilities that might cast a spell per attack have a fixed chance.
+constexpr uint8_t CHANCE_TO_CAST_DISEASE          = 20;
+constexpr uint8_t CHANCE_TO_CAST_CURSE            = 25;
+constexpr uint8_t CHANCE_TO_CAST_AGING            = 20;
+constexpr uint8_t CHANCE_TO_CAST_POISON           = 30;
+constexpr uint8_t CHANCE_TO_CAST_PARALYZING_VENOM = 20;
+constexpr uint8_t CHANCE_TO_CAST_FEAR             = 20;
+constexpr uint8_t CHANCE_TO_CAST_PETRIFY          = 20;
+constexpr uint8_t CHANCE_TO_CAST_BLIND            = 20;
+constexpr uint8_t CHANCE_TO_CAST_LIGHTNING_STRIKE = 20;
+constexpr uint8_t CHANCE_TO_CAST_DEATH_BLOW       = 20;
+constexpr uint8_t CHANCE_TO_CAST_DEATH_STARE      = 10;
+constexpr uint8_t CHANCE_TO_CAST_ACCURATE_SHOT    = 10;
+constexpr uint8_t CHANCE_TO_CAST_ACID_BREATH      = 20;
+
 enum class Upgrade_level
 {
       None = 0,

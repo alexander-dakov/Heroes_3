@@ -85,7 +85,7 @@ class Hero
 
             Specialty _specialty;
 
-            Secondary_Skill* _secondary_skills[SECONDARY_SKILL_SLOTS] = {nullptr};
+            Secondary_Skill* _secondary_skills[SECONDARY_SKILL_SLOTS] = {nullptr}; // TO DO : add to constructors
 
             Morale _morale;
             Luck _luck;

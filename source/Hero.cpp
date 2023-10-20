@@ -30,7 +30,7 @@ Hero::Hero( const std::string name, const Gender gender, const Role hero_role, c
       }
       _mana = knowledge*10;
       _mana_left = _mana;
-      _movement_points = 1560;
+      _movement_points = 1560; // TO DO : implement movement points according to army
 }
 
 Hero::~Hero()
@@ -492,10 +492,11 @@ void Hero::update_army_stats()
       bool has_equipped_necklace_of_swiftness = _has_equipped_necklace_of_swiftness;
       bool has_equipped_cape_of_velocity      = _has_equipped_cape_of_velocity;
 
-      std::string specialty_name = get_specialty().get_name();
+      const uint8_t hero_level = get_level();
+      const std::string specialty_name = get_specialty().get_name();
 
       Skill_level level_of_archery    = Skill_level::None;
-      Skill_level level_of_offence    = Skill_level::None;
+      Skill_level level_of_offense    = Skill_level::None;
       Skill_level level_of_armorer    = Skill_level::None;
       Skill_level level_of_resistance = Skill_level::None;
 
@@ -504,13 +505,60 @@ void Hero::update_army_stats()
             if( get_secondary_skill(i) != nullptr )
             {
                   if     ( get_secondary_skill(i)->get_name() == "Archery")    { level_of_archery    = get_secondary_skill(i)->get_level(); }
-                  else if( get_secondary_skill(i)->get_name() == "Offence")    { level_of_offence    = get_secondary_skill(i)->get_level(); }
+                  else if( get_secondary_skill(i)->get_name() == "Offense")    { level_of_offense    = get_secondary_skill(i)->get_level(); }
                   else if( get_secondary_skill(i)->get_name() == "Armorer")    { level_of_armorer    = get_secondary_skill(i)->get_level(); }
                   else if( get_secondary_skill(i)->get_name() == "Resistance") { level_of_resistance = get_secondary_skill(i)->get_level(); }
             }
       }
       
-      for(int i = 0; i < ARMY_SLOTS; i++)
+      // count the number of different factions for morale and luck bonus/penalty
+      bool has_Neutral    = false;
+      bool has_Castle     = false;
+      bool has_Rampart    = false;
+      bool has_Tower      = false;
+      bool has_Inferno    = false;
+      bool has_Necropolis = false;
+      bool has_Dungeon    = false;
+      bool has_Stronghold = false;
+      bool has_Fortress   = false;
+      bool has_Conflux    = false;
+      bool has_Cove       = false;
+
+      for(uint8_t i = 0; i < ARMY_SLOTS; i++)
+      {
+            if( army[i] != nullptr)
+            {
+                  auto c = army[i]->get_creature();
+                  switch( c->get_faction() )
+                  {
+                        case Faction::Neutral    : has_Neutral    = true; break;
+                        case Faction::Castle     : has_Castle     = true; break;
+                        case Faction::Rampart    : has_Rampart    = true; break;
+                        case Faction::Tower      : has_Tower      = true; break;
+                        case Faction::Inferno    : has_Inferno    = true; break;
+                        case Faction::Necropolis : has_Necropolis = true; break;
+                        case Faction::Dungeon    : has_Dungeon    = true; break;
+                        case Faction::Stronghold : has_Stronghold = true; break;
+                        case Faction::Fortress   : has_Fortress   = true; break;
+                        case Faction::Conflux    : has_Conflux    = true; break;
+                        case Faction::Cove       : has_Cove       = true; break;
+                  }
+            }
+      }
+      uint8_t total = has_Neutral + has_Castle + has_Rampart + has_Tower + has_Inferno + has_Necropolis + has_Dungeon + has_Stronghold + has_Fortress + has_Conflux + has_Cove;
+      
+      Morale morale_penalty = Morale::Neutral; // diversity is penalized
+
+      switch( total )
+      {
+            case 1  : morale_penalty = Morale::Good;     break;
+            case 2  : morale_penalty = Morale::Neutral;  break;
+            case 3  : morale_penalty = Morale::Bad;      break;
+            case 4  : morale_penalty = Morale::Awful;    break;
+            default : morale_penalty = Morale::Terrible; break; // TO DO : test this
+      }
+
+      for(uint8_t i = 0; i < ARMY_SLOTS; i++)
       {
             if( army[i] != nullptr)
             {
@@ -525,12 +573,13 @@ void Hero::update_army_stats()
                   army[i]->set_speed(c->get_speed() + 1*has_equipped_ring_of_wayfarer + 1*has_equipped_necklace_of_swiftness + 2*has_equipped_cape_of_velocity);
 
                   // TO DO : morale/luck penalties for different factions in same army should be implemented + no morale/luck update for some creatures (undead, bloodless, satyr, leprechaun, etc.)
-                  army[i]->set_morale( static_cast<Morale>( std::min( std::max( static_cast<int8_t>(c->get_morale()) + static_cast<int8_t>(get_morale()), -3), 3) ) );
+                  army[i]->set_morale( static_cast<Morale>( std::min( std::max( static_cast<int8_t>(c->get_morale()) + static_cast<int8_t>(get_morale()) + static_cast<int8_t>(morale_penalty), -3), 3) ) );
                   army[i]->set_luck(   static_cast<Luck>(   std::min( std::max( static_cast<int8_t>(c->get_luck())   + static_cast<int8_t>(get_luck()),   -3), 3) ) );
 
+                  army[i]->set_hero_level(hero_level);
                   army[i]->set_hero_specialty_name(specialty_name);
                   army[i]->set_hero_level_of_archery(level_of_archery);
-                  army[i]->set_hero_level_of_offence(level_of_offence);
+                  army[i]->set_hero_level_of_offense(level_of_offense);
                   army[i]->set_hero_level_of_armorer(level_of_armorer);
                   army[i]->set_hero_level_of_resistance(level_of_resistance);
             }

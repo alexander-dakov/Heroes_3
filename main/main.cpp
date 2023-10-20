@@ -96,9 +96,9 @@ int main()
     // test_creature_stack_vs_creature_stack();
     // test_create_item();
     // test_create_hero();
-    test_hero_item_bonuses();
+    // test_hero_item_bonuses();
     // test_army_hero_bonuses();
-    // test_hero_vs_creature_stack();
+    test_hero_vs_creature_stack();
 
     system("pause");
     return 0;

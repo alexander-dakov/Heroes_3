@@ -64,6 +64,19 @@ void Stack::reset_stats()
     battle_stats._number_of_casts_left = get_creature()->get_number_of_casts();
 }
 
+void Stack::set_morale(const Morale morale) 
+{ 
+    if( ( !get_creature()->get_is_undead() && !get_creature()->get_is_bloodless() ) || (  get_creature()->get_name() == "Stone Gargoyle" || get_creature()->get_name() == "Obsidian Gargoyle" ) ) 
+        battle_stats._morale = morale; 
+}
+
+void Stack::add_morale(const Morale morale) 
+{ 
+    if( ( !get_creature()->get_is_undead() && !get_creature()->get_is_bloodless() ) || ( get_creature()->get_name() == "Stone Gargoyle" || get_creature()->get_name() == "Obsidian Gargoyle" ) ) 
+        battle_stats._morale = static_cast<Morale>( std::min( std::max( static_cast<int8_t>(battle_stats._morale) + static_cast<int8_t>(morale), -3), 3) ); 
+}
+
+
 void Stack::new_turn()
 {
     if( _has_perished )
@@ -97,7 +110,7 @@ void Stack::recieve_damage(uint32_t damage)
         set_hp_left(static_cast<uint16_t>(hp_last - damage));
 
         #if SHOW_DEBUG_INFO == 1
-            printf( "%s has %d hp left.\n", _creature.get_name().c_str(), get_hp_left() );
+            printf( "Last %s has %d hp left.\n", get_creature()->get_name().c_str(), get_hp_left() );
         #endif
 
         return;
@@ -108,13 +121,13 @@ void Stack::recieve_damage(uint32_t damage)
         if( get_number() == 0 )
         {
             set_has_perished(true);
-            printf( "%s has perished!\n", _creature.get_name().c_str() );
+            printf( "%s has perished!\n", get_creature()->get_name().c_str() );
 
             set_action(Stack_Action::Skip);
             return;
         }
         set_hp_left(hp);
-        printf( "One %s has perished!\n", _creature.get_name().c_str() );
+        printf( "One %s has perished!\n", get_creature()->get_name().c_str() );
         return;
     }
     else
@@ -125,7 +138,7 @@ void Stack::recieve_damage(uint32_t damage)
         {
             set_number(0);
             set_has_perished(true);
-            printf( "The whole %s stack has perished!\n", _creature.get_name().c_str() );
+            printf( "The whole %s stack has perished!\n", get_creature()->get_name().c_str() );
 
             set_action(Stack_Action::Skip);
             return;
@@ -138,10 +151,11 @@ void Stack::recieve_damage(uint32_t damage)
             set_hp_left( static_cast<uint16_t>( (capacity - damage) % hp ) );
             set_number(new_num);
 
-            printf( "%d %s has perished!\n", initial_num - new_num, _creature.get_name().c_str() );
+            printf( "%d %s has perished!\n", initial_num - new_num, get_creature()->get_name().c_str() );
 
             #if SHOW_DEBUG_INFO == 1
-                printf( "%s has %d hp left.\n", _creature.get_name().c_str(), get_hp_left() );
+                if( get_hp_left() )
+                    printf( "Last %s has %d hp left.\n", get_creature()->get_name().c_str(), get_hp_left() );
             #endif
 
             return;
@@ -208,17 +222,36 @@ int8_t Stack::roll_luck()
 void Stack::move(uint8_t x, uint8_t y)
 {
     uint8_t distance = std::abs(x - _pos.x) + std::abs(y - _pos.y);
-    while(_creature.get_speed() < distance)
+    while(get_creature()->get_speed() < distance)
     {
-        printf("%s have only %i speed and can't move that far. Pick a new position!", _creature.get_name());
+        printf("%s have only %i speed and can't move that far. Pick a new position!", get_creature()->get_name());
     }
-    _pos.x = x;
-    _pos.y = y;
+
+    if(get_creature()->get_is_flying()) // true for both flying and teleporting creatures
+    {
+        _pos.x = x;
+        _pos.y = y;
+    }
+    else
+    {
+        // TO DO : implement walking through every tile on the battle field for on-tile effects - quicksand and siege wall bombs, rivers, spikes, etc.
+        /*_distance_traveled = 0;
+        while( distance )
+        {  
+            // TO DO : implement movement patterns
+            _distance_traveled++;
+        }*/
+        if( get_creature()->get_has_jousting() )
+            _distance_traveled = std::abs(_pos.x - x) + std::abs(_pos.y - y);
+        _pos.x = x; // this acts like flying teleporting and it should not
+        _pos.y = y; // this acts like flying teleporting and it should not
+    }
+
 }
 
-void Stack::attack(Stack& defender)
+void Stack::attack(Stack& defender, bool attack_is_retaliation)
 {
-    if( get_team() == defender.get_team() /* && not berserk*/ )
+    if( get_team() == defender.get_team() /* && TO DO : not berserk*/ )
         return;
 
     if( defender.get_has_perished() )
@@ -227,8 +260,8 @@ void Stack::attack(Stack& defender)
     if(!target(defender))
         return;
     
-    uint8_t max_dmg = _creature.get_max_dmg();
-    uint8_t min_dmg = _creature.get_min_dmg();
+    uint8_t max_dmg = get_creature()->get_max_dmg();
+    uint8_t min_dmg = get_creature()->get_min_dmg();
     
     uint32_t final_damage = 0;
     uint32_t base_damage = 0;
@@ -240,14 +273,14 @@ void Stack::attack(Stack& defender)
     float I1(0.f), I2(0.f), I3(0.f), I4(0.f), I5(0.f); // increase damage
     float R1(0.f), R2(0.f), R3(0.f), R4(0.f), R5(0.f), R6(0.f), R7(0.f), R8(0.f); // reduce damage
 
-    // calculate I1
+    // calculate I1 - Attack > Defense bonus
     if( get_att() >= defender.get_def() )
         I1 = 0.05 * (get_att() - defender.get_def());
 
-    // calculate I2 and I3
-    if( _creature.get_is_ranged() && can_shoot() )
+    // calculate I2 and I3 - secondary skill and specialty in Archery / Offense bonus
+    if( get_creature()->get_is_ranged() && can_shoot() )
     {
-        // implement positioning, distance to target and adjacency
+        // TO DO : implement positioning, distance to target and adjacency
         switch(get_hero_level_of_archery())
         {
                 case Skill_level::None :     I2 = 0.00f; break;
@@ -256,14 +289,15 @@ void Stack::attack(Stack& defender)
                 case Skill_level::Expert :   I2 = 0.50f; break;
         }
 
-        I3 = 0.05 * I2 * static_cast<int8_t>(get_hero_level_of_archery());
+        if( get_hero_specialty_name() == "Archery")
+            I3 = 0.05 * I2 * get_hero_level();
     }
     else // is ranged but has melee penalty or is not ranged
     {
-        if( _creature.get_is_ranged() && !can_shoot() )
+        if( get_creature()->get_is_ranged() && !can_shoot() )
             melee_penalty = true;
             
-        switch(get_hero_level_of_offence())
+        switch(get_hero_level_of_offense())
         {
                 case Skill_level::None :     I2 = 0.0f; break;
                 case Skill_level::Basic :    I2 = 0.1f; break;
@@ -271,42 +305,73 @@ void Stack::attack(Stack& defender)
                 case Skill_level::Expert :   I2 = 0.3f; break;
         }
 
-        I3 = 0.05 * I2 * static_cast<int8_t>(get_hero_level_of_offence());
+        if( get_hero_specialty_name() == "Offense")
+            I3 = 0.05 * I2 * get_hero_level();
     }
 
-    // calculate I4
+    // calculate I4 - luck bonus
     if     ( roll_luck() <  0 ) I4 = -0.5;
     else if( roll_luck() == 0 ) I4 =  0.0;
     else if( roll_luck() >  0 ) I4 =  1.0;
     
-    // calculate I5
-    // if death blow / hate / elements / jousting
+    // calculate I5 - special ability bonus
+    // death blow bonus
+    if( get_creature()->get_may_cast_death_blow() ) I5 = ((rand() % 100) < CHANCE_TO_CAST_DEATH_BLOW)*1.0f;
+
+    // hate bonus
+    if     ( get_creature()->get_hates_efreeti()       && ( defender.get_creature()->get_name() == "Efreet" || defender.get_creature()->get_name() == "Efreet Sultan" ) ) I5 = 0.5;
+    else if( get_creature()->get_hates_genies()        && ( defender.get_creature()->get_name() == "Genie"  || defender.get_creature()->get_name() == "Master Genie" )  ) I5 = 0.5;
+    else if( get_creature()->get_hates_devils()        && ( defender.get_creature()->get_name() == "Devil"  || defender.get_creature()->get_name() == "Arch Devil" )    ) I5 = 0.5;
+    else if( get_creature()->get_hates_angels()        && ( defender.get_creature()->get_name() == "Angel"  || defender.get_creature()->get_name() == "Archangel" )     ) I5 = 0.5;
+    else if( get_creature()->get_hates_black_dragons() && defender.get_creature()->get_name() == "Black Dragon" ) I5 = 0.5;
+    else if( get_creature()->get_hates_titans()        && defender.get_creature()->get_name() == "Titan"        ) I5 = 0.5;
+
+    // elementals bonus
+    if     ( ( get_creature()->get_name() == "Air Elemental"   || get_creature()->get_name() == "Storm Elemental"  ) && ( defender.get_creature()->get_name() == "Earth Elemental" || defender.get_creature()->get_name() == "Magma Elemental"  ) ) I5 = 1.0;
+    else if( ( get_creature()->get_name() == "Water Elemental" || get_creature()->get_name() == "Ice Elemental"    ) && ( defender.get_creature()->get_name() == "Fire Elemental"  || defender.get_creature()->get_name() == "Energy Elemental" ) ) I5 = 1.0;
+    else if( ( get_creature()->get_name() == "Fire Elemental"  || get_creature()->get_name() == "Energy Elemental" ) && ( defender.get_creature()->get_name() == "Water Elemental" || defender.get_creature()->get_name() == "Ice Elemental"    ) ) I5 = 1.0;
+    else if( ( get_creature()->get_name() == "Earth Elemental" || get_creature()->get_name() == "Magma Elemental"  ) && ( defender.get_creature()->get_name() == "Air Elemental"   || defender.get_creature()->get_name() == "Storm Elemental"  ) ) I5 = 1.0;
+
+    // jousting bonus
+    if( get_creature()->get_has_jousting() ) I5 = 0.05*get_distance_traveled();
 
 
-    // calculate R1
-    if( defender.get_def() >= get_att() && ( !_creature.get_is_ranged() || (_creature.get_is_ranged() && !can_shoot()) ) )
+    // calculate R1 - Defense > Attack penalty
+    if( defender.get_def() >= get_att() && ( !get_creature()->get_is_ranged() || (get_creature()->get_is_ranged() && !can_shoot()) ) )
         R1 = 0.025 * (defender.get_def() - get_att());
 
-    // calculate R2
-    // if secondary skills
+    // calculate R2 - Armorer penalty
+    switch(defender.get_hero_level_of_armorer())
+    {
+            case Skill_level::None :     R2 = 0.00f; break;
+            case Skill_level::Basic :    R2 = 0.05f; break;
+            case Skill_level::Advanced : R2 = 0.10f; break;
+            case Skill_level::Expert :   R2 = 0.15f; break;
+    }
 
-    // calculate R3
-    // if secondary skills
+    // calculate R3 - specialty Armorer penalty
+    if( get_hero_specialty_name() == "Armorer")
+        R3 = 0.05 * R2 * get_hero_level();
 
-    // calculate R4
-    // if spells
+    // calculate R4 - spells Shield and Air Shield bonus
+    // TO DO : if spells
     
-    // calculate R5
-    // if melee (half the damage from shooting) or ranged penalties (half the damage for shooting at distance greater than 10 hexes)
+    // calculate R5 - range or melee penalties
+    if     ( get_creature()->get_is_ranged() &&  can_shoot() && get_distance_to_target(defender) > 10 && !get_creature()->get_no_range_penalty() /*&& !get_no_range_penalty() - stack method due to artifacts*/ ) R5 = 0.5; // range penalty
+    else if( get_creature()->get_is_ranged() && !can_shoot() && get_distance_to_target(defender) == 1 && !get_creature()->get_no_melee_penalty() ) R5 = 0.5; // melee penalty
 
-    // calculate R6
-    // if obstacle penalties
-
-    // calculate R7
-    // if retaliation or attack after spell
+    // calculate R6 - obstacle penalty
+    // TO DO : if obstacle penalties - siege wall between shooter and defender
+    if( get_creature()->get_is_ranged() && can_shoot() && /* there's a wall between attacker and defender &&*/ !get_creature()->get_no_obstacle_penalty() /*&& !get_no_obstacle_penalty() - stack method due to artifacts*/ ) R6 = 0.5; // range penalty
     
-    // calculate R8
-    // if special abilities
+    // calculate R7 - spells Blind and Forgetfulness penalty
+    // TO DO : if retaliation or attack after spell
+    
+    // calculate R8 - special abilities penalty
+    if     ( get_creature()->get_name() == "Psychic Elemental" && defender.get_creature()->get_is_immune_to_mind_spells() ) R8 = 0.5;
+    else if( get_creature()->get_name() == "Magic Elemental"   && defender.get_creature()->get_is_immune_to_all_spells()  ) R8 = 0.5;
+    // TO DO : implement retaliation after Stone Gaze and Paralyzing Venom
+
 
     if( min_dmg == max_dmg )
         base_damage = min_dmg * get_number();
@@ -334,83 +399,100 @@ void Stack::attack(Stack& defender)
 
     final_damage = static_cast<int32_t>( base_damage * (1 + I1 + I2 + I3 + I4 + I5) * (1 - R1) * (1 - R2 - R3) * (1 - R4) * (1 - R5) * (1 - R6) * (1 - R7) * (1 - R8) );
     
-    printf("%s does %d damage to %s.\n", _creature.get_name().c_str(), final_damage, defender._creature.get_name().c_str());
+    if( !attack_is_retaliation )
+        printf( "Stack of %d %s attacks and does %d damage to %s.\n", get_number(), get_creature()->get_name().c_str(), final_damage, defender.get_creature()->get_name().c_str() );
+    else
+        printf( "Stack of %d %s retaliates and does %d damage to %s.\n", get_number(), get_creature()->get_name().c_str(), final_damage, defender.get_creature()->get_name().c_str() );
     
+    // TO DO : apply special abilities with pre-hit effects
+
+    // TO DO : if attack can attack surrounding enemies - they should recieve dmg
     defender.recieve_damage(final_damage);
 
-    //if defender is efreet sultan or has pell fire shield attacker and attacker is not immuned - attacker should recieve dmg
+    // TO DO : apply special abilities with hit-on effects
+
+    // TO DO : if defender is efreet sultan or has spell fire shield attacker and attacker is not immuned - attacker should recieve dmg
+
+    if( !attack_is_retaliation && get_distance_to_target(defender) == 1  )
+        if( !get_creature()->get_no_enemy_retaliation() )
+            defender.retaliate(*this);
 }
 
 bool Stack::can_shoot()
 {
-    // if archer has arrows and no active enemy is in the way
+    // TO DO : if archer has arrows and no active enemy is in the way
     return true;
 }
 
 bool Stack::target(Stack& stack)
 {
-    // if attacker can reach defender
+    // TO DO : if attacker can reach defender
     return true;
 }
 
 void Stack::retaliate(Stack& attacker)
 {
-    // if not endless retaliation or spell check if already retaliated
+    if( get_retaliations_left() || get_creature()->get_has_unlimited_retaliations() )
+        {
+            if( !get_creature()->get_has_unlimited_retaliations() )
+                set_retaliations_left( get_retaliations_left() - 1 );
+            attack(attacker, true);
+        }
 }
 
 void Stack::print_battle_info()
 {
-    auto c = _creature;
-    printf("Name : %s\n", c.get_name().c_str());
-    printf("Faction : %s\n", c.get_faction_as_string().c_str());
-    printf("Level : %d\n", c.get_level());
-    printf("Upgrade level : %d\n", c.get_upgrade());
-    printf("Attack : %d(%d)\n", c.get_att(), get_att());
-    printf("Defense : %d(%d)\n", c.get_def(), get_def());
+    auto c = get_creature();
+    printf("Name : %s\n",    c->get_name().c_str());
+    printf("Faction : %s\n", c->get_faction_as_string().c_str());
+    printf("Level : %d\n",   c->get_level());
+    printf("Upgrade level : %d\n", c->get_upgrade());
+    printf("Attack : %d(%d)\n",    c->get_att(), get_att());
+    printf("Defense : %d(%d)\n",   c->get_def(), get_def());
 
-    if( c.get_is_ranged() )
-        printf("Shots : %d(%d)\n", c.get_shots(), get_shots_left());
+    if( c->get_is_ranged() )
+        printf("Shots : %d(%d)\n", c->get_shots(), get_shots_left());
     
-    printf("Damage : %d - %d\n", c.get_min_dmg(), c.get_max_dmg());
-    printf("Health : %d(%d)\n", c.get_hp(), get_hp_left());
-    printf("Morale : %d\n", c.get_morale());
-    printf("Luck : %d\n", c.get_luck());
+    printf("Damage : %d - %d\n", c->get_min_dmg(), c->get_max_dmg());
+    printf("Health : %d(%d)\n",  c->get_hp(), get_hp_left());
+    printf("Morale : %d\n", c->get_morale());
+    printf("Luck : %d\n",   c->get_luck());
 
-    if( c.get_special_abilities().length() != 0 )
-        printf("Special abilities : %s\n", c.get_special_abilities().c_str());
+    if( c->get_special_abilities().length() != 0 )
+        printf("Special abilities : %s\n", c->get_special_abilities().c_str());
 }
 
 void Stack::print_full_info()
 {
-    auto c = _creature;
+    auto c = get_creature();
     printf( "\n" );
     printf( "Number : %d\n",  get_number() );
-    printf( "Name : %s\n",    c.get_name().c_str() );
-    printf( "Faction : %s\n", c.get_faction_as_string().c_str() );
-    printf( "Level : %d\n",   c.get_level() );
-    printf( "Upgrade level : %d\n",   c.get_upgrade() );
-    printf( "Growth per week : %d\n", c.get_growth()  );
-    printf( "Attack : %d(%d)\n",  c.get_att(), get_att() );
-    printf( "Defense : %d(%d)\n", c.get_def(), get_def() );
+    printf( "Name : %s\n",    c->get_name().c_str() );
+    printf( "Faction : %s\n", c->get_faction_as_string().c_str() );
+    printf( "Level : %d\n",   c->get_level() );
+    printf( "Upgrade level : %d\n",   c->get_upgrade() );
+    printf( "Growth per week : %d\n", c->get_growth()  );
+    printf( "Attack : %d(%d)\n",  c->get_att(), get_att() );
+    printf( "Defense : %d(%d)\n", c->get_def(), get_def() );
 
-    if( c.get_is_ranged() )
-        printf( "Shots : %d\n", c.get_shots() );
+    if( c->get_is_ranged() )
+        printf( "Shots : %d\n", c->get_shots() );
     
-    if( c.get_min_dmg() != c.get_max_dmg() )
-        printf( "Damage : %d - %d\n", c.get_min_dmg(), c.get_max_dmg() );
+    if( c->get_min_dmg() != c->get_max_dmg() )
+        printf( "Damage : %d - %d\n", c->get_min_dmg(), c->get_max_dmg() );
     else
-        printf( "Damage : %d\n", c.get_min_dmg() );
+        printf( "Damage : %d\n", c->get_min_dmg() );
 
     printf("Health : %d(%d)\n",  get_hp_left(), get_hp() );
-    printf("Speed : %d(%d)\n",   c.get_speed(), get_speed() );
-    printf("Morale : %d\n",      c.get_morale() );
-    printf("Luck : %d\n",        c.get_luck() );
-    printf("Fight value : %d\n", c.get_fight_value() );
-    printf("AI value : %d\n",    c.get_ai_value() );
-    printf("%s", c.get_cost().c_str());
+    printf("Speed : %d(%d)\n",   c->get_speed(), get_speed() );
+    printf("Morale : %d\n",      c->get_morale() );
+    printf("Luck : %d\n",        c->get_luck() );
+    printf("Fight value : %d\n", c->get_fight_value() );
+    printf("AI value : %d\n",    c->get_ai_value() );
+    printf("%s", c->get_cost().c_str());
 
-    if( c.get_special_abilities().length() != 0 )
-        printf( "Special abilities : %s\n", c.get_special_abilities().c_str() );
+    if( c->get_special_abilities().length() != 0 )
+        printf( "Special abilities : %s\n", c->get_special_abilities().c_str() );
 }
 
 #endif
