@@ -7,12 +7,15 @@
 #include "Creature.h"
 #include "Position.h"
 
+// TO DO :
 // get hero's special abilities form creature and place in creature_stack
 // allow creature to hold up to 3 buffs/debuffs and reduce their duration on each turn with 1
 // fix function new_turn
 // add defend to attack function
 // make creature a struct to be used as a library (could be added in a namespace) and leave only getters in it. all setters and modifiers should be in creature stack.
 // Stack should be constructed with the help of a copy constructor when it comes to creatures
+
+constexpr uint8_t min_num_for_stack_to_count_as_group_to_calc_rand_dmg = 10;
 
 enum Stack_Action // Used on every turn of a stack during battle
 {
@@ -202,7 +205,7 @@ class Stack
         bool roll_positive_morale(); // after initial action in turn
 
         // Returns -1/0/1, refering to the type of attack (unlucky/non-lucky/lucky strike) a stack will perform on its turn.
-        int8_t roll_luck();
+        int8_t roll_luck(bool leprechauns_in_army = false, bool hero_has_equipped_hourglass_of_the_evil_hour = false);
 
         // Skip stack's action and return to it later during the same battle turn.
         void wait() { set_action(Stack_Action::Wait); };
@@ -214,7 +217,7 @@ class Stack
         void move(uint8_t x, uint8_t y);
 
         // Stack attacks another stack (defender), causing the defender to take damage and occasionaly retaliate.
-        void attack(Stack& defender, bool attack_is_retaliation = false, bool attack_is_second_attack = false);
+        void attack(Stack& defender, bool attack_is_retaliation = false, bool attack_is_second_attack = false, bool leprechauns_in_army = false, bool hero_has_equipped_hourglass_of_the_evil_hour = false);
 
         // Checks if a ranged stack can shoot = has ammo and is not obstructed by an active enemy.
         bool can_shoot();

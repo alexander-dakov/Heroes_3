@@ -169,20 +169,22 @@ bool Stack::roll_positive_morale()
     return rand() % 1000 < probability;
 }
 
-int8_t Stack::roll_luck()
+int8_t Stack::roll_luck(bool leprechauns_in_army, bool hero_has_equipped_hourglass_of_the_evil_hour)
 {
+    // Leprechauns double the luck chance.
+    // Item 'Hourglass of the Evil Hour' negates all positive luck effects.
     uint16_t probability;
     int8_t sign;
 
-    switch(get_morale())
+    switch(get_luck())
     {
-        case Morale::Terrible : probability = 250; sign = -1; break;
-        case Morale::Awful    : probability = 167; sign = -1; break;
-        case Morale::Bad      : probability =  83; sign = -1; break;
-        case Morale::Neutral  : probability =   0; sign =  0; break;
-        case Morale::Good     : probability =  42; sign =  1; break;
-        case Morale::Great    : probability =  83; sign =  1; break;
-        case Morale::Superb   : probability = 125; sign =  1; break;
+        case Luck::Terrible : probability = 250*(1 + leprechauns_in_army);                                                    sign = -1; break;
+        case Luck::Awful    : probability = 167*(1 + leprechauns_in_army);                                                    sign = -1; break;
+        case Luck::Bad      : probability =  83*(1 + leprechauns_in_army);                                                    sign = -1; break;
+        case Luck::Neutral  : probability =   0*(1 + leprechauns_in_army);                                                    sign =  0; break;
+        case Luck::Good     : probability =  42*(1 + leprechauns_in_army)*(1 - hero_has_equipped_hourglass_of_the_evil_hour); sign =  1; break;
+        case Luck::Great    : probability =  83*(1 + leprechauns_in_army)*(1 - hero_has_equipped_hourglass_of_the_evil_hour); sign =  1; break;
+        case Luck::Superb   : probability = 125*(1 + leprechauns_in_army)*(1 - hero_has_equipped_hourglass_of_the_evil_hour); sign =  1; break;
     }
     return sign*(rand() % 1000 < probability);
 }
@@ -221,7 +223,7 @@ void Stack::move(uint8_t x, uint8_t y)
 
 }
 
-void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_second_attack)
+void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_second_attack, bool leprechauns_in_army, bool hero_has_equipped_hourglass_of_the_evil_hour)
 {
     if( get_team() == defender.get_team() /* && TO DO : not berserk*/ )
         return;
@@ -231,28 +233,47 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
 
     if(!target(defender))
         return;
-    
-    uint8_t max_dmg = get_creature()->get_max_dmg();
-    uint8_t min_dmg = get_creature()->get_min_dmg();
-    
+
     uint32_t final_damage = 0;
     uint32_t base_damage = 0;
-
-    bool melee_penalty = false;
-    bool ranged_penalty = false;
-    bool obstacle_penalty = false;
 
     float I1(0.f), I2(0.f), I3(0.f), I4(0.f), I5(0.f); // increase damage
     float R1(0.f), R2(0.f), R3(0.f), R4(0.f), R5(0.f), R6(0.f), R7(0.f), R8(0.f); // reduce damage
 
+    // attacker's attributes
+    std::string attacker_name      = get_creature()->get_name();
+    uint32_t    attacker_number    = get_number();
+    uint8_t     attacker_attack    = get_att();
+    bool        attacker_is_ranged = get_creature()->get_is_ranged();
+    uint8_t     attacker_max_dmg   = get_creature()->get_max_dmg();
+    uint8_t     attacker_min_dmg   = get_creature()->get_min_dmg();
+
+    // penalties for shooting attacker
+    bool melee_penalty    = attacker_is_ranged && !can_shoot();
+    bool range_penalty    = attacker_is_ranged && can_shoot() && get_distance_to_target(defender) > 10 && !get_creature()->get_no_range_penalty() /*&& !get_no_range_penalty() - stack method due to artifacts*/;
+    bool obstacle_penalty = attacker_is_ranged && can_shoot() && /* there's a wall between attacker and defender &&*/ !get_creature()->get_no_obstacle_penalty() /*&& !get_no_obstacle_penalty() - stack method due to artifacts*/; // TO DO : implement
+
+    // defender's attributes
+    std::string defender_name      = defender.get_creature()->get_name();
+    uint8_t     defender_defense   = defender.get_def();
+
+    if( defender.get_action() == Stack_Action::Defend ) 
+        defender_defense += defender_defense/5;
+
+    // special abilities which modify stack attributes
+    if( defender.get_creature()->get_ignore_enemy_attack() )
+        attacker_attack = attacker_attack * (100 - defender.get_creature()->get_ignore_enemy_attack_by_percent() ) / 100;
+
+    if( get_creature()->get_ignore_enemy_defense() )
+        defender_defense = defender_defense * (100 - get_creature()->get_ignore_enemy_defense_by_percent() ) / 100;
+
     // calculate I1 - Attack > Defense bonus
-    if( get_att() >= defender.get_def() )
-        I1 = 0.05 * (get_att() - defender.get_def());
+    if( attacker_attack >= defender_defense )
+        I1 = 0.05 * (attacker_attack - defender_defense);
 
     // calculate I2 and I3 - secondary skill and specialty in Archery / Offense bonus
-    if( get_creature()->get_is_ranged() && can_shoot() )
+    if( attacker_is_ranged && can_shoot() )
     {
-        // TO DO : implement positioning, distance to target and adjacency
         switch(get_hero_level_of_archery())
         {
                 case Skill_level::None :     I2 = 0.00f; break;
@@ -266,15 +287,12 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
     }
     else // is ranged but has melee penalty or is not ranged
     {
-        if( get_creature()->get_is_ranged() && !can_shoot() )
-            melee_penalty = true;
-            
         switch(get_hero_level_of_offense())
         {
-                case Skill_level::None :     I2 = 0.0f; break;
-                case Skill_level::Basic :    I2 = 0.1f; break;
-                case Skill_level::Advanced : I2 = 0.2f; break;
-                case Skill_level::Expert :   I2 = 0.3f; break;
+                case Skill_level::None :     I2 = 0.00f; break;
+                case Skill_level::Basic :    I2 = 0.10f; break;
+                case Skill_level::Advanced : I2 = 0.20f; break;
+                case Skill_level::Expert :   I2 = 0.30f; break;
         }
 
         if( get_hero_specialty_name() == "Offense")
@@ -282,35 +300,36 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
     }
 
     // calculate I4 - luck bonus
-    if     ( roll_luck() <  0 ) I4 = -0.5;
-    else if( roll_luck() == 0 ) I4 =  0.0;
-    else if( roll_luck() >  0 ) I4 =  1.0;
+    int8_t rolled_luck = roll_luck(leprechauns_in_army, hero_has_equipped_hourglass_of_the_evil_hour);
+    I4 = -0.5*(rolled_luck <  0) + /*  0.0*( rolled_luck == 0) + */  1.0*(rolled_luck >  0);
     
     // calculate I5 - special ability bonus
     // death blow bonus
-    if( get_creature()->get_may_cast_death_blow() ) I5 = ((rand() % 100) < CHANCE_TO_CAST_DEATH_BLOW)*1.0f;
+    if( get_creature()->get_may_cast_death_blow() ) I5 = ((rand() % 100) < CHANCE_TO_CAST_DEATH_BLOW)*1.00f;
 
     // hate bonus
-    if     ( get_creature()->get_hates_efreeti()       && ( defender.get_creature()->get_name() == "Efreet" || defender.get_creature()->get_name() == "Efreet Sultan" ) ) I5 = 0.5;
-    else if( get_creature()->get_hates_genies()        && ( defender.get_creature()->get_name() == "Genie"  || defender.get_creature()->get_name() == "Master Genie" )  ) I5 = 0.5;
-    else if( get_creature()->get_hates_devils()        && ( defender.get_creature()->get_name() == "Devil"  || defender.get_creature()->get_name() == "Arch Devil" )    ) I5 = 0.5;
-    else if( get_creature()->get_hates_angels()        && ( defender.get_creature()->get_name() == "Angel"  || defender.get_creature()->get_name() == "Archangel" )     ) I5 = 0.5;
-    else if( get_creature()->get_hates_black_dragons() && defender.get_creature()->get_name() == "Black Dragon" ) I5 = 0.5;
-    else if( get_creature()->get_hates_titans()        && defender.get_creature()->get_name() == "Titan"        ) I5 = 0.5;
+    if     ( get_creature()->get_hates_efreeti()       && ( defender_name == "Efreet" || defender_name == "Efreet Sultan" ) ) I5 = 0.50f;
+    else if( get_creature()->get_hates_genies()        && ( defender_name == "Genie"  || defender_name == "Master Genie" )  ) I5 = 0.50f;
+    else if( get_creature()->get_hates_devils()        && ( defender_name == "Devil"  || defender_name == "Arch Devil" )    ) I5 = 0.50f;
+    else if( get_creature()->get_hates_angels()        && ( defender_name == "Angel"  || defender_name == "Archangel" )     ) I5 = 0.50f;
+    else if( get_creature()->get_hates_black_dragons() &&   defender_name == "Black Dragon" ) I5 = 0.50f;
+    else if( get_creature()->get_hates_titans()        &&   defender_name == "Titan"        ) I5 = 0.50f;
 
     // elementals bonus
-    if     ( ( get_creature()->get_name() == "Air Elemental"   || get_creature()->get_name() == "Storm Elemental"  ) && ( defender.get_creature()->get_name() == "Earth Elemental" || defender.get_creature()->get_name() == "Magma Elemental"  ) ) I5 = 1.0;
-    else if( ( get_creature()->get_name() == "Water Elemental" || get_creature()->get_name() == "Ice Elemental"    ) && ( defender.get_creature()->get_name() == "Fire Elemental"  || defender.get_creature()->get_name() == "Energy Elemental" ) ) I5 = 1.0;
-    else if( ( get_creature()->get_name() == "Fire Elemental"  || get_creature()->get_name() == "Energy Elemental" ) && ( defender.get_creature()->get_name() == "Water Elemental" || defender.get_creature()->get_name() == "Ice Elemental"    ) ) I5 = 1.0;
-    else if( ( get_creature()->get_name() == "Earth Elemental" || get_creature()->get_name() == "Magma Elemental"  ) && ( defender.get_creature()->get_name() == "Air Elemental"   || defender.get_creature()->get_name() == "Storm Elemental"  ) ) I5 = 1.0;
+    if     ( ( attacker_name == "Air Elemental"   || attacker_name == "Storm Elemental"  ) && ( defender_name == "Earth Elemental" || defender_name == "Magma Elemental"  ) ) I5 = 1.00f;
+    else if( ( attacker_name == "Water Elemental" || attacker_name == "Ice Elemental"    ) && ( defender_name == "Fire Elemental"  || defender_name == "Energy Elemental" ) ) I5 = 1.00f;
+    else if( ( attacker_name == "Fire Elemental"  || attacker_name == "Energy Elemental" ) && ( defender_name == "Water Elemental" || defender_name == "Ice Elemental"    ) ) I5 = 1.00f;
+    else if( ( attacker_name == "Earth Elemental" || attacker_name == "Magma Elemental"  ) && ( defender_name == "Air Elemental"   || defender_name == "Storm Elemental"  ) ) I5 = 1.00f;
 
     // jousting bonus
-    if( get_creature()->get_has_jousting() ) I5 = 0.05*get_distance_traveled();
+    if( !defender.get_creature()->get_is_immune_to_jousting() ) 
+        if( get_creature()->get_has_jousting() ) 
+            I5 = 0.05 * get_distance_traveled();
 
 
     // calculate R1 - Defense > Attack penalty
-    if( defender.get_def() >= get_att() && ( !get_creature()->get_is_ranged() || (get_creature()->get_is_ranged() && !can_shoot()) ) )
-        R1 = 0.025 * (defender.get_def() - get_att());
+    if( defender_defense >= attacker_attack && ( !attacker_is_ranged || melee_penalty ) )
+        R1 = 0.025 * (defender_defense - attacker_attack);
 
     // calculate R2 - Armorer penalty
     switch(defender.get_hero_level_of_armorer())
@@ -329,37 +348,37 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
     // TO DO : if spells
     
     // calculate R5 - range or melee penalties
-    if     ( get_creature()->get_is_ranged() &&  can_shoot() && get_distance_to_target(defender) > 10 && !get_creature()->get_no_range_penalty() /*&& !get_no_range_penalty() - stack method due to artifacts*/ ) R5 = 0.5; // range penalty
-    else if( get_creature()->get_is_ranged() && !can_shoot() && get_distance_to_target(defender) == 1 && !get_creature()->get_no_melee_penalty() ) R5 = 0.5; // melee penalty
+    if     ( range_penalty ) R5 = 0.50f;
+    else if( melee_penalty ) R5 = 0.50f;
 
     // calculate R6 - obstacle penalty
     // TO DO : if obstacle penalties - siege wall between shooter and defender
-    if( get_creature()->get_is_ranged() && can_shoot() && /* there's a wall between attacker and defender &&*/ !get_creature()->get_no_obstacle_penalty() /*&& !get_no_obstacle_penalty() - stack method due to artifacts*/ ) R6 = 0.5; // range penalty
+    if( obstacle_penalty ) R6 = 0.50f; // range penalty
     
     // calculate R7 - spells Blind and Forgetfulness penalty
     // TO DO : if retaliation or attack after spell
     
     // calculate R8 - special abilities penalty
-    if     ( get_creature()->get_name() == "Psychic Elemental" && defender.get_creature()->get_is_immune_to_mind_spells() ) R8 = 0.5;
-    else if( get_creature()->get_name() == "Magic Elemental"   && defender.get_creature()->get_is_immune_to_all_spells()  ) R8 = 0.5;
+    if     ( attacker_name == "Psychic Elemental" && defender.get_creature()->get_is_immune_to_mind_spells() ) R8 = 0.50f;
+    else if( attacker_name == "Magic Elemental"   && defender.get_creature()->get_is_immune_to_all_spells()  ) R8 = 0.50f;
     // TO DO : implement retaliation after Stone Gaze and Paralyzing Venom
 
 
-    if( min_dmg == max_dmg )
-        base_damage = min_dmg * get_number();
+    if( attacker_min_dmg == attacker_max_dmg )
+        base_damage = attacker_min_dmg * attacker_number;
     else
     {
-        uint8_t range = max_dmg - min_dmg + 1;
+        uint8_t range = attacker_max_dmg - attacker_min_dmg + 1;
         
-        if( get_number() <= 10 )
-            for(int i = 0; i < get_number(); i++)
-                base_damage += rand() % range + min_dmg;
+        if( attacker_number <= min_num_for_stack_to_count_as_group_to_calc_rand_dmg )
+            for(int i = 0; i < attacker_number; i++)
+                base_damage += rand() % range + attacker_min_dmg;
         else
         {
-            for(int i = 0; i < 10; i++)
-                base_damage += rand() % range + min_dmg;
+            for(int i = 0; i < min_num_for_stack_to_count_as_group_to_calc_rand_dmg; i++)
+                base_damage += rand() % range + attacker_min_dmg;
             
-            base_damage = base_damage * get_number()/10;
+            base_damage = base_damage * attacker_number/min_num_for_stack_to_count_as_group_to_calc_rand_dmg;
         }
     }
 
@@ -371,9 +390,9 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
 
     final_damage = static_cast<int32_t>( base_damage * (1 + I1 + I2 + I3 + I4 + I5) * (1 - R1) * (1 - R2 - R3) * (1 - R4) * (1 - R5) * (1 - R6) * (1 - R7) * (1 - R8) );
     
-    if     ( !attack_is_retaliation && !attack_is_second_attack ) printf( "Stack of %d %s attacks and does %d damage to %s.\n", get_number(), get_creature()->get_name().c_str(), final_damage, defender.get_creature()->get_name().c_str() );
-    else if(  attack_is_retaliation && !attack_is_second_attack ) printf( "Stack of %d %s retaliates and does %d damage to %s.\n", get_number(), get_creature()->get_name().c_str(), final_damage, defender.get_creature()->get_name().c_str() );
-    else if( !attack_is_retaliation &&  attack_is_second_attack ) printf( "Stack of %d %s attacks for a second time and does %d damage to %s.\n", get_number(), get_creature()->get_name().c_str(), final_damage, defender.get_creature()->get_name().c_str() );
+    if     ( !attack_is_retaliation && !attack_is_second_attack ) printf( "Stack of %d %s attacks and does %d damage to %s.\n", attacker_number, attacker_name.c_str(), final_damage, defender_name.c_str() );
+    else if(  attack_is_retaliation && !attack_is_second_attack ) printf( "Stack of %d %s retaliates and does %d damage to %s.\n", attacker_number, attacker_name.c_str(), final_damage, defender_name.c_str() );
+    else if( !attack_is_retaliation &&  attack_is_second_attack ) printf( "Stack of %d %s attacks for a second time and does %d damage to %s.\n", attacker_number, attacker_name.c_str(), final_damage, defender_name.c_str() );
     else if(  attack_is_retaliation &&  attack_is_second_attack ) { std::cerr << "\nRetaliation cannot be a double attack!\n"; abort(); }
     
     // TO DO : apply special abilities with pre-hit effects
@@ -396,6 +415,14 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
 bool Stack::can_shoot()
 {
     // TO DO : if archer has arrows and no active enemy is in the way
+    /*
+    if( get_shots_left() )
+        if( has_enemy_in_surroundings() && !get_creature()->get_has_no_melee_penalty() ) // if enemy is blinded/petrified, can shooters shoot?
+            return true;
+
+    return false;
+    */
+
     return true;
 }
 

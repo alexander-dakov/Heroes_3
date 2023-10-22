@@ -335,15 +335,17 @@ void test_hero_vs_creature_stack()
     // Stack attacker(Creature_List::Angel, 1, Team::Red);
     // Stack attacker(Creature_List::Crusader, 5, Team::Red);
     // Stack attacker(Creature_List::Naga_Queen, 2, Team::Red);
-    Stack attacker(Creature_List::Ayssid, 2, Team::Red);
+    // Stack attacker(Creature_List::Ayssid, 2, Team::Red);
+    Stack attacker(Creature_List::Nix, 2, Team::Red);
     hero.add_stack_to_army(&attacker);
     printf( "\nHero %s is leading the %s stack, comprised of : %d %s\n", hero.get_name().c_str(), attacker.get_team_as_string().c_str(), attacker.get_number(), attacker.get_creature()->get_name().c_str() );
     attacker.print_full_info();
 
-    Stack defender(Creature_List::Skeleton, 20, Team::Blue);
+    // Stack defender(Creature_List::Skeleton, 20, Team::Blue);
     // Stack defender(Creature_List::Ghost_Dragon, 1, Team::Blue);
     // Stack defender(Creature_List::Wolf_Raider, 20, Team::Blue);
     // Stack defender(Creature_List::Royal_Griffin, 10, Team::Blue);
+    Stack defender(Creature_List::Behemoth, 1, Team::Blue);
     printf( "\n%s stack is comprised of : %d %s\n", defender.get_team_as_string().c_str(), defender.get_number(), defender.get_creature()->get_name().c_str() );
     defender.print_full_info();
 
