@@ -200,7 +200,7 @@ struct Item
             bool get_increase_hp_2() { return effects._increase_hp_1; }
 
             bool get_increase_speed_1() { return effects._increase_speed_1; }
-            bool get_increase_speed_2() { return effects._increase_speed_1; }
+            bool get_increase_speed_2() { return effects._increase_speed_2; }
 
             uint16_t get_gold() { return cost._gold; };
 

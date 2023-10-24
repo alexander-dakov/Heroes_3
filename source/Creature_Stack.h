@@ -98,6 +98,8 @@ class Stack
         // Each creature can hold up to 3 spell effects at the same time.
         // std::array< Spell - duration , 3 > _spell_slots; // Should work as LIFO but also be able to have spells removed regardless of the order - thus normal container with fixed lenght.
 
+        bool _has_acquired_regeneration = false;
+
     public:
         // Parametrized constructor used during battle.
         Stack(const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y, const Team team);
@@ -150,22 +152,22 @@ class Stack
 
         uint8_t get_number_of_casts_left() { return battle_stats._number_of_casts_left; };
 
-        void set_number(uint32_t number) { _number = number; _has_perished = !number; set_action(Stack_Action::Skip); }; // when receiving damage
+        void set_number(const uint32_t number) { _number = number; _has_perished = !number; set_action(Stack_Action::Skip); }; // when receiving damage
         uint32_t get_number() {return _number; };
 
-        void set_position(Position position) { _pos = position; };
-        void set_position(uint8_t x, uint8_t y) { _pos = {x, y}; };
+        void set_position(const Position position) { _pos = position; };
+        void set_position(const uint8_t x, const uint8_t y) { _pos = {x, y}; };
         Position get_position() { return _pos; };
 
         uint8_t get_distance_traveled() { return _distance_traveled; };
 
-        void set_has_perished(bool has_perished) { _has_perished = has_perished; }; // when a stack dies
+        void set_has_perished(const bool has_perished) { _has_perished = has_perished; }; // when a stack dies
         bool get_has_perished() { return _has_perished; }; // to skip turns during battle, forbid attacks and reduce retaliation
 
-        void set_retaliations_left(uint8_t retaliations) { _retaliations_left = retaliations; };
+        void set_retaliations_left(const uint8_t retaliations) { _retaliations_left = retaliations; };
         uint8_t get_retaliations_left() { return _retaliations_left; };
 
-        void set_action(Stack_Action action) { _action = action; };
+        void set_action(const Stack_Action action) { _action = action; };
         Stack_Action get_action() { return _action; };
 
         void set_hero_level(const uint8_t level) { hero_secondary_skills._hero_level = level; };
@@ -186,8 +188,11 @@ class Stack
         void set_hero_level_of_resistance(const Skill_level level) { hero_secondary_skills._hero_level_of_resistance = level; };
         Skill_level get_hero_level_of_resistance()                 { return hero_secondary_skills._hero_level_of_resistance;  };
 
+        void set_has_acquired_regeneration(const bool regenerates) { _has_acquired_regeneration = regenerates; };
+        bool get_has_acquired_regeneration() { return _has_acquired_regeneration; };
+
         // Stack's number and/or remaining health of last units get affected.
-        void recieve_damage(uint32_t damage);
+        void recieve_damage(const uint32_t damage);
         
         // Updates attributes, buffs and debuffs in the beggning of each new turn.
         void new_turn(); // should be called simultaiously for every creature on the battle field
@@ -205,7 +210,7 @@ class Stack
         bool roll_positive_morale(); // after initial action in turn
 
         // Returns -1/0/1, refering to the type of attack (unlucky/non-lucky/lucky strike) a stack will perform on its turn.
-        int8_t roll_luck(bool leprechauns_in_army = false, bool hero_has_equipped_hourglass_of_the_evil_hour = false);
+        int8_t roll_luck(const bool leprechauns_in_army = false);
 
         // Skip stack's action and return to it later during the same battle turn.
         void wait() { set_action(Stack_Action::Wait); };
@@ -214,7 +219,7 @@ class Stack
         void defend() { set_action(Stack_Action::Defend); };
 
         // Reposition stack on the battle field according to stack speed and objects.
-        void move(uint8_t x, uint8_t y);
+        void move(const uint8_t x, const uint8_t y);
 
         // Stack attacks another stack (defender), causing the defender to take damage and occasionaly retaliate.
         void attack(Stack& defender, bool attack_is_retaliation = false, bool attack_is_second_attack = false, bool leprechauns_in_army = false, bool hero_has_equipped_hourglass_of_the_evil_hour = false);
@@ -223,7 +228,7 @@ class Stack
         bool can_shoot();
 
         // Checks if target is reachable for melee attack.
-        bool target(Stack& stack);
+        bool target(const Stack& stack);
 
         uint8_t get_distance_to_target(Stack& stack) { return std::abs(stack.get_position().x - get_position().x) + std::abs(stack.get_position().y - get_position().y); };
         

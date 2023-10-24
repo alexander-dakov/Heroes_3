@@ -251,7 +251,7 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
       all_abilities["Vulnerable to Meteor Shower."]                                  = { &_is_vulnerable_to_meteor_shower   };
       
       all_abilities["Minimum morale is +1."] = { &_minimum_morale_1 };
-      all_abilities["Luck is always +1."]    = { &_luck_is_always_1 };
+      all_abilities["Minimum luck is +1."]   = { &_minimum_luck_1   };
 
       all_abilities["+1 morale to alias troops."]         = { &_increases_alias_morale_1 };
       all_abilities["-1 morale to enemy troops."]         = { &_decreases_enemy_morale_1 };

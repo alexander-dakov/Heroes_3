@@ -228,7 +228,7 @@ struct Creature
                   
                   // morale modifiers
                   bool _minimum_morale_1 = false; // Minotaur, Minotaur King
-                  bool _luck_is_always_1 = false; // Halfling
+                  bool _minimum_luck_1 = false; // Halfling
 
                   // whole army morale and luck modifiers
                   bool _increases_alias_morale_1 = false; // Angel, Archangel
@@ -371,7 +371,7 @@ struct Creature
             bool get_casts_mana_drain()   { return special_abilities._casts_mana_drain;   };
 
             bool get_minimum_morale_1() { return special_abilities._minimum_morale_1; };
-            bool get_luck_is_always_1() { return special_abilities._luck_is_always_1; };
+            bool get_minimum_luck_1() { return special_abilities._minimum_luck_1; };
             
             bool get_increases_alias_morale_1() { return special_abilities._increases_alias_morale_1; };
             bool get_decreases_enemy_morale_1() { return special_abilities._decreases_enemy_morale_1; };

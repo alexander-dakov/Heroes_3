@@ -99,7 +99,7 @@ void Stack::take_action()
 }
 
 
-void Stack::recieve_damage(uint32_t damage)
+void Stack::recieve_damage(const uint32_t damage)
 {
     uint16_t hp = get_hp();           // hp per unit
     uint16_t hp_last = get_hp_left(); // hp of last unit
@@ -169,7 +169,7 @@ bool Stack::roll_positive_morale()
     return rand() % 1000 < probability;
 }
 
-int8_t Stack::roll_luck(bool leprechauns_in_army, bool hero_has_equipped_hourglass_of_the_evil_hour)
+int8_t Stack::roll_luck(const bool leprechauns_in_army)
 {
     // Leprechauns double the luck chance.
     // Item 'Hourglass of the Evil Hour' negates all positive luck effects.
@@ -178,13 +178,13 @@ int8_t Stack::roll_luck(bool leprechauns_in_army, bool hero_has_equipped_hourgla
 
     switch(get_luck())
     {
-        case Luck::Terrible : probability = 250*(1 + leprechauns_in_army);                                                    sign = -1; break;
-        case Luck::Awful    : probability = 167*(1 + leprechauns_in_army);                                                    sign = -1; break;
-        case Luck::Bad      : probability =  83*(1 + leprechauns_in_army);                                                    sign = -1; break;
-        case Luck::Neutral  : probability =   0*(1 + leprechauns_in_army);                                                    sign =  0; break;
-        case Luck::Good     : probability =  42*(1 + leprechauns_in_army)*(1 - hero_has_equipped_hourglass_of_the_evil_hour); sign =  1; break;
-        case Luck::Great    : probability =  83*(1 + leprechauns_in_army)*(1 - hero_has_equipped_hourglass_of_the_evil_hour); sign =  1; break;
-        case Luck::Superb   : probability = 125*(1 + leprechauns_in_army)*(1 - hero_has_equipped_hourglass_of_the_evil_hour); sign =  1; break;
+        case Luck::Terrible : probability = 250*(1 + leprechauns_in_army); sign = -1; break;
+        case Luck::Awful    : probability = 167*(1 + leprechauns_in_army); sign = -1; break;
+        case Luck::Bad      : probability =  83*(1 + leprechauns_in_army); sign = -1; break;
+        case Luck::Neutral  : probability =   0*(1 + leprechauns_in_army); sign =  0; break;
+        case Luck::Good     : probability =  42*(1 + leprechauns_in_army); sign =  1; break;
+        case Luck::Great    : probability =  83*(1 + leprechauns_in_army); sign =  1; break;
+        case Luck::Superb   : probability = 125*(1 + leprechauns_in_army); sign =  1; break;
     }
     return sign*(rand() % 1000 < probability);
 }
@@ -193,7 +193,7 @@ int8_t Stack::roll_luck(bool leprechauns_in_army, bool hero_has_equipped_hourgla
 
 // void Stack::defend(){}
 
-void Stack::move(uint8_t x, uint8_t y)
+void Stack::move(const uint8_t x, const uint8_t y)
 {
     uint8_t distance = std::abs(x - _pos.x) + std::abs(y - _pos.y);
     while(get_creature()->get_speed() < distance)
@@ -300,8 +300,8 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
     }
 
     // calculate I4 - luck bonus
-    int8_t rolled_luck = roll_luck(leprechauns_in_army, hero_has_equipped_hourglass_of_the_evil_hour);
-    I4 = -0.5*(rolled_luck <  0) + /*  0.0*( rolled_luck == 0) + */  1.0*(rolled_luck >  0);
+    int8_t rolled_luck = roll_luck(leprechauns_in_army);
+    I4 = -0.5*(rolled_luck <  0) + /*  0.0*( rolled_luck == 0) + */  1.0*(rolled_luck >  0) * (1 - hero_has_equipped_hourglass_of_the_evil_hour);
     
     // calculate I5 - special ability bonus
     // death blow bonus
@@ -426,7 +426,7 @@ bool Stack::can_shoot()
     return true;
 }
 
-bool Stack::target(Stack& stack)
+bool Stack::target(const Stack& stack)
 {
     // TO DO : if attacker can reach defender
     return true;

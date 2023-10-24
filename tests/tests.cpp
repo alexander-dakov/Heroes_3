@@ -237,7 +237,7 @@ void test_army_hero_bonuses()
     second_hero.pick_up_item(&Item_List::Cape_of_Velocity);                  // unit speed +2
 
     // Necklace
-    second_hero.pick_up_item(&Item_List::Necklace_of_Swiftness);             // unit speed +3
+    second_hero.pick_up_item(&Item_List::Necklace_of_Swiftness);             // unit speed +1
 
     // Weapon
     second_hero.pick_up_item(&Item_List::Sword_of_Judgement);                // primary +5

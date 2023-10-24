@@ -240,7 +240,7 @@ void Hero::add_experience(const uint32_t experience)
 // path to location should be calculated in days
 // each tile across the path should be visited for step-on effects
 // TO DO : fix move()
-void Hero::move(uint8_t x, uint8_t y)
+void Hero::move(const uint8_t x, const uint8_t y)
 {
     uint8_t distance = std::abs(x - _position.x) + std::abs(y - _position.y);
     while(get_movement_points() < distance)
@@ -304,6 +304,32 @@ void Hero::equip_item(Item* item)
             case Slot::Pocket   : for( uint8_t i = 0; i < POCKET_SLOTS; i++ ) { if( items.pocket[i] == nullptr ) { items.pocket[i] = item; break; } } break;
       }
       
+      // Check if same item is equipped in hand slot (not concerning 'Quiet Eye of the Dragon' an resource generating items )
+      if( item->get_slot() == Slot::Hand )
+            if( item->get_name() != "Quiet Eye of the Dragon" || item->get_effect().find("Resource") == std::string::npos )
+                  for( uint8_t i = 0; i < HAND_SLOTS - 1; i++)
+                        for( uint8_t j = i + 1; j < HAND_SLOTS ; j++)
+                              if( item->get_name() == items.hand[i]->get_name() && items.hand[i]->get_name() == items.hand[j]->get_name() )
+                              {
+                                    printf( "\n%s equips item '%s', but does not gain effects, because the same item is already equipped and its bonuses cannot be multiplied.\n", get_name().c_str(), item->get_name().c_str() );
+                                    return;
+                              }
+
+      // Check if same item is equipped in pocket slot (not concerning resource generating items )
+      if( item->get_slot() == Slot::Pocket )
+            if( item->get_effect().find("Gold") != std::string::npos && item->get_effect().find("Resource") != std::string::npos ) // items may generate gold or resources, but never both
+                  for( uint8_t i = 0; i < POCKET_SLOTS - 1; i++)
+                        for( uint8_t j = i + 1; j < POCKET_SLOTS ; j++)
+                              if( item->get_name() == items.pocket[i]->get_name() && items.pocket[i]->get_name() == items.pocket[j]->get_name() )
+                              {
+                                    printf( "\n%s equips item '%s', but does not gain effects, because the same item is already equipped and its bonuses cannot be multiplied.\n", get_name().c_str(), item->get_name().c_str() );
+                                    return;
+                              }
+
+      // TO DO : Check if recipe for combo items if fulfilled - if yes - give the bonuses. 
+      // Perhaps after each equip if the items name is part of list of combination recipes a funciton to seek for the rest of items should be called. 
+      // Afterwards combining the items takes place just like in the game, and the bonuses are assigned.
+
       printf( "\n%s equips item '%s', gaining effects : %s\n", get_name().c_str(), item->get_name().c_str(), item->get_effect().c_str() );
 
       add_attack(    item->get_attack_bonus()    );
@@ -315,8 +341,8 @@ void Hero::equip_item(Item* item)
 
       // TO DO : implement morale & luck and other bonuses
 
-      // set_army_hp_bonus( 1*item->get_increase_hp_1() + 2*item->get_increase_hp_1() );
-      // set_army_speed_bonus( 1*item->get_increase_hp_1() + 3*item->get_increase_hp_1() );
+      set_army_hp_bonus(    get_army_hp_bonus()    + 1*item->get_increase_hp_1()    + 2*item->get_increase_hp_2()    );
+      set_army_speed_bonus( get_army_speed_bonus() + 1*item->get_increase_speed_1() + 2*item->get_increase_speed_2() );
 
       update_army_stats();
 }
@@ -336,6 +362,28 @@ void Hero::unequip_item(Item* item)
             case Slot::Pocket   : for( uint8_t i = 0; i < POCKET_SLOTS; i++ ) { if( items.pocket[i] == item ) { if( add_item_to_chest( item ) ) { items.pocket[i] = nullptr; break; } else { return; } } } printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return;
       }
 
+      // Check if same item is equipped in hand slot (not concerning 'Quiet Eye of the Dragon' an resource generating items )
+      if( item->get_slot() == Slot::Hand )
+            if( items.hand[0]->get_name() == items.hand[1]->get_name() )
+                  if( item->get_name() != "Quiet Eye of the Dragon" || item->get_effect().find("Resource") == std::string::npos )
+                  {
+                        printf( "\n%s unequips item '%s', but does not lose effects, because the same item is already equipped and its bonuses cannot be multiplied.\n", get_name().c_str(), item->get_name().c_str() );
+                        return;
+                  }
+
+      // Check if same item is equipped in pocket slot (not concerning resource generating items )
+      if( item->get_slot() == Slot::Pocket )
+            if( item->get_effect().find("Gold") != std::string::npos && item->get_effect().find("Resource") != std::string::npos ) // items may generate gold or resources, but never both
+                  for( uint8_t i = 0; i < POCKET_SLOTS - 1; i++)
+                        for( uint8_t j = i + 1; j < POCKET_SLOTS ; j++)
+                              if( item->get_name() == items.pocket[i]->get_name() && items.pocket[i]->get_name() == items.pocket[j]->get_name() )
+                              {
+                                    printf( "\n%s unequips item '%s', but does not lose effects, because the same item is already equipped and its bonuses cannot be multiplied.\n", get_name().c_str(), item->get_name().c_str() );
+                                    return;
+                              }
+
+      // TO DO : Check if unequipping the item will destroy the combo and reduce the bonuses
+      
       printf( "\n%s unequips item '%s', losing effects : %s\n", get_name().c_str(), item->get_name().c_str(), item->get_effect().c_str() );
 
       add_attack(    -item->get_attack_bonus()    );
@@ -347,8 +395,8 @@ void Hero::unequip_item(Item* item)
 
       // TO DO : implement morale & luck and other bonuses
 
-      // set_army_hp_bonus( -1*item->get_increase_hp_1() - 2*item->get_increase_hp_1() );
-      // set_army_speed_bonus( -1*item->get_increase_hp_1() - 3*item->get_increase_hp_1() );
+      set_army_hp_bonus(    get_army_hp_bonus()    - 1*item->get_increase_hp_1()    - 2*item->get_increase_hp_2()    );
+      set_army_speed_bonus( get_army_speed_bonus() - 1*item->get_increase_speed_1() - 2*item->get_increase_speed_2() );
 
       update_army_stats();
 }
@@ -401,18 +449,6 @@ void Hero::print_unequipped_items()
             printf( "No items.\n" );
 }
 
-void Hero::set_army_hp_bonus(const uint8_t hp)
-{
-      // TO DO : implement!
-      return;
-}
-
-void Hero::set_army_speed_bonus(const uint8_t hp)
-{
-      // TO DO : implement!
-      return;
-}
-
 void Hero::add_stack_to_army(Stack* stack)
 {
       for( uint8_t i = 0; i < ARMY_SLOTS; i++ )
@@ -427,7 +463,7 @@ void Hero::add_stack_to_army(Stack* stack)
       return;
 }
 
-void Hero::add_stack_to_slot(Stack* stack, uint8_t slot)
+void Hero::add_stack_to_slot(Stack* stack, const uint8_t slot)
 {
       if( army[slot] == nullptr )
       {
@@ -455,7 +491,7 @@ void Hero::remove_stack(Stack& stack)
       printf( "\nStack of %d %s does not exist in %s's army.\n", stack.get_number(), stack.get_creature()->get_name().c_str(), get_name().c_str() );
 }
 
-void Hero::remove_stack_from_position(uint8_t slot)
+void Hero::remove_stack_from_position(const uint8_t slot)
 {
       if( army[slot] == nullptr )
       {
@@ -481,16 +517,7 @@ void Hero::update_army_stats()
       Morale morale = get_morale();
       Luck luck     = get_luck();
 
-      // items adding hp to units
-      bool has_equipped_ring_of_life      = _has_equipped_ring_of_life;
-      bool has_equipped_ring_of_vitality  = _has_equipped_ring_of_vitality;
-      bool has_equipped_vail_of_lifeblood = _has_equipped_vail_of_lifeblood;
-      bool has_equipped_elixir_of_life    = _has_equipped_elixir_of_life;
-
-      // items adding speed to units
-      bool has_equipped_ring_of_wayfarer      = _has_equipped_ring_of_wayfarer;
-      bool has_equipped_necklace_of_swiftness = _has_equipped_necklace_of_swiftness;
-      bool has_equipped_cape_of_velocity      = _has_equipped_cape_of_velocity;
+      bool has_equipped_elixir_of_life = _has_equipped_elixir_of_life;
 
       const uint8_t hero_level = get_level();
       const std::string specialty_name = get_specialty().get_name();
@@ -564,24 +591,32 @@ void Hero::update_army_stats()
             {
                   auto c = army[i]->get_creature();
 
-                  army[i]->set_att(c->get_att() + att);
-                  army[i]->set_def(c->get_def() + def);
+                  army[i]->set_att( c->get_att() + att );
+                  army[i]->set_def( c->get_def() + def );
+                  
+                  army[i]->set_hp( c->get_hp() + get_army_hp_bonus() + (c->get_hp()/4)*has_equipped_elixir_of_life );
+                  army[i]->set_hp_left( c->get_hp() );
+                  if( has_equipped_elixir_of_life && !c->get_is_undead() && !c->get_is_bloodless() )
+                        army[i]->set_has_acquired_regeneration(true);
 
-                  army[i]->set_hp(c->get_hp() + 1*_has_equipped_ring_of_life + 1*has_equipped_ring_of_vitality + 2*has_equipped_vail_of_lifeblood + (c->get_hp()/4)*has_equipped_elixir_of_life);
-                  army[i]->set_hp_left(c->get_hp());
+                  army[i]->set_speed( c->get_speed() + get_army_speed_bonus() );
 
-                  army[i]->set_speed(c->get_speed() + 1*has_equipped_ring_of_wayfarer + 1*has_equipped_necklace_of_swiftness + 2*has_equipped_cape_of_velocity);
-
-                  // TO DO : morale/luck penalties for different factions in same army should be implemented + no morale/luck update for some creatures (undead, bloodless, satyr, leprechaun, etc.)
                   army[i]->set_morale( static_cast<Morale>( std::min( std::max( static_cast<int8_t>(c->get_morale()) + static_cast<int8_t>(get_morale()) + static_cast<int8_t>(morale_penalty), -3), 3) ) );
-                  army[i]->set_luck(   static_cast<Luck>(   std::min( std::max( static_cast<int8_t>(c->get_luck())   + static_cast<int8_t>(get_luck()),   -3), 3) ) );
+                  if( c->get_is_undead() || c->get_is_bloodless() )
+                        army[i]->set_morale( Morale::Neutral );
+                  if( c->get_minimum_morale_1() && static_cast<int8_t>(army[i]->get_morale()) < 1 )
+                        army[i]->set_morale( Morale::Good );
 
-                  army[i]->set_hero_level(hero_level);
-                  army[i]->set_hero_specialty_name(specialty_name);
-                  army[i]->set_hero_level_of_archery(level_of_archery);
-                  army[i]->set_hero_level_of_offense(level_of_offense);
-                  army[i]->set_hero_level_of_armorer(level_of_armorer);
-                  army[i]->set_hero_level_of_resistance(level_of_resistance);
+                  army[i]->set_luck( static_cast<Luck>( std::min( std::max( static_cast<int8_t>(c->get_luck()) + static_cast<int8_t>(get_luck()), -3), 3) ) );
+                  if( c->get_minimum_luck_1() && static_cast<int8_t>(army[i]->get_luck()) < 1 )
+                        army[i]->set_luck( Luck::Good );
+
+                  army[i]->set_hero_level( hero_level );
+                  army[i]->set_hero_specialty_name( specialty_name );
+                  army[i]->set_hero_level_of_archery( level_of_archery );
+                  army[i]->set_hero_level_of_offense( level_of_offense );
+                  army[i]->set_hero_level_of_armorer( level_of_armorer );
+                  army[i]->set_hero_level_of_resistance( level_of_resistance );
             }
       }
 }

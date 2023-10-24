@@ -6,6 +6,13 @@
 #include "Terrains.h" 
 #include "Hero.h"
 
+enum class Format
+{
+    Normal,
+    Siege,
+    Surrounded,
+    Ships
+};
 
 class Battle
 {
@@ -19,7 +26,7 @@ class Battle
         // Defender may not have a hero. A possible solution is to create a new instance of a dummy/fake hero which will have no army bonuses. He will be there simply to 'carry' the army.
         // May be there should be struct Army which will be comprised of 7 slots for creatures with some in-battle modifiers as private fields (has_perished, retaliations_left, etc.), instead of having some stacks assigned via pointer to a hero.
         
-        // May be it will be better for class Battle to have the method attack(), instead of class Stack.
+        // May be it will be better for class Battle to have the methods attack(), wait(), defend(), move(), instead of class Stack.
 
     public:
 

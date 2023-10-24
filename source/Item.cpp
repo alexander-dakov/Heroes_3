@@ -149,6 +149,7 @@ void Item::effects::fill_effects()
                   }
             }
       }
+      
       if( _modify_attack )
             _attack =  1*(_effect.find("All primary skills +1.") != std::string::npos)
                     +  2*(_effect.find("All primary skills +2.") != std::string::npos)

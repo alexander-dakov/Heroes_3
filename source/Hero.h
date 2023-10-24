@@ -90,6 +90,9 @@ class Hero
             Morale _morale;
             Luck _luck;
 
+            uint8_t _army_hp_bonus    = 0;
+            uint8_t _army_speed_bonus = 0;
+
             uint16_t _mana;
             uint16_t _mana_left;
             
@@ -126,13 +129,7 @@ class Hero
             Item* chest[CHEST_SLOTS] = {nullptr};
 
             // items - implement a structure with flags for possible effects from items, analogical to special abilities
-            bool _has_equipped_ring_of_life          = false;
-            bool _has_equipped_ring_of_vitality      = false;
-            bool _has_equipped_vail_of_lifeblood     = false;
-            bool _has_equipped_elixir_of_life        = true && _has_equipped_ring_of_life + _has_equipped_ring_of_vitality + _has_equipped_vail_of_lifeblood;
-            bool _has_equipped_ring_of_wayfarer      = false;
-            bool _has_equipped_necklace_of_swiftness = false;
-            bool _has_equipped_cape_of_velocity      = false;
+            bool _has_equipped_elixir_of_life = false;
 
             Stack* army[ARMY_SLOTS] = {nullptr}; // probably would be better with unique_ptr
             // std::array<std::unique_ptr, ARMY_SLOTS> army;
@@ -195,12 +192,18 @@ class Hero
 
             Specialty get_specialty() { return _specialty; };
 
-            void set_secondary_skill(uint8_t i, Secondary_Skill skill) { _secondary_skills[i] = &skill; };
+            void set_secondary_skill(const uint8_t i, Secondary_Skill skill) { _secondary_skills[i] = &skill; };
             Secondary_Skill* get_secondary_skill(uint8_t i) { return _secondary_skills[i]; };
             std::string get_secondary_skill_name(uint8_t i) { return _secondary_skills[i]->get_name(); };
 
             void set_morale(const Morale morale) { _morale = morale; };
             Morale get_morale() { return _morale; };
+
+            void set_army_hp_bonus(const uint8_t bonus) { _army_hp_bonus = bonus; };
+            uint8_t get_army_hp_bonus()                 { return _army_hp_bonus;  };
+
+            void set_army_speed_bonus(const uint8_t bonus) { _army_speed_bonus = bonus; };
+            uint8_t get_army_speed_bonus()                 { return _army_speed_bonus;  };
 
             void set_luck(const Luck luck) { _luck = luck; };
             Luck get_luck() { return _luck; };
@@ -247,23 +250,17 @@ class Hero
             // Prints the names and effects of all equipped items.
             void print_unequipped_items();
 
-            // Adds to max hp of each unit in a creature stack in hero's army.
-            void set_army_hp_bonus(const uint8_t hp);
-
-            // Adds to speed of each unit in a creature stack in hero's army.
-            void set_army_speed_bonus(const uint8_t hp);
-
             // Adds a stack to the first empty slot in army.
             void add_stack_to_army(Stack* stack);
             
             // Adds a stack to a specific slot in army.
-            void add_stack_to_slot(Stack* stack, uint8_t slot);
+            void add_stack_to_slot(Stack* stack, const uint8_t slot);
 
             // Removes a stack from army.
             void remove_stack(Stack& stack);
 
             // Removes a stack from specific slot in army.
-            void remove_stack_from_position(uint8_t slot);
+            void remove_stack_from_position(const uint8_t slot);
             
             // Swaps positions of two stacks in the same army. ALso used when one of the slots is empty.
             void swap_stack_positions();
@@ -271,10 +268,10 @@ class Hero
             // Update battle stats of each stack according to current hero attributes. Called every time hero adds or removes creature from army, gets a new level, gets a morale/luck bonus, equips/unequips an item.
             void update_army_stats();
 
-            void set_position(Position position) { _position = position; };
+            void set_position(const Position position) { _position = position; };
             Position get_position() { return _position; };
 
-            void move(uint8_t x, uint8_t y); // if map object - interact = take resources item, flag mine, fight monster/hero, enter castle
+            void move(const uint8_t x, const uint8_t y); // if map object - interact = take resources item, flag mine, fight monster/hero, enter castle
             
             void print_full_info();
 };
