@@ -15,6 +15,7 @@ namespace Item_List
     // Necklace
     Item Celestial_Necklace_of_Bliss(    "Celestial Necklace of Bliss",    Slot::Necklace, Type::Relic,    { 12000, 0, 0, 0, 0 }, "All primary skills +3." );
     Item Necklace_of_Swiftness(          "Necklace of Swiftness",          Slot::Necklace, Type::Treasure, {  5000, 0, 0, 0, 0 }, "Unit's speed +1." );
+    Item Pendant_of_Courage(             "Pendant of Courage",             Slot::Necklace, Type::Major,    {  7000, 0, 0, 0, 0 }, "Morale +3. Luck +3." );
     
     // Weapon
     Item Sword_of_Judgement(             "Sword of Judgement",             Slot::Weapon,   Type::Relic,    { 20000, 0, 0, 0, 0 }, "All primary skills +5." );
@@ -57,6 +58,8 @@ namespace Item_List
     Item Ring_of_Vitality(               "Ring of Vitality",               Slot::Hand,     Type::Treasure, {  5000, 0, 0, 0, 0 }, "Unit's health points +1." );
     Item Ring_of_Life(                   "Ring of Life",                   Slot::Hand,     Type::Minor,    {  5000, 0, 0, 0, 0 }, "Unit's health points +1." );
     Item Ring_of_Wayfarer(               "Ring of Wayfarer",               Slot::Hand,     Type::Major,    {  5000, 0, 0, 0, 0 }, "Unit's speed +1." );
+    Item Still_Eye_of_the_Dragon(        "Still Eye of the Dragon",        Slot::Hand,     Type::Treasure, {  2000, 0, 0, 0, 0 }, "Morale +1. Luck +1." );
+    Item Ring_of_Suppression(            "Ring of Suppression",            Slot::Hand,     Type::Treasure, {  4000, 0, 0, 0, 0 }, "Enemy morale -1." );
     
     // Boots
     Item Sandals_of_the_Saint(           "Sandals of the Saint",           Slot::Boots,    Type::Relic,    {  8000, 0, 0, 0, 0 }, "All primary skills +2." );
@@ -64,6 +67,19 @@ namespace Item_List
     // Pocket
     Item Vial_of_Lifeblood(              "Vial of Lifeblood",              Slot::Pocket,   Type::Major,    { 10000, 0, 0, 0, 0 }, "Unit's health points +2." );
     // Item Elixir_of_Life(                 "Elixir of Life",                 Slot::Pocket, Type::Relic,    { 20000, 0, 0, 0, 0 }, "All creatures get a 25% health bonus and gain the regeneration ability. Does not work on Undead or unliving creatures." );
+    Item Badge_of_Courage(               "Badge of Courage",               Slot::Pocket,   Type::Treasure, {  1000, 0, 0, 0, 0 }, "Morale +1." );
+    Item Crest_of_Valor(                 "Crest of Valor",                 Slot::Pocket,   Type::Treasure, {  1000, 0, 0, 0, 0 }, "Morale +1." );
+    Item Glyph_of_Gallantry(             "Glyph of Gallantry",             Slot::Pocket,   Type::Treasure, {  1000, 0, 0, 0, 0 }, "Morale +1." );
+    Item Hideous_Mask(                   "Hideous Mask",                   Slot::Pocket,   Type::Minor,    {  4000, 0, 0, 0, 0 }, "Enemy morale -1." );
+    Item Pendant_of_Downfall(            "Pendant of Downfall",            Slot::Pocket,   Type::Major,    {  7000, 0, 0, 0, 0 }, "Enemy morale -2." );
+    Item Spirit_of_Oppression(           "Spirit of Oppression",           Slot::Pocket,   Type::Treasure, {  2000, 0, 0, 0, 0 }, "Negates all positive morale bonuses during combat for both you and your opponent." );
+    Item Cards_of_Prophecy(              "Cards of Prophecy",              Slot::Pocket,   Type::Treasure, {  1000, 0, 0, 0, 0 }, "Luck +1." );
+    Item Clover_of_Fortune(              "Clover of Fortune",              Slot::Pocket,   Type::Treasure, {  1000, 0, 0, 0, 0 }, "Luck +1." );
+    Item Ladybird_of_Luck(               "Ladybird of Luck",               Slot::Pocket,   Type::Treasure, {  1000, 0, 0, 0, 0 }, "Luck +1." );
+    Item Runes_of_Imminency(             "Runes of Imminency",             Slot::Pocket,   Type::Treasure, {  2000, 0, 0, 0, 0 }, "Enemy luck -1." );
+    Item Demons_Horseshoe(               "Demon's Horseshoe",              Slot::Pocket,   Type::Treasure, {  2000, 0, 0, 0, 0 }, "Enemy luck -1." );
+    Item Shamans_Puppet(                 "Shaman's Puppet",                Slot::Pocket,   Type::Minor,    {  4000, 0, 0, 0, 0 }, "Enemy luck -2." );
+    Item Hourglass_of_the_Evil_Hour(     "Hourglass of the Evil Hour",     Slot::Pocket,   Type::Treasure, {  2000, 0, 0, 0, 0 }, "Negates all positive luck bonuses during combat for both you and your opponent." );
 
     // TO DO : add all items
 }

@@ -26,8 +26,8 @@ class Battle
         // Defender may not have a hero. A possible solution is to create a new instance of a dummy/fake hero which will have no army bonuses. He will be there simply to 'carry' the army.
         // May be there should be struct Army which will be comprised of 7 slots for creatures with some in-battle modifiers as private fields (has_perished, retaliations_left, etc.), instead of having some stacks assigned via pointer to a hero.
         
-        // May be it will be better for class Battle to have the methods attack(), wait(), defend(), move(), instead of class Stack.
-
+        // May be it will be better for class Battle to have the methods take_action(), attack(), wait(), defend(), move(), instead of class Stack.
+        // Items which have effect - "Decrease enemy ...", "-? to enemy ...", "Negate all ? bonuses ...", etc. should take place here. 
     public:
 
         Battle();

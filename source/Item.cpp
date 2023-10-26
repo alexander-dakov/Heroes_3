@@ -105,6 +105,20 @@ std::map< std::string, std::vector<bool*> > Item::effects::create_map_of_all_eff
       all_effects["Unit's speed +1."] = { &_increase_speed_1 };
       all_effects["Unit's speed +2."] = { &_increase_speed_2 };
 
+      all_effects["Morale +1."]       = { &_modify_morale };
+      all_effects["Morale +2."]       = { &_modify_morale }; // no such item in orginal game
+      all_effects["Morale +3."]       = { &_modify_morale };
+      all_effects["Enemy morale -1."] = { &_modify_morale };
+      all_effects["Enemy morale -2."] = { &_modify_morale };
+      all_effects["Negates all positive morale bonuses during combat for both you and your opponent."] = { &_disable_positive_morale };
+
+      all_effects["Luck +1."]       = { &_modify_luck };
+      all_effects["Luck +2."]       = { &_modify_luck }; // no such item in orginal game
+      all_effects["Luck +3."]       = { &_modify_luck };
+      all_effects["Enemy luck -1."] = { &_modify_luck };
+      all_effects["Enemy luck -2."] = { &_modify_luck };
+      all_effects["Negates all positive luck bonuses during combat for both you and your opponent."] = { &_disable_positive_luck };
+
       return all_effects;
 }
 
@@ -215,6 +229,28 @@ void Item::effects::fill_effects()
                        +  5*(_effect.find("Knowledge skill +5.")     != std::string::npos)
                        +  6*(_effect.find("Knowledge skill +6.")     != std::string::npos)
                        + 10*(_effect.find("Knowledge skill +10.")    != std::string::npos);
+
+      if( _modify_morale )
+      {
+            _morale = 1*(_effect.find("Morale +1.") != std::string::npos)
+                    + 2*(_effect.find("Morale +2.") != std::string::npos)
+                    + 3*(_effect.find("Morale +3.") != std::string::npos);
+
+            _decrease_enemy_morale = 1*(_effect.find("Enemy morale -1.") != std::string::npos)
+                                   + 2*(_effect.find("Enemy morale -2.") != std::string::npos);
+      }
+
+
+      if( _modify_luck )
+      {
+            _luck = 1*(_effect.find("Luck +1.") != std::string::npos)
+                  + 2*(_effect.find("Luck +2.") != std::string::npos)
+                  + 3*(_effect.find("Luck +3.") != std::string::npos);
+                  
+            _decrease_enemy_luck = 1*(_effect.find("Enemy luck -1.") != std::string::npos)
+                                 + 2*(_effect.find("Enemy luck -2.") != std::string::npos);
+      }
+
 }
 
 std::string Item::get_slot_as_string()

@@ -309,22 +309,24 @@ void Hero::equip_item(Item* item)
             if( item->get_name() != "Quiet Eye of the Dragon" || item->get_effect().find("Resource") == std::string::npos )
                   for( uint8_t i = 0; i < HAND_SLOTS - 1; i++)
                         for( uint8_t j = i + 1; j < HAND_SLOTS ; j++)
-                              if( item->get_name() == items.hand[i]->get_name() && items.hand[i]->get_name() == items.hand[j]->get_name() )
-                              {
-                                    printf( "\n%s equips item '%s', but does not gain effects, because the same item is already equipped and its bonuses cannot be multiplied.\n", get_name().c_str(), item->get_name().c_str() );
-                                    return;
-                              }
+                              if( items.hand[i] != nullptr && items.hand[j] != nullptr )
+                                    if( item->get_name() == items.hand[i]->get_name() && items.hand[i]->get_name() == items.hand[j]->get_name() )
+                                    {
+                                          printf( "\n%s equips item '%s', but does not gain effects, because the same item is already equipped and its bonuses cannot be multiplied.\n", get_name().c_str(), item->get_name().c_str() );
+                                          return;
+                                    }
 
       // Check if same item is equipped in pocket slot (not concerning resource generating items )
       if( item->get_slot() == Slot::Pocket )
             if( item->get_effect().find("Gold") != std::string::npos && item->get_effect().find("Resource") != std::string::npos ) // items may generate gold or resources, but never both
                   for( uint8_t i = 0; i < POCKET_SLOTS - 1; i++)
                         for( uint8_t j = i + 1; j < POCKET_SLOTS ; j++)
-                              if( item->get_name() == items.pocket[i]->get_name() && items.pocket[i]->get_name() == items.pocket[j]->get_name() )
-                              {
-                                    printf( "\n%s equips item '%s', but does not gain effects, because the same item is already equipped and its bonuses cannot be multiplied.\n", get_name().c_str(), item->get_name().c_str() );
-                                    return;
-                              }
+                              if( items.pocket[i] != nullptr && items.pocket[j] != nullptr )
+                                    if( item->get_name() == items.pocket[i]->get_name() && items.pocket[i]->get_name() == items.pocket[j]->get_name() )
+                                    {
+                                          printf( "\n%s equips item '%s', but does not gain effects, because the same item is already equipped and its bonuses cannot be multiplied.\n", get_name().c_str(), item->get_name().c_str() );
+                                          return;
+                                    }
 
       // TO DO : Check if recipe for combo items if fulfilled - if yes - give the bonuses. 
       // Perhaps after each equip if the items name is part of list of combination recipes a funciton to seek for the rest of items should be called. 
@@ -339,7 +341,10 @@ void Hero::equip_item(Item* item)
       if( item->get_knowledge_bonus() )
             update_mana();
 
-      // TO DO : implement morale & luck and other bonuses
+      add_morale( item->get_morale_bonus() );
+      add_luck(   item->get_luck_bonus()   );
+
+      // TO DO : implement enemy morale & luck and other bonuses
 
       set_army_hp_bonus(    get_army_hp_bonus()    + 1*item->get_increase_hp_1()    + 2*item->get_increase_hp_2()    );
       set_army_speed_bonus( get_army_speed_bonus() + 1*item->get_increase_speed_1() + 2*item->get_increase_speed_2() );
@@ -393,7 +398,10 @@ void Hero::unequip_item(Item* item)
       if( item->get_knowledge_bonus() )
             update_mana();
 
-      // TO DO : implement morale & luck and other bonuses
+      add_morale( static_cast<Morale>( -static_cast<int8_t>( item->get_morale_bonus() ) ) );
+      add_luck(   static_cast<Luck>(   -static_cast<int8_t>( item->get_luck_bonus()   ) ) );
+
+      // TO DO : implement enemy morale & luck and other bonuses
 
       set_army_hp_bonus(    get_army_hp_bonus()    - 1*item->get_increase_hp_1()    - 2*item->get_increase_hp_2()    );
       set_army_speed_bonus( get_army_speed_bonus() - 1*item->get_increase_speed_1() - 2*item->get_increase_speed_2() );
@@ -573,7 +581,6 @@ void Hero::update_army_stats()
             }
       }
       uint8_t total = has_Neutral + has_Castle + has_Rampart + has_Tower + has_Inferno + has_Necropolis + has_Dungeon + has_Stronghold + has_Fortress + has_Conflux + has_Cove;
-      
       Morale morale_penalty = Morale::Neutral; // diversity is penalized
 
       switch( total )
@@ -602,7 +609,7 @@ void Hero::update_army_stats()
                   army[i]->set_speed( c->get_speed() + get_army_speed_bonus() );
 
                   army[i]->set_morale( static_cast<Morale>( std::min( std::max( static_cast<int8_t>(c->get_morale()) + static_cast<int8_t>(get_morale()) + static_cast<int8_t>(morale_penalty), -3), 3) ) );
-                  if( c->get_is_undead() || c->get_is_bloodless() )
+                  if( c->get_is_undead() || ( c->get_is_bloodless() && ( c->get_name() != "Stone Gargoyle" && c->get_name() != "Obsidian Gargoyle" ) ) )
                         army[i]->set_morale( Morale::Neutral );
                   if( c->get_minimum_morale_1() && static_cast<int8_t>(army[i]->get_morale()) < 1 )
                         army[i]->set_morale( Morale::Good );

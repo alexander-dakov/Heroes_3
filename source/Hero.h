@@ -196,16 +196,18 @@ class Hero
             Secondary_Skill* get_secondary_skill(uint8_t i) { return _secondary_skills[i]; };
             std::string get_secondary_skill_name(uint8_t i) { return _secondary_skills[i]->get_name(); };
 
-            void set_morale(const Morale morale) { _morale = morale; };
-            Morale get_morale() { return _morale; };
-
             void set_army_hp_bonus(const uint8_t bonus) { _army_hp_bonus = bonus; };
             uint8_t get_army_hp_bonus()                 { return _army_hp_bonus;  };
 
             void set_army_speed_bonus(const uint8_t bonus) { _army_speed_bonus = bonus; };
             uint8_t get_army_speed_bonus()                 { return _army_speed_bonus;  };
 
+            void set_morale(const Morale morale) { _morale = morale; };
+            void add_morale(const Morale morale) { _morale = static_cast<Morale>( std::min( std::max( static_cast<int8_t>(_morale) + static_cast<int8_t>(morale), -3), 3) ); };
+            Morale get_morale() { return _morale; };
+
             void set_luck(const Luck luck) { _luck = luck; };
+            void add_luck(const Luck luck) { _luck = static_cast<Luck>( std::min( std::max( static_cast<int8_t>(_luck) + static_cast<int8_t>(luck), -3), 3) ); };
             Luck get_luck() { return _luck; };
 
             void set_mana(const uint16_t mana) { _mana = mana; };

@@ -6,6 +6,7 @@
 #include <map>
 #include "../utilities/types.h"
 #include "Resources.h"
+#include "Morale_Luck.h"
 #include "Spell.h"
 
 constexpr uint8_t MAX_NUM_OF_EFFECTS = 10; // used to catch inaccuracies when constructing objects in Item_List.cpp
@@ -61,13 +62,12 @@ struct Item
                   bool _modify_morale = false;
                   uint8_t _morale = 0;
                   uint8_t _decrease_enemy_morale = 0;
+                  bool _disable_positive_morale = false; // Spirit of Oppression
 
                   bool _modify_luck = false;
                   uint8_t _luck = 0;
                   uint8_t _decrease_enemy_luck = 0;
-
-                  bool _disable_positive_morale = false; // Spirit of Oppression
-                  bool _disable_luck = false; // Hourglass of the Evil Hour
+                  bool _disable_positive_luck = false; // Hourglass of the Evil Hour
                   
                   // increase hp of all creature stacks in army
                   bool _increase_hp_1 = false; // Ring of Vitality, Ring of Life
@@ -190,11 +190,19 @@ struct Item
 
             std::string get_effect() { return effects._effect; };
 
-            int8_t get_attack_bonus()    { return effects._modify_attack * effects._attack;       };
-            int8_t get_defense_bonus()   { return effects._modify_defense * effects._defense;     };
-            int8_t get_power_bonus()     { return effects._modify_power * effects._power;         };
+            int8_t get_attack_bonus()    { return effects._modify_attack    * effects._attack;    };
+            int8_t get_defense_bonus()   { return effects._modify_defense   * effects._defense;   };
+            int8_t get_power_bonus()     { return effects._modify_power     * effects._power;     };
             int8_t get_knowledge_bonus() { return effects._modify_knowledge * effects._knowledge; };
-            // morale & luck
+
+            Morale get_morale_bonus() { return static_cast<Morale>( std::min( std::max( effects._modify_morale * effects._morale, 0 ), 3 ) ); };
+            Luck get_luck_bonus()     { return static_cast<Luck>(   std::min( std::max( effects._modify_luck   * effects._luck,   0 ), 3 ) ); };
+
+            Morale get_decrease_enemy_morale_bonus() { return static_cast<Morale>( std::max( std::min( -effects._modify_morale * effects._decrease_enemy_morale, 0 ), -3 ) ); };
+            Luck get_decrease_enemy_luck_bonus()     { return static_cast<Luck>(   std::max( std::min( -effects._modify_luck   * effects._decrease_enemy_luck,   0 ), -3 ) ); };
+
+            bool get_disable_positive_morale() { return effects._disable_positive_morale; };
+            bool get_disable_positive_luck()   { return effects._disable_positive_luck;   };
 
             bool get_increase_hp_1() { return effects._increase_hp_1; }
             bool get_increase_hp_2() { return effects._increase_hp_1; }

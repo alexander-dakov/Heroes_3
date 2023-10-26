@@ -238,6 +238,7 @@ void test_army_hero_bonuses()
 
     // Necklace
     second_hero.pick_up_item(&Item_List::Necklace_of_Swiftness);             // unit speed +1
+    // second_hero.pick_up_item(&Item_List::Pendant_of_Courage);                // morale +3, luck +3
 
     // Weapon
     second_hero.pick_up_item(&Item_List::Sword_of_Judgement);                // primary +5
@@ -259,6 +260,9 @@ void test_army_hero_bonuses()
     // Pocket
     second_hero.pick_up_item(&Item_List::Vial_of_Lifeblood);                 // unit hp +2
     // second_hero.pick_up_item(&Item_List::Elixir_of_Life); // unit hp + 4 + 25% of base hp + regeneration per round
+    second_hero.pick_up_item(&Item_List::Badge_of_Courage);                  // morale +1
+    second_hero.pick_up_item(&Item_List::Crest_of_Valor);                    // morale +1
+    second_hero.pick_up_item(&Item_List::Cards_of_Prophecy);                 // luck +1
 
     second_hero.unequip_item(&Item_List::Helm_of_Heavenly_Enlightenment);    // primary +6
     
@@ -266,52 +270,75 @@ void test_army_hero_bonuses()
 
     // fill an army with the same units
     Stack* army[ARMY_SLOTS] = {nullptr};
+    army[0] = new Stack(Creature_List::Master_Gremlin, 1);
+    army[1] = new Stack(Creature_List::Stone_Gargoyle, 1);
+    // army[2] = new Stack(Creature_List::Obsidian_Gargoyle, 1);
+    army[3] = new Stack(Creature_List::Stone_Golem, 1);
+    // army[4] = new Stack(Creature_List::Iron_Golem, 1);
+    army[5] = new Stack(Creature_List::Skeleton, 1);
+    army[6] = new Stack(Creature_List::Magma_Elemental, 1);
 
     for(int i = 0; i < ARMY_SLOTS; i++)
-    {
-        army[i] = new Stack(Creature_List::Marksman, i + 1);
-        printf( "Stack %d is comprised of : %d %s\n", i + 1, army[i]->get_number(), army[i]->get_creature()->get_name().c_str() );
-    }
+        if( army[i] != nullptr )
+            printf( "Stack %d is comprised of : %d %s\n", i + 1, army[i]->get_number(), army[i]->get_creature()->get_name().c_str() );
     // Print stats of part of the army
-    printf( "\nFirst and last stacks of army without hero :\n" );
-    army[0]->print_full_info();
-    printf("\n");
-    army[ARMY_SLOTS - 1]->print_full_info();
+    printf( "\nArmy without hero :\n" );
+    for(int i = 0; i < ARMY_SLOTS; i++)
+        if( army[i] != nullptr )
+        {
+            army[i]->print_battle_info();
+            printf("\n");
+        }
    
     // Assign the army to second hero
     for(int i = 0; i < ARMY_SLOTS; i++)
-        second_hero.add_stack_to_slot(army[i], i);
+        if( army[i] != nullptr )
+            second_hero.add_stack_to_slot(army[i], i);
     // Print stats of part of the army
-    printf( "\nFirst and last stacks of army lead by hero %s :\n", second_hero.get_name().c_str() );
-    army[0]->print_full_info();
-    printf("\n");
-    army[ARMY_SLOTS - 1]->print_full_info();
+    printf( "\nArmy lead by hero %s :\n", second_hero.get_name().c_str() );
+    for(int i = 0; i < ARMY_SLOTS; i++)
+        if( army[i] != nullptr )
+        {
+            army[i]->print_battle_info();
+            printf("\n");
+        }
 
     // Hero equips an item to boost army
     second_hero.equip_item_from_chest(&Item_List::Helm_of_Heavenly_Enlightenment);    // primary +6
     // Print stats of part of the army
-    printf( "\nFirst and last stacks of army lead by hero %s :\n", second_hero.get_name().c_str() );
-    army[0]->print_full_info();
-    printf("\n");
-    army[ARMY_SLOTS - 1]->print_full_info();
+    printf( "\nArmy lead by hero %s :\n", second_hero.get_name().c_str() );
+    for(int i = 0; i < ARMY_SLOTS; i++)
+        if( army[i] != nullptr )
+        {
+            army[i]->print_battle_info();
+            printf("\n");
+        }
 
     // Remove army from hero
     for(int i = 0; i < ARMY_SLOTS; i++)
-        second_hero.remove_stack_from_position(i);
+        if( army[i] != nullptr )
+            second_hero.remove_stack_from_position(i);
     // Print stats of part of the army
-    printf( "\nFirst and last stacks of army without hero :\n" );
-    army[0]->print_full_info();
-    printf("\n");
-    army[ARMY_SLOTS - 1]->print_full_info();
+    printf( "\nArmy without hero :\n" );
+    for(int i = 0; i < ARMY_SLOTS; i++)
+        if( army[i] != nullptr )
+        {
+            army[i]->print_battle_info();
+            printf("\n");
+        }
 
     // Assign army to first hero
     for(int i = 0; i < ARMY_SLOTS; i++)
-        first_hero.add_stack_to_slot(army[i], i);
+        if( army[i] != nullptr )
+            first_hero.add_stack_to_slot(army[i], i);
     // Print stats of part of the army
-    printf( "\nFirst and last stacks of army lead by hero %s :\n", first_hero.get_name().c_str() );
-    army[0]->print_full_info();
-    printf("\n");
-    army[ARMY_SLOTS - 1]->print_full_info();
+    printf( "\nArmy lead by hero %s :\n", first_hero.get_name().c_str() );
+    for(int i = 0; i < ARMY_SLOTS; i++)
+        if( army[i] != nullptr )
+        {
+            army[i]->print_battle_info();
+            printf("\n");
+        }
 }
 
 void test_hero_vs_creature_stack()
@@ -323,9 +350,9 @@ void test_hero_vs_creature_stack()
     hero.set_attack(5);
     hero.set_defense(5);
 
-    // hero.equip_item(&Item_List::Ring_of_Vitality);  // unit hp +1
-    // hero.equip_item(&Item_List::Ring_of_Life);      // unit hp +1
-    // hero.equip_item(&Item_List::Vial_of_Lifeblood); // unit hp +2
+    hero.equip_item(&Item_List::Ring_of_Vitality);  // unit hp +1
+    hero.equip_item(&Item_List::Ring_of_Life);      // unit hp +1
+    hero.equip_item(&Item_List::Vial_of_Lifeblood); // unit hp +2
 
     // hero.equip_item(&Item_List::Elixir_of_Life); // unit hp + 4 + 25% of base hp + regeneration per round
 

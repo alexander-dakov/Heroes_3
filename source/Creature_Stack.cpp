@@ -66,7 +66,7 @@ void Stack::reset_stats()
 
 void Stack::set_morale(const Morale morale) 
 { 
-    if( ( !get_creature()->get_is_undead() && !get_creature()->get_is_bloodless() ) || (  get_creature()->get_name() == "Stone Gargoyle" || get_creature()->get_name() == "Obsidian Gargoyle" ) ) 
+    if( ( !get_creature()->get_is_undead() && !get_creature()->get_is_bloodless() ) || ( get_creature()->get_name() == "Stone Gargoyle" || get_creature()->get_name() == "Obsidian Gargoyle" ) ) 
         battle_stats._morale = morale; 
 }
 
@@ -457,8 +457,9 @@ void Stack::print_battle_info()
     
     printf("Damage : %d - %d\n", c->get_min_dmg(), c->get_max_dmg());
     printf("Health : %d(%d)\n",  c->get_hp(), get_hp_left());
-    printf("Morale : %d\n", c->get_morale());
-    printf("Luck : %d\n",   c->get_luck());
+    printf("Speed : %d(%d)\n",   c->get_speed(), get_speed() );
+    printf("Morale : %d\n", get_morale());
+    printf("Luck : %d\n",   get_luck());
 
     if( c->get_special_abilities().length() != 0 )
         printf("Special abilities : %s\n", c->get_special_abilities().c_str());
@@ -487,8 +488,8 @@ void Stack::print_full_info()
 
     printf("Health : %d(%d)\n",  get_hp_left(), get_hp() );
     printf("Speed : %d(%d)\n",   c->get_speed(), get_speed() );
-    printf("Morale : %d\n",      c->get_morale() );
-    printf("Luck : %d\n",        c->get_luck() );
+    printf("Morale : %d\n",      get_morale() );
+    printf("Luck : %d\n",        get_luck() );
     printf("Fight value : %d\n", c->get_fight_value() );
     printf("AI value : %d\n",    c->get_ai_value() );
     printf("%s", c->get_cost().c_str());
