@@ -132,7 +132,6 @@ class Hero
             bool _has_equipped_elixir_of_life = false;
 
             Stack* army[ARMY_SLOTS] = {nullptr}; // probably would be better with unique_ptr
-            // std::array<std::unique_ptr, ARMY_SLOTS> army;
 
             Position _position = Position(0, 0);
 
@@ -269,6 +268,9 @@ class Hero
             
             // Update battle stats of each stack according to current hero attributes. Called every time hero adds or removes creature from army, gets a new level, gets a morale/luck bonus, equips/unequips an item.
             void update_army_stats();
+
+            // Return the pointer to a stack in the army.
+            Stack* get_army_stack(uint8_t i);
 
             void set_position(const Position position) { _position = position; };
             Position get_position() { return _position; };

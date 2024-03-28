@@ -9,6 +9,8 @@ Creature::Creature( const std::string name, const Faction faction, const uint8_t
                     cost(resources),  
                     special_abilities(abilities)
 {
+      unit_info.set_native_terrain();
+
       special_abilities.set_special_abilities();
 
       logical_limitations();
@@ -29,6 +31,24 @@ Creature::Creature(const Creature* creature) : unit_info(creature->unit_info), b
 Creature::~Creature()
 {
       // printf( "Creature %s destroyed!\n", get_name().c_str() );
+}
+
+void Creature::unit_info::set_native_terrain()
+{
+      switch(this->_faction)
+      {
+            case Faction::Neutral    : _native_terrain = Terrain::None;         break;
+            case Faction::Castle     : _native_terrain = Terrain::Grass;        break;
+            case Faction::Rampart    : _native_terrain = Terrain::Grass;        break;
+            case Faction::Tower      : _native_terrain = Terrain::Snow;         break;
+            case Faction::Inferno    : _native_terrain = Terrain::Lava;         break;
+            case Faction::Necropolis : _native_terrain = Terrain::Dirt;         break;
+            case Faction::Dungeon    : _native_terrain = Terrain::Subterranean; break;
+            case Faction::Stronghold : _native_terrain = Terrain::Rough;        break;
+            case Faction::Fortress   : _native_terrain = Terrain::Swamp;        break;
+            case Faction::Conflux    : _native_terrain = Terrain::Highlands;    break;
+            case Faction::Cove       : _native_terrain = Terrain::Swamp;        break;
+      }
 }
 
 void Creature::special_abilities::set_special_abilities()
@@ -248,7 +268,7 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
       all_abilities["Vulnerable to Ice Bolt and Frost Ring."]                        = { &_is_vulnerable_to_ice_bolt, &_is_vulnerable_to_frost_ring };
       all_abilities["Vulnerable to Lightning Bolt, Chain Lightning and Armageddon."] = { &_is_vulnerable_to_lightning_bolt, &_is_vulnerable_to_chain_lightning, &_is_vulnerable_to_armageddon };
       all_abilities["Vulnerable to Armageddon, Fireball, Inferno."]                  = { &_is_vulnerable_to_armageddon, &_is_vulnerable_to_fire_ball, &_is_vulnerable_to_inferno };
-      all_abilities["Vulnerable to Meteor Shower."]                                  = { &_is_vulnerable_to_meteor_shower   };
+      all_abilities["Vulnerable to Meteor Shower."]                                  = { &_is_vulnerable_to_meteor_shower };
       
       all_abilities["Minimum morale is +1."] = { &_minimum_morale_1 };
       all_abilities["Minimum luck is +1."]   = { &_minimum_luck_1   };
@@ -257,14 +277,14 @@ std::map< std::string, std::vector<bool*> > Creature::special_abilities::create_
       all_abilities["-1 morale to enemy troops."]         = { &_decreases_enemy_morale_1 };
       all_abilities["-1 luck to enemy troops."]           = { &_decreases_enemy_luck_1   };
       all_abilities["-2 luck to enemy troops."]           = { &_decreases_enemy_luck_2   };
-      all_abilities["Doubles friendly unit Luck chance."] = { &_doubles_luck_chance   };
+      all_abilities["Doubles friendly unit Luck chance."] = { &_doubles_luck_chance      };
 
       all_abilities["Magic channel."]                         = { &_magic_channel };
       all_abilities["Magic damper."]                          = { &_magic_damper  };
       all_abilities["Hero's combat spells cost 2 less mana."] = { &_mana_economy  };
 
-      all_abilities["Spying."]             = { &_has_spying };
-      all_abilities["Sandwalker."]         = { &_is_sandwalker };
+      all_abilities["Spying."]             = { &_has_spying         };
+      all_abilities["Sandwalker."]         = { &_is_sandwalker      };
       all_abilities["Generates crystals."] = { &_generates_crystals };
 
       return all_abilities;
@@ -278,6 +298,7 @@ void Creature::special_abilities::fill_special_abilities()
       auto all_abilities = create_map_of_all_abilities();
 
       uint8_t counter = 0;
+      
       while( helper.length() > 1) // no need to enter helper when an empty space remains
       {
             counter ++;
@@ -311,6 +332,7 @@ void Creature::special_abilities::fill_special_abilities()
                   }
             }
       }
+
       if( _ignore_enemy_defense )
             _ignore_enemy_defense_by_percent = 40*(_abilities.find("Ignores 40% of enemy's defense skill.") != std::string::npos)
                                              + 80*(_abilities.find("Ignores 80% of enemy's defense skill.") != std::string::npos);

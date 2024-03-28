@@ -86,11 +86,11 @@ void test_create_creature_stack()
 {
     print_before_testing_output();
 
-    Stack* army[ARMY_SLOTS] = {nullptr};
+    std::unique_ptr<Stack> army[ARMY_SLOTS] = {nullptr};
 
     for(int i = 0; i < ARMY_SLOTS; i++)
     {
-        army[i] = new Stack(Creature_List::Master_Genie, 50 + i);
+        army[i] = std::unique_ptr<Stack>( new Stack(Creature_List::Master_Genie, 50 + i) );
         printf( "Stack %d is comprised of : %d %s\n", i + 1, army[i]->get_number(), army[i]->get_creature()->get_name().c_str() );
     }
     printf( "\n" );
@@ -104,11 +104,11 @@ void test_creature_stack_vs_creature_stack()
 
     // Stack attacker(Creature_List::Lich, 10, Team::Red);
     Stack attacker(Creature_List::Angel, 1, Team::Red);
-    printf( "%s stack is comprised of : %d %s\n", attacker.get_team_as_string().c_str(), attacker.get_number(), attacker.get_creature()->get_name().c_str() );
+    printf( "%s stack is comprised of : %d %s\n", attacker.get_team_as_string().c_str(), attacker.get_number(), attacker.get_creature_name().c_str() );
 
     Stack defender(Creature_List::Skeleton, 50, Team::Blue);
     // Stack defender(Creature_List::Ghost_Dragon, 1, Team::Blue);
-    printf( "%s stack is comprised of : %d %s\n", defender.get_team_as_string().c_str(), defender.get_number(), defender.get_creature()->get_name().c_str() );
+    printf( "%s stack is comprised of : %d %s\n", defender.get_team_as_string().c_str(), defender.get_number(), defender.get_creature_name().c_str() );
 
     // TO DO : all special abilities have to be added in : attack(), defend(), recieve_damage()
     attacker.attack(defender);
@@ -261,26 +261,26 @@ void test_army_hero_bonuses()
     second_hero.pick_up_item(&Item_List::Vial_of_Lifeblood);                 // unit hp +2
     // second_hero.pick_up_item(&Item_List::Elixir_of_Life); // unit hp + 4 + 25% of base hp + regeneration per round
     second_hero.pick_up_item(&Item_List::Badge_of_Courage);                  // morale +1
-    second_hero.pick_up_item(&Item_List::Crest_of_Valor);                    // morale +1
+    // second_hero.pick_up_item(&Item_List::Crest_of_Valor);                    // morale +1
     second_hero.pick_up_item(&Item_List::Cards_of_Prophecy);                 // luck +1
 
     second_hero.unequip_item(&Item_List::Helm_of_Heavenly_Enlightenment);    // primary +6
     
     second_hero.print_full_info();
 
-    // fill an army with the same units
+    // fill an army
     Stack* army[ARMY_SLOTS] = {nullptr};
     army[0] = new Stack(Creature_List::Master_Gremlin, 1);
     army[1] = new Stack(Creature_List::Stone_Gargoyle, 1);
-    // army[2] = new Stack(Creature_List::Obsidian_Gargoyle, 1);
+    army[2] = new Stack(Creature_List::Dwarf, 1);
     army[3] = new Stack(Creature_List::Stone_Golem, 1);
-    // army[4] = new Stack(Creature_List::Iron_Golem, 1);
+    army[4] = new Stack(Creature_List::Pikeman, 1);
     army[5] = new Stack(Creature_List::Skeleton, 1);
     army[6] = new Stack(Creature_List::Magma_Elemental, 1);
 
     for(int i = 0; i < ARMY_SLOTS; i++)
         if( army[i] != nullptr )
-            printf( "Stack %d is comprised of : %d %s\n", i + 1, army[i]->get_number(), army[i]->get_creature()->get_name().c_str() );
+            printf( "Stack %d is comprised of : %d %s\n", i + 1, army[i]->get_number(), army[i]->get_creature_name().c_str() );
     // Print stats of part of the army
     printf( "\nArmy without hero :\n" );
     for(int i = 0; i < ARMY_SLOTS; i++)
@@ -290,7 +290,7 @@ void test_army_hero_bonuses()
             printf("\n");
         }
    
-    // Assign the army to second hero
+    // Assign the army to the second hero
     for(int i = 0; i < ARMY_SLOTS; i++)
         if( army[i] != nullptr )
             second_hero.add_stack_to_slot(army[i], i);
@@ -339,6 +339,9 @@ void test_army_hero_bonuses()
             army[i]->print_battle_info();
             printf("\n");
         }
+
+    for(int i = 0; i < ARMY_SLOTS; i++)
+        delete army[i];
 }
 
 void test_hero_vs_creature_stack()
@@ -365,7 +368,7 @@ void test_hero_vs_creature_stack()
     // Stack attacker(Creature_List::Ayssid, 2, Team::Red);
     Stack attacker(Creature_List::Nix, 2, Team::Red);
     hero.add_stack_to_army(&attacker);
-    printf( "\nHero %s is leading the %s stack, comprised of : %d %s\n", hero.get_name().c_str(), attacker.get_team_as_string().c_str(), attacker.get_number(), attacker.get_creature()->get_name().c_str() );
+    printf( "\nHero %s is leading the %s stack, comprised of : %d %s\n", hero.get_name().c_str(), attacker.get_team_as_string().c_str(), attacker.get_number(), attacker.get_creature_name().c_str() );
     attacker.print_full_info();
 
     // Stack defender(Creature_List::Skeleton, 20, Team::Blue);
@@ -373,7 +376,7 @@ void test_hero_vs_creature_stack()
     // Stack defender(Creature_List::Wolf_Raider, 20, Team::Blue);
     // Stack defender(Creature_List::Royal_Griffin, 10, Team::Blue);
     Stack defender(Creature_List::Behemoth, 1, Team::Blue);
-    printf( "\n%s stack is comprised of : %d %s\n", defender.get_team_as_string().c_str(), defender.get_number(), defender.get_creature()->get_name().c_str() );
+    printf( "\n%s stack is comprised of : %d %s\n", defender.get_team_as_string().c_str(), defender.get_number(), defender.get_creature_name().c_str() );
     defender.print_full_info();
 
     // TO DO : all special abilities have to be added in : attack(), defend(), recieve_damage()
@@ -385,4 +388,54 @@ void test_hero_vs_creature_stack()
     attacker.attack(defender);
 
     defender.attack(attacker);
+}
+
+void test_position_armies_on_battlefield()
+{
+    print_before_testing_output();
+
+    Hero& red_hero = Hero_List::Him;
+    Hero& tan_hero = Hero_List::Her;
+
+    red_hero.print_full_info();
+    tan_hero.print_full_info();
+
+    // fill an army
+    Stack* red_army[ARMY_SLOTS] = {nullptr};
+    red_army[0] = new Stack( Creature_List::Hobgoblin,      100, red_hero.get_team() );
+    red_army[1] = new Stack( Creature_List::Wolf_Raider,     50, red_hero.get_team() );
+    red_army[2] = new Stack( Creature_List::Orc_Chieftain,   25, red_hero.get_team() );
+    red_army[3] = new Stack( Creature_List::Ogre_Mage,       10, red_hero.get_team() );
+    red_army[4] = new Stack( Creature_List::Thunderbird,      5, red_hero.get_team() );
+    red_army[5] = new Stack( Creature_List::Cyclops_King,     2, red_hero.get_team() );
+    red_army[6] = new Stack( Creature_List::Ancient_Behemoth, 1, red_hero.get_team() );
+
+    // Assign the army to the first hero
+    for(int i = 0; i < ARMY_SLOTS; i++)
+        if( red_army[i] != nullptr )
+            red_hero.add_stack_to_slot(red_army[i], i);
+
+    // fill an army
+    Stack* tan_army[ARMY_SLOTS] = {nullptr};
+    tan_army[0] = new Stack( Creature_List::Gnoll_Marauder,  100, tan_hero.get_team() );
+    tan_army[1] = new Stack( Creature_List::Lizard_Warrior,   50, tan_hero.get_team() );
+    tan_army[2] = new Stack( Creature_List::Dragon_Fly,       25, tan_hero.get_team() );
+    tan_army[3] = new Stack( Creature_List::Greater_Basilisk, 10, tan_hero.get_team() );
+    tan_army[4] = new Stack( Creature_List::Mighty_Gorgon,     5, tan_hero.get_team() );
+    tan_army[5] = new Stack( Creature_List::Wyvern_Monarch,    2, tan_hero.get_team() );
+    tan_army[6] = new Stack( Creature_List::Chaos_Hydra,       1, tan_hero.get_team() );
+
+    // Assign the army to the second hero
+    for(int i = 0; i < ARMY_SLOTS; i++)
+        if( tan_army[i] != nullptr )
+            tan_hero.add_stack_to_slot(tan_army[i], i);
+
+    Battle(red_hero, tan_hero, Battle_Format::Normal, Terrain::Grass);
+
+    for(int i = 0; i < ARMY_SLOTS; i++)
+    {
+        delete red_army[i];
+        delete tan_army[i];
+        // use smart pointers, so manual freeing of memory wont be neccessary
+    }
 }

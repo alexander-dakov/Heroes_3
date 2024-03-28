@@ -194,7 +194,7 @@ void Hero::add_to_primary_on_level_up(uint8_t probability, const uint8_t* array)
       else if( probability < d ) { add_defense(1);   printf( "\n%s reaches level %d and recieves a bonus point in defense.\n", get_name().c_str(), get_level() );   }
       else if( probability < p ) { add_power(1);     printf( "\n%s reaches level %d and recieves a bonus point in power.\n", get_name().c_str(), get_level() );     }
       else if( probability < k ) { add_knowledge(1); printf( "\n%s reaches level %d and recieves a bonus point in knowledge.\n", get_name().c_str(), get_level() ); }
-      else { std::cerr << "\nProbability = "<< probability <<". Such value is unacceptable! Check the primary skills level up coefficients in add_level()!\n"; abort(); }
+      else { std::cerr << "\nProbability = "<< probability <<". Such value is unacceptable! Check the primary skills level up coefficients in add_level()!" << std::endl; abort(); }
 }
 
 void Hero::add_experience(const uint32_t experience)
@@ -467,12 +467,22 @@ void Hero::add_stack_to_army(Stack* stack)
                   return;
             }
 
-      printf("\n%s tries to add stack of %d %s to army, but there is not enough space!\n", get_name().c_str(), stack->get_number(), stack->get_creature()->get_name().c_str());
+      printf("\n%s tries to add stack of %d %s to army, but there is not enough space!\n", get_name().c_str(), stack->get_number(), stack->get_creature_name().c_str());
       return;
 }
 
 void Hero::add_stack_to_slot(Stack* stack, const uint8_t slot)
 {
+      if( get_team() != stack->get_team() )
+      {
+            printf("\nImpossible to add this stack as ");
+            print_colored_string( get_name().c_str(), get_team() );
+            printf(" and the stack of ");
+            print_colored_string( stack->get_creature_name().c_str(), stack->get_team());
+            printf(" do not belong to the same team!\n");
+            return;
+      }
+
       if( army[slot] == nullptr )
       {
             army[slot] = stack;
@@ -480,7 +490,7 @@ void Hero::add_stack_to_slot(Stack* stack, const uint8_t slot)
             return;
       }
 
-      printf("\n%s tries to add stack of %d %s to army slot %d, but it is taken!\n", get_name().c_str(), stack->get_number(), stack->get_creature()->get_name().c_str(), slot + 1);
+      printf("\n%s tries to add stack of %d %s to army slot %d, but it is taken!\n", get_name().c_str(), stack->get_number(), stack->get_creature_name().c_str(), slot + 1);
       return;
 }
 
@@ -489,14 +499,14 @@ void Hero::remove_stack(Stack& stack)
       for( uint8_t i = 0; i < ARMY_SLOTS; i++)
             if( army[i] == &stack )
             {
-                  printf( "\nStack of %d %s removed from %s's army.\n", stack.get_number(), stack.get_creature()->get_name().c_str(), get_name().c_str() );
+                  printf( "\nStack of %d %s removed from %s's army.\n", stack.get_number(), stack.get_creature_name().c_str(), get_name().c_str() );
                   army[i]->reset_stats();
                   army[i] = nullptr;
                   update_army_stats(); // because removed creatures might have army bonuses
                   return;
             }
 
-      printf( "\nStack of %d %s does not exist in %s's army.\n", stack.get_number(), stack.get_creature()->get_name().c_str(), get_name().c_str() );
+      printf( "\nStack of %d %s does not exist in %s's army.\n", stack.get_number(), stack.get_creature_name().c_str(), get_name().c_str() );
 }
 
 void Hero::remove_stack_from_position(const uint8_t slot)
@@ -506,7 +516,7 @@ void Hero::remove_stack_from_position(const uint8_t slot)
             printf( "\nSlot %d is already empty.\n", slot );
             return;
       }
-      printf( "\nStack of %d %s removed from %s's army from slot %d.\n", army[slot]->get_number(), army[slot]->get_creature()->get_name().c_str(), get_name().c_str(), slot + 1);
+      printf( "\nStack of %d %s removed from %s's army from slot %d.\n", army[slot]->get_number(), army[slot]->get_creature_name().c_str(), get_name().c_str(), slot + 1);
       army[slot]->reset_stats();
       army[slot] = nullptr;
       update_army_stats(); // because removed creatures might have army bonuses
@@ -589,7 +599,7 @@ void Hero::update_army_stats()
             case 2  : morale_penalty = Morale::Neutral;  break;
             case 3  : morale_penalty = Morale::Bad;      break;
             case 4  : morale_penalty = Morale::Awful;    break;
-            default : morale_penalty = Morale::Terrible; break; // TO DO : test this
+            default : morale_penalty = Morale::Terrible; break;
       }
 
       for(uint8_t i = 0; i < ARMY_SLOTS; i++)
@@ -626,6 +636,17 @@ void Hero::update_army_stats()
                   army[i]->set_hero_level_of_resistance( level_of_resistance );
             }
       }
+}
+
+Stack* Hero::get_army_stack(uint8_t i)
+{
+      if( i > ARMY_SLOTS )
+      {
+            std::cerr << i << "is invalid army position!" << std::endl;
+            abort();
+      }
+
+      return army[i];
 }
 
 void Hero::print_full_info()

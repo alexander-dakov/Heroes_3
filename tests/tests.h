@@ -2,12 +2,14 @@
 #define TESTS_H
 
 #include <iostream>
+#include <memory>
 #include "tests.h"
 #include "../utilities/types.h"
 #include "../source/Creature_Stack.cpp"
 #include "../source/Creature_List.cpp"
 #include "../source/Hero_List.cpp"
 #include "../source/Item_List.cpp"
+#include "../source/Battle.h"
 
 // Flushes std::cout and std::cerr and prints a message in order to mark the output of a test.
 void print_before_testing_output();
@@ -38,5 +40,8 @@ void test_army_hero_bonuses();
 
 // Constructs creature stacks : "attacker" and "defender" (from different teams). "attacker" gets assigned to a hero's army to gain bonuses and "attacker" attacks "defender" to check if damage gets calculated rightfully.
 void test_hero_vs_creature_stack();
+
+// Concstructs an instance of Battle by : creating a field, positioning the armies with their bonuses from their respective heroes on said field and applying terrain bonuses to the stacks.
+void test_position_armies_on_battlefield();
 
 #endif

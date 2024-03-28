@@ -96,7 +96,7 @@ class Stack
         Stack_Action _action = Stack_Action::Attack;
 
         // Each creature can hold up to 3 spell effects at the same time.
-        // std::array< Spell - duration , 3 > _spell_slots; // Should work as LIFO but also be able to have spells removed regardless of the order - thus normal container with fixed lenght.
+        // std::array< Spell - duration , 3 > _spell_slots; // Should work as LIFO but also be able to have spells removed regardless of the order - thus normal container with fixed length.
 
         bool _has_acquired_regeneration = false;
 
@@ -120,8 +120,12 @@ class Stack
         std::string get_team_as_string();
 
         Creature* get_creature() { return &_creature; };
-        
-        // Used when stacks are removed from an army or move from one army to another;
+
+        std::string get_creature_name() { return get_creature()->get_name(); };        // for ease of code writing
+        Faction get_faction() { return get_creature()->get_faction(); };               // for ease of code writing
+        Terrain get_native_terrain() { return get_creature()->get_native_terrain(); }; // for ease of code writing
+
+        // Used when stacks are removed from an army or are moved from one army to another;
         void reset_stats();
 
         void set_att(const uint8_t att) { battle_stats._att = att; };

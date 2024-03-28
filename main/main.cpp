@@ -3,13 +3,9 @@
 
 #define SHOW_DEBUG_INFO (1) // show(1) or hide(0) debug messages
 
-#include "../source/Creature_Stack.cpp"
-#include "../source/Creature_List.cpp"
-#include "../source/Hero_List.cpp"
-
 #define TESTS (1) // include(1) or exclude(0) tests library
 #if TESTS == 1
-#include "../tests/tests.cpp"
+    #include "../tests/tests.cpp"
 #endif
 
 
@@ -96,8 +92,9 @@ int main()
     // test_create_item();
     // test_create_hero();
     // test_hero_item_bonuses();
-    test_army_hero_bonuses();
+    // test_army_hero_bonuses();
     // test_hero_vs_creature_stack();
+    test_position_armies_on_battlefield();
 
     system("pause");
     return 0;

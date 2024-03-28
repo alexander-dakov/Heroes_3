@@ -1,6 +1,3 @@
-#ifndef CREATURE_STACK_CPP
-#define CREATURE_STACK_CPP
-
 #include "Creature_Stack.h"
 
 Stack::Stack(const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y, const Team team = Team::Neutral) :
@@ -66,13 +63,13 @@ void Stack::reset_stats()
 
 void Stack::set_morale(const Morale morale) 
 { 
-    if( ( !get_creature()->get_is_undead() && !get_creature()->get_is_bloodless() ) || ( get_creature()->get_name() == "Stone Gargoyle" || get_creature()->get_name() == "Obsidian Gargoyle" ) ) 
+    if( ( !get_creature()->get_is_undead() && !get_creature()->get_is_bloodless() ) || ( get_creature_name() == "Stone Gargoyle" || get_creature_name() == "Obsidian Gargoyle" ) ) 
         battle_stats._morale = morale; 
 }
 
 void Stack::add_morale(const Morale morale) 
 { 
-    if( ( !get_creature()->get_is_undead() && !get_creature()->get_is_bloodless() ) || ( get_creature()->get_name() == "Stone Gargoyle" || get_creature()->get_name() == "Obsidian Gargoyle" ) ) 
+    if( ( !get_creature()->get_is_undead() && !get_creature()->get_is_bloodless() ) || ( get_creature_name() == "Stone Gargoyle" || get_creature_name() == "Obsidian Gargoyle" ) ) 
         battle_stats._morale = static_cast<Morale>( std::min( std::max( static_cast<int8_t>(battle_stats._morale) + static_cast<int8_t>(morale), -3), 3) ); 
 }
 
@@ -111,7 +108,7 @@ void Stack::recieve_damage(const uint32_t damage)
     {
         set_number(0);
         set_has_perished(true);
-        printf( "The whole %s stack has perished!\n", get_creature()->get_name().c_str() );
+        printf( "The whole %s stack has perished!\n", get_creature_name().c_str() );
 
         set_action(Stack_Action::Skip);
         return;
@@ -126,11 +123,11 @@ void Stack::recieve_damage(const uint32_t damage)
         if(delta_num)
         {
             set_number(new_num);
-            printf( "%d %s perished!\n", delta_num, get_creature()->get_name().c_str() );
+            printf( "%d %s perished!\n", delta_num, get_creature_name().c_str() );
         }
 
         #if SHOW_DEBUG_INFO == 1
-            printf( "Last %s in stack has %d hp left.\n", get_creature()->get_name().c_str(), get_hp_left() );
+            printf( "Last %s in stack has %d hp left.\n", get_creature_name().c_str(), get_hp_left() );
         #endif
     }
 }
@@ -198,7 +195,7 @@ void Stack::move(const uint8_t x, const uint8_t y)
     uint8_t distance = std::abs(x - _pos.x) + std::abs(y - _pos.y);
     while(get_creature()->get_speed() < distance)
     {
-        printf("%s have only %i speed and can't move that far. Pick a new position!", get_creature()->get_name());
+        printf("%s have only %i speed and can't move that far. Pick a new position!", get_creature_name());
     }
 
     if(get_creature()->get_is_flying()) // true for both flying and teleporting creatures
@@ -241,7 +238,7 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
     float R1(0.f), R2(0.f), R3(0.f), R4(0.f), R5(0.f), R6(0.f), R7(0.f), R8(0.f); // reduce damage
 
     // attacker's attributes
-    std::string attacker_name      = get_creature()->get_name();
+    std::string attacker_name      = get_creature_name();
     uint32_t    attacker_number    = get_number();
     uint8_t     attacker_attack    = get_att();
     bool        attacker_is_ranged = get_creature()->get_is_ranged();
@@ -254,7 +251,7 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
     bool obstacle_penalty = attacker_is_ranged && can_shoot() && /* there's a wall between attacker and defender &&*/ !get_creature()->get_no_obstacle_penalty() /*&& !get_no_obstacle_penalty() - stack method due to artifacts*/; // TO DO : implement
 
     // defender's attributes
-    std::string defender_name      = defender.get_creature()->get_name();
+    std::string defender_name      = defender.get_creature_name();
     uint8_t     defender_defense   = defender.get_def();
 
     if( defender.get_action() == Stack_Action::Defend ) 
@@ -390,10 +387,10 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
 
     final_damage = static_cast<int32_t>( base_damage * (1 + I1 + I2 + I3 + I4 + I5) * (1 - R1) * (1 - R2 - R3) * (1 - R4) * (1 - R5) * (1 - R6) * (1 - R7) * (1 - R8) );
     
-    if     ( !attack_is_retaliation && !attack_is_second_attack ) printf( "Stack of %d %s attacks and does %d damage to %s.\n", attacker_number, attacker_name.c_str(), final_damage, defender_name.c_str() );
-    else if(  attack_is_retaliation && !attack_is_second_attack ) printf( "Stack of %d %s retaliates and does %d damage to %s.\n", attacker_number, attacker_name.c_str(), final_damage, defender_name.c_str() );
+    if     ( !attack_is_retaliation && !attack_is_second_attack ) printf( "Stack of %d %s attacks and does %d damage to %s.\n",                   attacker_number, attacker_name.c_str(), final_damage, defender_name.c_str() );
+    else if(  attack_is_retaliation && !attack_is_second_attack ) printf( "Stack of %d %s retaliates and does %d damage to %s.\n",                attacker_number, attacker_name.c_str(), final_damage, defender_name.c_str() );
     else if( !attack_is_retaliation &&  attack_is_second_attack ) printf( "Stack of %d %s attacks for a second time and does %d damage to %s.\n", attacker_number, attacker_name.c_str(), final_damage, defender_name.c_str() );
-    else if(  attack_is_retaliation &&  attack_is_second_attack ) { std::cerr << "\nRetaliation cannot be a double attack!\n"; abort(); }
+    else if(  attack_is_retaliation &&  attack_is_second_attack ) { std::cerr << "\nRetaliation cannot be a double attack!" << std::endl; abort(); }
     
     // TO DO : apply special abilities with pre-hit effects
 
@@ -497,5 +494,3 @@ void Stack::print_full_info()
     if( c->get_special_abilities().length() != 0 )
         printf( "Special abilities : %s\n", c->get_special_abilities().c_str() );
 }
-
-#endif

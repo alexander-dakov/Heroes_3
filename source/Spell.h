@@ -5,7 +5,7 @@
 #include "../utilities/types.h"
 #include "Skill_level.h"
 
-enum School_of_magic
+enum class School_of_magic
 {
       Air = 1, // 1
       Water,   // 2

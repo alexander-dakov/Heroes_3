@@ -4,6 +4,9 @@ add_library(
     Terrains.h
 
     Battle.h
+    Battle.cpp
+    Battlefield_Tile.h
+    Battlefield_Tile.cpp
     Position.h
 
     Morale_Luck.h
@@ -19,6 +22,7 @@ add_library(
 
     Resources.h
     Team.h
+    Team.cpp
 
     Spell.h
     Spellbook.h

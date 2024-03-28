@@ -7,6 +7,7 @@
 #include <map>
 #include "../utilities/types.h"
 #include "Faction.h"
+#include "Terrains.h"
 #include "Morale_Luck.h"
 #include "Resources.h"
 #include "Skill_level.h"
@@ -37,15 +38,18 @@ enum class Upgrade_level
 struct Creature
 {
       private:
-
             struct unit_info
             {
                   std::string _name;
                   Faction _faction;
+                  Terrain _native_terrain;
                   uint8_t _level;
                   Upgrade_level _upgrade;
                   uint8_t _growth;
                   bool _needs_2_hexes_in_battle;
+
+                  // Sets the native terrain of a creature, according to its faction. 
+                  void set_native_terrain();
 
                   // Constructs a private structure containing data used for overview
                   unit_info( std::string name, Faction faction, uint8_t level, Upgrade_level upgrade, uint8_t growth, bool needs_2_hexes_in_battle ) :
@@ -228,7 +232,7 @@ struct Creature
                   
                   // morale modifiers
                   bool _minimum_morale_1 = false; // Minotaur, Minotaur King
-                  bool _minimum_luck_1 = false; // Halfling
+                  bool _minimum_luck_1   = false; // Halfling
 
                   // whole army morale and luck modifiers
                   bool _increases_alias_morale_1 = false; // Angel, Archangel
@@ -286,6 +290,8 @@ struct Creature
 
             Faction get_faction() { return unit_info._faction; };
             std::string get_faction_as_string();
+
+            Terrain get_native_terrain() {return unit_info._native_terrain; };
 
             uint8_t get_level() { return unit_info._level; };
 

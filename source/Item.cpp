@@ -38,7 +38,7 @@ Item::Item( Spell& spellscroll, const Resources resources ) :
       }
       else
       {
-            std::cerr << "\nAll spellscrolls must have type 'None'! Check up Item_List.cpp!\n";
+            std::cerr << "\nAll spellscrolls must have type 'None'! Check up Item_List.cpp!" << std::endl;
             abort();
       }
 
