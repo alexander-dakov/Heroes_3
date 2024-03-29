@@ -457,22 +457,26 @@ void Hero::print_unequipped_items()
             printf( "No items.\n" );
 }
 
-void Hero::add_stack_to_army(Stack* stack)
+void Hero::add_stack_to_army(std::unique_ptr<Stack> & stack_ptr)
 {
       for( uint8_t i = 0; i < ARMY_SLOTS; i++ )
             if( army[i] == nullptr )
             {
-                  army[i] = stack;
+                  army[i].swap(stack_ptr); // swaps the nullptr with the stack
+                  delete stack_ptr.get();  // deletes the nullptr
+
                   update_army_stats();
                   return;
             }
 
-      printf("\n%s tries to add stack of %d %s to army, but there is not enough space!\n", get_name().c_str(), stack->get_number(), stack->get_creature_name().c_str());
+      printf("\n%s tries to add stack of %d %s to army, but there is not enough space!\n", get_name().c_str(), stack_ptr.get()->get_number(), stack_ptr.get()->get_creature_name().c_str());
       return;
 }
 
-void Hero::add_stack_to_slot(Stack* stack, const uint8_t slot)
+void Hero::add_stack_to_slot(std::unique_ptr<Stack> & stack_ptr, const uint8_t slot)
 {
+      auto stack = stack_ptr.get();
+
       if( get_team() != stack->get_team() )
       {
             printf("\nImpossible to add this stack as ");
@@ -485,7 +489,9 @@ void Hero::add_stack_to_slot(Stack* stack, const uint8_t slot)
 
       if( army[slot] == nullptr )
       {
-            army[slot] = stack;
+            army[slot].swap(stack_ptr); // swaps the nullptr with the stack
+            delete stack_ptr.get();     // deletes the nullptr
+            
             update_army_stats();
             return;
       }
@@ -494,19 +500,23 @@ void Hero::add_stack_to_slot(Stack* stack, const uint8_t slot)
       return;
 }
 
-void Hero::remove_stack(Stack& stack)
+void Hero::remove_stack(std::unique_ptr<Stack> & stack_ptr)
 {
+      auto stack = stack_ptr.get();
+
       for( uint8_t i = 0; i < ARMY_SLOTS; i++)
-            if( army[i] == &stack )
+            if( army[i] == stack_ptr )
             {
-                  printf( "\nStack of %d %s removed from %s's army.\n", stack.get_number(), stack.get_creature_name().c_str(), get_name().c_str() );
-                  army[i]->reset_stats();
-                  army[i] = nullptr;
+                  printf( "\nStack of %d %s removed from %s's army.\n", stack->get_number(), stack->get_creature_name().c_str(), get_name().c_str() );
+                  
+                  delete army[i].get();
+                  army[i].reset(nullptr);
+
                   update_army_stats(); // because removed creatures might have army bonuses
                   return;
             }
 
-      printf( "\nStack of %d %s does not exist in %s's army.\n", stack.get_number(), stack.get_creature_name().c_str(), get_name().c_str() );
+      printf( "\nStack of %d %s does not exist in %s's army.\n", stack->get_number(), stack->get_creature_name().c_str(), get_name().c_str() );
 }
 
 void Hero::remove_stack_from_position(const uint8_t slot)
@@ -517,15 +527,44 @@ void Hero::remove_stack_from_position(const uint8_t slot)
             return;
       }
       printf( "\nStack of %d %s removed from %s's army from slot %d.\n", army[slot]->get_number(), army[slot]->get_creature_name().c_str(), get_name().c_str(), slot + 1);
-      army[slot]->reset_stats();
-      army[slot] = nullptr;
+      
+      delete army[slot].get();
+      army[slot].reset(nullptr);
+      
       update_army_stats(); // because removed creatures might have army bonuses
 }
 
-void Hero::swap_stack_positions()
+void Hero::swap_stack_positions(uint8_t i, uint8_t j)
 {
-      // TO DO : Implement update!
+      if( i < 0 || i > ARMY_SLOTS - 1 )
+      {
+            std::cerr << "Slot positions must be in the range [0;" << ARMY_SLOTS - 1 << "]!" << std::endl;
+            abort();
+      }
+
+      if( j < 0 || j > ARMY_SLOTS - 1 )
+      {
+            std::cerr << "Slot positions must be in the range [0;" << ARMY_SLOTS - 1 << "]!" << std::endl;
+            abort();
+      }
+
+      army[i].swap(army[j]);
       return;
+}
+
+void Hero::swap_entire_armies(Hero& hero)
+{
+      if( get_team() != hero.get_team() )
+      {
+            printf("Heroes must be from the same team in order to swap armies!\n");
+            return;
+      }
+
+      for(uint8_t i = 0; i < ARMY_SLOTS; i++)
+            army[i].swap( hero.get_army_stack_ptr(i) );
+      
+      update_army_stats();
+      hero.update_army_stats();
 }
 
 void Hero::update_army_stats()
@@ -639,6 +678,17 @@ void Hero::update_army_stats()
 }
 
 Stack* Hero::get_army_stack(uint8_t i)
+{
+      if( i > ARMY_SLOTS )
+      {
+            std::cerr << i << "is invalid army position!" << std::endl;
+            abort();
+      }
+
+      return army[i].get();
+}
+
+std::unique_ptr<Stack> & Hero::get_army_stack_ptr(uint8_t i)
 {
       if( i > ARMY_SLOTS )
       {

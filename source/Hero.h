@@ -2,6 +2,8 @@
 #define HERO_H
 
 #include <iostream>
+#include <memory>
+#include <array>
 #include "../utilities/types.h"
 #include "Specialty.h"
 #include "Secondary_Skill.h"
@@ -131,7 +133,7 @@ class Hero
             // items - implement a structure with flags for possible effects from items, analogical to special abilities
             bool _has_equipped_elixir_of_life = false;
 
-            Stack* army[ARMY_SLOTS] = {nullptr}; // probably would be better with unique_ptr
+            std::array<std::unique_ptr<Stack>, ARMY_SLOTS> army = {nullptr};
 
             Position _position = Position(0, 0);
 
@@ -252,25 +254,31 @@ class Hero
             void print_unequipped_items();
 
             // Adds a stack to the first empty slot in army.
-            void add_stack_to_army(Stack* stack);
+            void add_stack_to_army(std::unique_ptr<Stack> & stack_ptr); // unique_ptr because this functionality in the game will be used in dynamic state
             
             // Adds a stack to a specific slot in army.
-            void add_stack_to_slot(Stack* stack, const uint8_t slot);
+            void add_stack_to_slot(std::unique_ptr<Stack> & stack_ptr, const uint8_t slot); // unique_ptr because this functionality in the game will be used in dynamic state
 
             // Removes a stack from army.
-            void remove_stack(Stack& stack);
+            void remove_stack(std::unique_ptr<Stack> & stack_ptr); // unique_ptr in case there are other slots with the same stacks
 
             // Removes a stack from specific slot in army.
             void remove_stack_from_position(const uint8_t slot);
             
             // Swaps positions of two stacks in the same army. ALso used when one of the slots is empty.
-            void swap_stack_positions();
+            void swap_stack_positions(uint8_t i, uint8_t j);
+
+            // Swaps the entire armies of two heroes of the same team.
+            void swap_entire_armies(Hero& hero);
             
             // Update battle stats of each stack according to current hero attributes. Called every time hero adds or removes creature from army, gets a new level, gets a morale/luck bonus, equips/unequips an item.
             void update_army_stats();
 
-            // Return the pointer to a stack in the army.
+            // Return a pointer to a stack in the army.
             Stack* get_army_stack(uint8_t i);
+
+            // Return a unique_ptr to a stack in the army.
+            std::unique_ptr<Stack> & get_army_stack_ptr(uint8_t i);
 
             void set_position(const Position position) { _position = position; };
             Position get_position() { return _position; };
