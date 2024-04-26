@@ -2,7 +2,6 @@
 #define CREATURE_H
 
 #include <iostream>
-#include <algorithm>
 #include <vector>
 #include <map>
 #include "../utilities/types.h"
@@ -46,14 +45,14 @@ struct Creature
                   uint8_t _level;
                   Upgrade_level _upgrade;
                   uint8_t _growth;
-                  bool _needs_2_hexes_in_battle;
+                  bool _needs_2_tiles_in_battle;
 
                   // Sets the native terrain of a creature, according to its faction. 
                   void set_native_terrain();
 
                   // Constructs a private structure containing data used for overview
-                  unit_info( std::string name, Faction faction, uint8_t level, Upgrade_level upgrade, uint8_t growth, bool needs_2_hexes_in_battle ) :
-                             _name(name), _faction(faction), _level(level), _upgrade(upgrade), _growth(growth), _needs_2_hexes_in_battle(needs_2_hexes_in_battle) 
+                  unit_info( std::string name, Faction faction, uint8_t level, Upgrade_level upgrade, uint8_t growth, bool needs_2_tiles_in_battle ) :
+                             _name(name), _faction(faction), _level(level), _upgrade(upgrade), _growth(growth), _needs_2_tiles_in_battle(needs_2_tiles_in_battle) 
                              {};
             }unit_info;
 
@@ -269,7 +268,7 @@ struct Creature
          
       public:
             // Parametrized constructor (no default constructor allowed). Calls Logical_Limitations_When_Constructing().
-            Creature( const std::string name, const Faction faction, const uint8_t level, const Upgrade_level upgrade, const uint8_t growth, const bool needs_2_hexes_in_battle,
+            Creature( const std::string name, const Faction faction, const uint8_t level, const Upgrade_level upgrade, const uint8_t growth, const bool needs_2_tiles_in_battle,
                       const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, const uint16_t hp, const uint8_t speed, const Morale morale, const Luck luck, const uint16_t fight_value, const uint32_t ai_value, 
                       const Resources resources, 
                       const std::string abilities );
@@ -299,7 +298,7 @@ struct Creature
 
             uint8_t get_growth() { return unit_info._growth; };
 
-            bool get_needs_2_hexes_in_battle() { return unit_info._needs_2_hexes_in_battle; };
+            bool get_needs_2_tiles_in_battle() { return unit_info._needs_2_tiles_in_battle; };
 
             uint8_t get_att() { return battle_stats._att; };
 

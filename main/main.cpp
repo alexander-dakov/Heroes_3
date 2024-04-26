@@ -1,9 +1,11 @@
 #include <iostream>
 #include "../utilities/types.h"
 
-#define SHOW_DEBUG_INFO (1) // show(1) or hide(0) debug messages
+#define SHOW_DAMAGE_INFO (0) // show(1) OR hide(0) damage messages
 
-#define TESTS (1) // include(1) or exclude(0) tests library
+#define ENABLE_DOUBLE_TILE_STACKS (0) // represent big creatures with 2 tiles(1) OR represent all creature stacks with 1 tile(0)
+
+#define TESTS (1) // include(1) OR exclude(0) tests library
 #if TESTS == 1
     #include "../tests/tests.cpp"
 #endif
@@ -64,11 +66,10 @@
 
 TO DO:
 - When you try to add a stack into an army/slot, if there is already such creature - add the new stack to the existing one.
-- Test a hero vs hero battle (no spells)
 - Test a hero vs hero battle (with spells)
-- Fix the implementation of secondary skills and test it in battle
+- Add more secondary skills and test them in battle
 - Fix the implementation of war machines and test it in battle
-- Fix the implementation of items and test it in battle
+- Add more items and test them in battle
 - Fix the implementation of specialties and test it in battle
 - Fix the implementation of spells and spellbook and test it in battle
 - Implement the battle event with all of its quirks (actions = wait/attack/defend/retreat, terrain, map) and test it
@@ -92,7 +93,7 @@ int main()
     // test_hero_item_bonuses();
     // test_army_hero_bonuses();
     // test_hero_vs_creature_stack();
-    test_position_armies_on_battlefield();
+    test_battle();
 
     system("pause");
     return 0;

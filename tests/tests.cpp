@@ -35,7 +35,7 @@ void test_create_creature()
     uint8_t level = 1;
     Upgrade_level upgrade = Upgrade_level::None;
     uint8_t growth = 12;
-    bool needs_2_hexes_in_battle = false;
+    bool needs_2_tiles_in_battle = false;
     uint8_t att = 5;
     uint8_t def = 4;
     uint8_t shots = 20;
@@ -54,7 +54,7 @@ void test_create_creature()
     uint32_t gems = 0;
     std::string special_abilities = "Undead.";
     
-    Creature Skellies ( name, faction, level, upgrade, growth, needs_2_hexes_in_battle,
+    Creature Skellies ( name, faction, level, upgrade, growth, needs_2_tiles_in_battle,
                         att, def, shots, min_dmg, max_dmg, hp, speed, morale, luck, fight_value, ai_value, 
                         { gold, mercury, sulfur, crystal, gems }, 
                         special_abilities );
@@ -110,9 +110,9 @@ void test_creature_stack_vs_creature_stack()
     printf( "%s stack is comprised of : %d %s\n", defender.get_team_as_string().c_str(), defender.get_number(), defender.get_creature_name().c_str() );
 
     // TO DO : all special abilities have to be added in : attack(), defend(), recieve_damage()
-    attacker.attack(defender);
+    attacker.attack(&defender);
 
-    defender.attack(attacker);
+    defender.attack(&attacker);
 }
 
 void test_create_item()
@@ -372,12 +372,12 @@ void test_hero_vs_creature_stack()
     attacker->set_position(0, 0);
     defender.set_position(1, 0);
 
-    attacker->attack(defender);
+    attacker->attack(&defender);
 
-    defender.attack(*attacker);
+    defender.attack(attacker);
 }
 
-void test_position_armies_on_battlefield()
+void test_battle()
 {
     print_before_testing_output();
 

@@ -12,7 +12,7 @@ constexpr char ARMY_CHAR = '+'; // used for default army character in function a
 enum class Tile
 {
     Normal,
-    Unreachable,   // according to objects and Battle Battle_Format
+    Unreachable,   // according to objects and Battle_Format
     Tower,         // can be destroyed by catapults, Cyclopses and Cyclops Kings
     Wall,          // can be destroyed by catapults, Cyclopses and Cyclops Kings
     Fortification, // river, lava, etc.

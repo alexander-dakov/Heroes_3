@@ -422,23 +422,55 @@ bool Hero::add_item_to_chest(Item* item)
       return false;
 }
 
+bool Hero::check_eqipped_item(std::string item_name, Slot slot)
+{
+      std::map<Slot, Item*> items_map;
+      items_map[Slot::Helmet]   = items.helmet;
+      items_map[Slot::Cape]     = items.cape;
+      items_map[Slot::Necklace] = items.necklace;
+      items_map[Slot::Weapon]   = items.weapon;
+      items_map[Slot::Shield]   = items.shield;
+      items_map[Slot::Armor]    = items.armor;
+      items_map[Slot::Boots]    = items.boots;
+
+      if(slot == Slot::Hand)
+            for( uint8_t i = 0; i < HAND_SLOTS; i++)
+                  if( items.hand[i] != nullptr )
+                        if( items.hand[i] ->get_name() == item_name )
+                              return true;
+      else if(slot == Slot::Pocket)
+            for( uint8_t i = 0; i < POCKET_SLOTS; i++)
+                  if( items.pocket[i] != nullptr )
+                        if( items.pocket[i]->get_name() == item_name )
+                              return true;
+      else
+            if( items_map[slot] != nullptr )
+                  if( items_map[slot]->get_name() == item_name )
+                        return true;
+
+      return false;
+}
+
 void Hero::print_equipped_items()
 {
+      std::map<Slot, Item*> items_map;
+      items_map[Slot::Helmet]   = items.helmet;
+      items_map[Slot::Cape]     = items.cape;
+      items_map[Slot::Necklace] = items.necklace;
+      items_map[Slot::Weapon]   = items.weapon;
+      items_map[Slot::Shield]   = items.shield;
+      items_map[Slot::Armor]    = items.armor;
+      items_map[Slot::Boots]    = items.boots;
+
       printf( "\n%s has equipped : \n", get_name().c_str() );
-      if( items.helmet   != nullptr )     printf( "\tSlot %s - %s : %s\n", items.helmet->get_slot_as_string().c_str(),   items.helmet->get_name().c_str(),   items.helmet->get_effect().c_str()   );
-      if( items.cape     != nullptr )     printf( "\tSlot %s - %s : %s\n", items.cape->get_slot_as_string().c_str(),     items.cape->get_name().c_str(),     items.cape->get_effect().c_str()     );
-      if( items.necklace != nullptr )     printf( "\tSlot %s - %s : %s\n", items.necklace->get_slot_as_string().c_str(), items.necklace->get_name().c_str(), items.necklace->get_effect().c_str() );
-      if( items.weapon   != nullptr )     printf( "\tSlot %s - %s : %s\n", items.weapon->get_slot_as_string().c_str(),   items.weapon->get_name().c_str(),   items.weapon->get_effect().c_str()   );
-      if( items.shield   != nullptr )     printf( "\tSlot %s - %s : %s\n", items.shield->get_slot_as_string().c_str(),   items.shield->get_name().c_str(),   items.shield->get_effect().c_str()   );
-      if( items.armor    != nullptr )     printf( "\tSlot %s - %s : %s\n", items.armor->get_slot_as_string().c_str(),    items.armor->get_name().c_str(),    items.armor->get_effect().c_str()    );
-      
+      for(auto & item : items_map)
+            if( item.second != nullptr )        printf( "\tSlot %s - %s : %s\n",    item.second->get_slot_as_string().c_str(),            item.second->get_name().c_str(),    item.second->get_effect().c_str()      );
+
       for( uint8_t i = 0; i < HAND_SLOTS; i++)
-            if( items.hand[i] != nullptr )     printf( "\tSlot %s %d - %s : %s\n", items.hand[i]->get_slot_as_string().c_str(), i + 1,   items.hand[i]->get_name().c_str(),   items.hand[i]->get_effect().c_str()   );
-      
-      if( items.boots != nullptr )             printf( "\tSlot %s - %s : %s\n", items.boots->get_slot_as_string().c_str(),     items.boots->get_name().c_str(),     items.boots->get_effect().c_str()     );
+            if( items.hand[i] != nullptr )      printf( "\tSlot %s %d - %s : %s\n", items.hand[i]->get_slot_as_string().c_str(), i + 1,   items.hand[i]->get_name().c_str(),   items.hand[i]->get_effect().c_str()   );
       
       for( uint8_t i = 0; i < POCKET_SLOTS; i++)
-            if( items.pocket[i] != nullptr )   printf( "\tSlot %s %d - %s : %s\n", items.pocket[i]->get_slot_as_string().c_str(), i + 1, items.pocket[i]->get_name().c_str(), items.pocket[i]->get_effect().c_str() );
+            if( items.pocket[i] != nullptr )    printf( "\tSlot %s %d - %s : %s\n", items.pocket[i]->get_slot_as_string().c_str(), i + 1, items.pocket[i]->get_name().c_str(), items.pocket[i]->get_effect().c_str() );
 }
 
 void Hero::print_unequipped_items()

@@ -9,7 +9,7 @@
 #include "../source/Creature_List.cpp"
 #include "../source/Hero_List.cpp"
 #include "../source/Item_List.cpp"
-#include "../source/Battle.h"
+#include "../source/Battle.cpp"
 
 // Flushes std::cout and std::cerr and prints a message in order to mark the output of a test.
 void print_before_testing_output();

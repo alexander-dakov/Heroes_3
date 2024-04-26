@@ -1,7 +1,7 @@
 #include "Creature_Stack.h"
 
-Stack::Stack(const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y, const Team team = Team::Neutral) :
-             _creature(creature), _number(number), _pos(pos_x, pos_y), _team(team),
+Stack::Stack(const Creature creature, const uint32_t number, const uint8_t pos_x, const uint8_t pos_y, const char battlefield_symbol, const Team team = Team::Neutral) :
+             _creature(creature), _number(number), _pos(pos_x, pos_y), _battlefield_symbol(battlefield_symbol), _team(team),
              battle_stats(creature), 
              hero_secondary_skills()
              {};
@@ -76,31 +76,25 @@ void Stack::add_morale(const Morale morale)
 
 void Stack::new_turn()
 {
-    if( _has_perished )
+    if( get_has_perished() )
     {
         set_action(Stack_Action::Skip);
         return;
     }
     
-    if( true ) // if creature is not blinded its status should be returned to default
-        set_action(Stack_Action::Skip); // default value for normal turns
-    else
+    if( true ) // if creature is not blinded its status should be returned to the default value (Attack)
         set_action(Stack_Action::Attack); // default value for normal turns
+    else
+        set_action(Stack_Action::Skip);
 
-    // reduce spell duration acting on stacks
+    // reduce the duration of spells acting on the stack
 }
-
-void Stack::take_action()
-{
-    // call the functions in the correct order
-}
-
 
 void Stack::recieve_damage(const uint32_t damage)
 {
-    uint16_t hp = get_hp();           // hp per unit
-    uint16_t hp_last = get_hp_left(); // hp of last unit
-    uint32_t initial_num = get_number();      // amount of creatures in stack
+    const uint16_t hp = get_hp();              // hp per unit
+    uint16_t hp_last = get_hp_left();          // hp of last unit
+    const uint32_t initial_num = get_number(); // amount of creatures in stack
 
     uint64_t capacity = hp*(initial_num - 1) + hp_last;
 
@@ -126,15 +120,15 @@ void Stack::recieve_damage(const uint32_t damage)
             printf( "%d %s perished!\n", delta_num, get_creature_name().c_str() );
         }
 
-        #if SHOW_DEBUG_INFO == 1
-            printf( "Last %s in stack has %d hp left.\n", get_creature_name().c_str(), get_hp_left() );
+        #if SHOW_DAMAGE_INFO == 1
+            printf( "Last %s in stack has %d hp left.\n", get_creature_name().c_str(), get_hp_left() + hp*( get_hp_left() == 0 ) );
         #endif
     }
 }
 
 bool Stack::roll_negative_morale()
 {
-    uint16_t probability;
+    uint16_t probability = 0;
 
     switch(get_morale())
     {
@@ -146,12 +140,12 @@ bool Stack::roll_negative_morale()
         case Morale::Great    : probability =   0; break; // written because of compiler warnings (I prefer not to silence them as errors might be missed)
         case Morale::Superb   : probability =   0; break; // written because of compiler warnings (I prefer not to silence them as errors might be missed)
     }
-    return rand() % 1000 < probability;
+    return rand() % 1000 < probability; // intentionaly not used with 'new', so battles can be replayed with the same rolls
 }
 
 bool Stack::roll_positive_morale()
 {
-    uint16_t probability;
+    uint16_t probability = 0;
 
     switch(get_morale())
     {
@@ -163,7 +157,7 @@ bool Stack::roll_positive_morale()
         case Morale::Great    : probability =  83; break;
         case Morale::Superb   : probability = 125; break;
     }
-    return rand() % 1000 < probability;
+    return rand() % 1000 < probability; // intentionaly not used with 'new', so battles can be replayed with the same rolls
 }
 
 int8_t Stack::roll_luck(const bool leprechauns_in_army)
@@ -183,20 +177,14 @@ int8_t Stack::roll_luck(const bool leprechauns_in_army)
         case Luck::Great    : probability =  83*(1 + leprechauns_in_army); sign =  1; break;
         case Luck::Superb   : probability = 125*(1 + leprechauns_in_army); sign =  1; break;
     }
-    return sign*(rand() % 1000 < probability);
+    return sign*(rand() % 1000 < probability); // intentionaly not used with 'new', so battles can be replayed with the same rolls
 }
-
-// void Stack::wait(){}
-
-// void Stack::defend(){}
 
 void Stack::move(const uint8_t x, const uint8_t y)
 {
+    set_action(Stack_Action::Attack);
+
     uint8_t distance = std::abs(x - _pos.x) + std::abs(y - _pos.y);
-    while(get_creature()->get_speed() < distance)
-    {
-        printf("%s have only %i speed and can't move that far. Pick a new position!", get_creature_name());
-    }
 
     if(get_creature()->get_is_flying()) // true for both flying and teleporting creatures
     {
@@ -214,21 +202,21 @@ void Stack::move(const uint8_t x, const uint8_t y)
         }*/
         if( get_creature()->get_has_jousting() )
             _distance_traveled = std::abs(_pos.x - x) + std::abs(_pos.y - y);
-        _pos.x = x; // this acts like flying teleporting and it should not
-        _pos.y = y; // this acts like flying teleporting and it should not
+
+        _pos.x = x; // this acts like flying / teleporting and it should not
+        _pos.y = y; // this acts like flying / teleporting and it should not
     }
 
 }
 
-void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_second_attack, bool leprechauns_in_army, bool hero_has_equipped_hourglass_of_the_evil_hour)
+void Stack::attack(Stack* defender, bool can_shoot, bool attack_is_retaliation, bool attack_is_second_attack, bool hourglass_of_evil_hour_present, bool attacker_has_leprechaun, bool defender_has_leprechaun)
 {
-    if( get_team() == defender.get_team() /* && TO DO : not berserk*/ )
+    set_action(Stack_Action::Attack);
+
+    if( get_team() == defender->get_team() /* && TO DO : not berserk*/ )
         return;
 
-    if( defender.get_has_perished() )
-        return;
-
-    if(!target(defender))
+    if( defender->get_has_perished() )
         return;
 
     uint32_t final_damage = 0;
@@ -246,20 +234,20 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
     uint8_t     attacker_min_dmg   = get_creature()->get_min_dmg();
 
     // penalties for shooting attacker
-    bool melee_penalty    = attacker_is_ranged && !can_shoot();
-    bool range_penalty    = attacker_is_ranged && can_shoot() && get_distance_to_target(defender) > 10 && !get_creature()->get_no_range_penalty() /*&& !get_no_range_penalty() - stack method due to artifacts*/;
-    bool obstacle_penalty = attacker_is_ranged && can_shoot() && /* there's a wall between attacker and defender &&*/ !get_creature()->get_no_obstacle_penalty() /*&& !get_no_obstacle_penalty() - stack method due to artifacts*/; // TO DO : implement
+    bool melee_penalty    = attacker_is_ranged && !can_shoot;
+    bool range_penalty    = attacker_is_ranged && can_shoot && get_distance_to_target(defender) > 10 && !get_creature()->get_no_range_penalty() /*&& !get_no_range_penalty() - stack method due to artifacts*/;
+    bool obstacle_penalty = attacker_is_ranged && can_shoot && /* there's a wall between attacker and defender &&*/ !get_creature()->get_no_obstacle_penalty() /*&& !get_no_obstacle_penalty() - stack method due to artifacts*/; // TO DO : implement
 
     // defender's attributes
-    std::string defender_name      = defender.get_creature_name();
-    uint8_t     defender_defense   = defender.get_def();
+    std::string defender_name    = defender->get_creature_name();
+    uint8_t     defender_defense = defender->get_def();
 
-    if( defender.get_action() == Stack_Action::Defend ) 
+    if( defender->get_action() == Stack_Action::Defend ) 
         defender_defense += defender_defense/5;
 
     // special abilities which modify stack attributes
-    if( defender.get_creature()->get_ignore_enemy_attack() )
-        attacker_attack = attacker_attack * (100 - defender.get_creature()->get_ignore_enemy_attack_by_percent() ) / 100;
+    if( defender->get_creature()->get_ignore_enemy_attack() )
+        attacker_attack = attacker_attack * (100 - defender->get_creature()->get_ignore_enemy_attack_by_percent() ) / 100;
 
     if( get_creature()->get_ignore_enemy_defense() )
         defender_defense = defender_defense * (100 - get_creature()->get_ignore_enemy_defense_by_percent() ) / 100;
@@ -269,7 +257,7 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
         I1 = 0.05 * (attacker_attack - defender_defense);
 
     // calculate I2 and I3 - secondary skill and specialty in Archery / Offense bonus
-    if( attacker_is_ranged && can_shoot() )
+    if( attacker_is_ranged && can_shoot )
     {
         switch(get_hero_level_of_archery())
         {
@@ -297,8 +285,8 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
     }
 
     // calculate I4 - luck bonus
-    int8_t rolled_luck = roll_luck(leprechauns_in_army);
-    I4 = -0.5*(rolled_luck <  0) + /*  0.0*( rolled_luck == 0) + */  1.0*(rolled_luck >  0) * (1 - hero_has_equipped_hourglass_of_the_evil_hour);
+    int8_t rolled_luck = roll_luck(attacker_has_leprechaun);
+    I4 = -0.5*(rolled_luck <  0) + /*  0.0*( rolled_luck == 0) + */  1.0*(rolled_luck >  0) * (1 - hourglass_of_evil_hour_present);
     
     // calculate I5 - special ability bonus
     // death blow bonus
@@ -319,7 +307,7 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
     else if( ( attacker_name == "Earth Elemental" || attacker_name == "Magma Elemental"  ) && ( defender_name == "Air Elemental"   || defender_name == "Storm Elemental"  ) ) I5 = 1.00f;
 
     // jousting bonus
-    if( !defender.get_creature()->get_is_immune_to_jousting() ) 
+    if( !defender->get_creature()->get_is_immune_to_jousting() ) 
         if( get_creature()->get_has_jousting() ) 
             I5 = 0.05 * get_distance_traveled();
 
@@ -329,7 +317,7 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
         R1 = 0.025 * (defender_defense - attacker_attack);
 
     // calculate R2 - Armorer penalty
-    switch(defender.get_hero_level_of_armorer())
+    switch(defender->get_hero_level_of_armorer())
     {
             case Skill_level::None :     R2 = 0.00f; break;
             case Skill_level::Basic :    R2 = 0.05f; break;
@@ -356,8 +344,8 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
     // TO DO : if retaliation or attack after spell
     
     // calculate R8 - special abilities penalty
-    if     ( attacker_name == "Psychic Elemental" && defender.get_creature()->get_is_immune_to_mind_spells() ) R8 = 0.50f;
-    else if( attacker_name == "Magic Elemental"   && defender.get_creature()->get_is_immune_to_all_spells()  ) R8 = 0.50f;
+    if     ( attacker_name == "Psychic Elemental" && defender->get_creature()->get_is_immune_to_mind_spells() ) R8 = 0.50f;
+    else if( attacker_name == "Magic Elemental"   && defender->get_creature()->get_is_immune_to_all_spells()  ) R8 = 0.50f;
     // TO DO : implement retaliation after Stone Gaze and Paralyzing Venom
 
 
@@ -379,7 +367,7 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
         }
     }
 
-#if SHOW_DEBUG_INFO == 1
+#if SHOW_DAMAGE_INFO == 1
     printf( "\nDamage parameters:\n" );
     printf( "\t- I1 = %.3f\n\t- I2 = %.3f\n\t- I3 = %.3f\n\t- I4 = %.3f\n\t- I5 = %.3f\n", I1, I2, I3, I4, I5 );
     printf( "\t- R1 = %.3f\n\t- R2 = %.3f\n\t- R3 = %.3f\n\t- R4 = %.3f\n\t- R5 = %.3f\n\t- R6 = %.3f\n\t- R7 = %.3f\n\t- R8 = %.3f\n\n", R1, R2, R3, R4, R5, R6, R7, R8 );
@@ -395,47 +383,27 @@ void Stack::attack(Stack& defender, bool attack_is_retaliation, bool attack_is_s
     // TO DO : apply special abilities with pre-hit effects
 
     // TO DO : if creature can attack surrounding enemies - they should recieve dmg
-    defender.recieve_damage(final_damage);
+    defender->recieve_damage(final_damage);
 
     // TO DO : apply special abilities with hit-on effects
 
     // TO DO : if defender is efreet sultan or has spell fire shield attacker and attacker is not immuned - attacker should recieve dmg
 
-    if( !attack_is_retaliation && get_distance_to_target(defender) == 1  )
+    if( !attack_is_retaliation && ( get_distance_to_target(defender) == 1 ) )
         if( !get_creature()->get_no_enemy_retaliation() )
-            defender.retaliate(*this);
+            defender->retaliate( this, can_shoot, hourglass_of_evil_hour_present, defender_has_leprechaun );
 
     if( !attack_is_retaliation && ( get_creature()->get_has_double_attack() || get_creature()->get_has_ferocity() ) && !attack_is_second_attack )
-        attack(defender, false, true);
+        attack( defender, can_shoot, false, true, hourglass_of_evil_hour_present, attacker_has_leprechaun, defender_has_leprechaun );
 }
 
-bool Stack::can_shoot()
-{
-    // TO DO : if archer has arrows and no active enemy is in the way
-    /*
-    if( get_shots_left() )
-        if( has_enemy_in_surroundings() && !get_creature()->get_has_no_melee_penalty() ) // if enemy is blinded/petrified, can shooters shoot?
-            return true;
-
-    return false;
-    */
-
-    return true;
-}
-
-bool Stack::target(const Stack& stack)
-{
-    // TO DO : if attacker can reach defender
-    return true;
-}
-
-void Stack::retaliate(Stack& attacker)
+void Stack::retaliate(Stack* attacker, bool can_shoot, bool hourglass_of_evil_hour_present, bool has_leprechaun_in_army)
 {
     if( get_retaliations_left() || get_creature()->get_has_unlimited_retaliations() )
         {
             if( !get_creature()->get_has_unlimited_retaliations() )
                 set_retaliations_left( get_retaliations_left() - 1 );
-            attack(attacker, true, false);
+            attack( attacker, can_shoot, true, false, hourglass_of_evil_hour_present, has_leprechaun_in_army );
         }
 }
 

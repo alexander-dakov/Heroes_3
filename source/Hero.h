@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 #include <array>
+#include <map>
 #include "../utilities/types.h"
 #include "Specialty.h"
 #include "Secondary_Skill.h"
@@ -252,6 +253,9 @@ class Hero
             
             // Prints the names and effects of all equipped items.
             void print_unequipped_items();
+            
+            // Returns true or false based on whether the item is equipped by the hero on the given slot.
+            bool check_eqipped_item(std::string item_name, Slot slot);
 
             // Adds a stack to the first empty slot in army.
             void add_stack_to_army(std::unique_ptr<Stack> & stack_ptr); // unique_ptr because this functionality in the game will be used in dynamic state

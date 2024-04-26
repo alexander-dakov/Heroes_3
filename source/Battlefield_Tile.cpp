@@ -12,22 +12,8 @@ Battlefield_Tile::~Battlefield_Tile()
 
 bool Battlefield_Tile::is_reachable()
 {
-      bool reachable = true;
-
-      switch( get_tile() )
-      {
-            case Tile::Normal        : reachable = true;  break;
-            case Tile::Unreachable   : reachable = false; break;
-            case Tile::Tower         : reachable = false; break;
-            case Tile::Wall          : reachable = false; break;
-            case Tile::Fortification : reachable = true;  break;
-            case Tile::Obstacle      : reachable = false; break;
-            case Tile::Land_Mine     : reachable = true;  break;
-            case Tile::Quicksand     : reachable = true;  break;
-            case Tile::Army          : reachable = false; break;
-      }
-
-      return reachable;
+      auto t = get_tile();
+      return (t == Tile::Normal) + (t == Tile::Fortification) + (t == Tile::Land_Mine) + (t == Tile::Quicksand);
 }
 
 void Battlefield_Tile::update_symbol(const Team team, const char ch)
@@ -55,5 +41,5 @@ void Battlefield_Tile::setup_tile(const Tile tile, const Team team, const char c
 void Battlefield_Tile::reset_tile()
 {
       _tile = Tile::Normal;
-      update_symbol(Team::Neutral);
+      update_symbol();
 }

@@ -1,10 +1,10 @@
 #include "Creature.h"
 
-Creature::Creature( const std::string name, const Faction faction, const uint8_t level, const Upgrade_level upgrade, const uint8_t growth, const bool needs_2_hexes_in_battle,
+Creature::Creature( const std::string name, const Faction faction, const uint8_t level, const Upgrade_level upgrade, const uint8_t growth, const bool needs_2_tiles_in_battle,
                     const uint8_t att, const uint8_t def, const uint8_t shots, const uint8_t min_dmg, const uint8_t max_dmg, const uint16_t hp, const uint8_t speed, const Morale morale, const Luck luck, const uint16_t fight_value, const uint32_t ai_value, 
                     const Resources resources,
                     const std::string abilities ) : 
-                    unit_info(name, faction, level, upgrade, growth, needs_2_hexes_in_battle),
+                    unit_info(name, faction, level, upgrade, growth, needs_2_tiles_in_battle),
                     battle_stats(att, def, shots, min_dmg, max_dmg, hp, speed, morale, luck, fight_value, ai_value),
                     cost(resources),  
                     special_abilities(abilities)
