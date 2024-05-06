@@ -93,13 +93,17 @@ class Hero
             Morale _morale;
             Luck _luck;
 
-            uint8_t _army_hp_bonus    = 0;
-            uint8_t _army_speed_bonus = 0;
-
             uint16_t _mana;
             uint16_t _mana_left;
             
             uint16_t _movement_points;
+
+            uint8_t _army_hp_bonus    = 0;
+            uint8_t _army_speed_bonus = 0;
+
+            uint8_t _reduce_enemy_power_skill;
+            uint8_t _reduce_enemy_morale;
+            uint8_t _reduce_enemy_luck;
 
             struct war_machines
             {
@@ -197,19 +201,16 @@ class Hero
             void set_secondary_skill(const uint8_t i, Secondary_Skill skill) { _secondary_skills[i] = &skill; };
             Secondary_Skill* get_secondary_skill(uint8_t i) { return _secondary_skills[i]; };
             std::string get_secondary_skill_name(uint8_t i) { return _secondary_skills[i]->get_name(); };
-
-            void set_army_hp_bonus(const uint8_t bonus) { _army_hp_bonus = bonus; };
-            uint8_t get_army_hp_bonus()                 { return _army_hp_bonus;  };
-
-            void set_army_speed_bonus(const uint8_t bonus) { _army_speed_bonus = bonus; };
-            uint8_t get_army_speed_bonus()                 { return _army_speed_bonus;  };
+            Skill_level get_secondary_skill_level(const std::string skill_name);
 
             void set_morale(const Morale morale) { _morale = morale; };
             void add_morale(const Morale morale) { _morale = static_cast<Morale>( std::min( std::max( static_cast<int8_t>(_morale) + static_cast<int8_t>(morale), -3), 3) ); };
+            void add_morale(const int8_t morale) { _morale = static_cast<Morale>( std::min( std::max( static_cast<int8_t>(_morale) + morale, -3), 3) ); };
             Morale get_morale() { return _morale; };
 
-            void set_luck(const Luck luck) { _luck = luck; };
-            void add_luck(const Luck luck) { _luck = static_cast<Luck>( std::min( std::max( static_cast<int8_t>(_luck) + static_cast<int8_t>(luck), -3), 3) ); };
+            void set_luck(const Luck luck)   { _luck = luck; };
+            void add_luck(const Luck luck)   { _luck = static_cast<Luck>( std::min( std::max( static_cast<int8_t>(_luck) + static_cast<int8_t>(luck), -3), 3) ); };
+            void add_luck(const int8_t luck) { _luck = static_cast<Luck>( std::min( std::max( static_cast<int8_t>(_luck) + luck, -3), 3) ); };
             Luck get_luck() { return _luck; };
 
             void set_mana(const uint16_t mana) { _mana = mana; };
@@ -221,9 +222,27 @@ class Hero
             void reset_mana_left() { _mana_left = _mana; };
             uint16_t get_mana_left() { return _mana_left; };
 
-            void set_movement_points(const uint16_t movement_points) { _movement_points = movement_points; };
+            void set_movement_points(const uint16_t movement_points) { _movement_points = movement_points;  };
             void add_movement_points(const uint16_t movement_points) { _movement_points += movement_points; };
             uint16_t get_movement_points() { return _movement_points; };
+            
+            void set_army_hp_bonus(const uint8_t bonus) { _army_hp_bonus = bonus; };
+            uint8_t get_army_hp_bonus()                 { return _army_hp_bonus;  };
+
+            void set_army_speed_bonus(const uint8_t bonus) { _army_speed_bonus = bonus; };
+            uint8_t get_army_speed_bonus()                 { return _army_speed_bonus;  };
+
+            void set_reduce_enemy_power_skill(const uint8_t reduce_power_skill) { _reduce_enemy_power_skill = reduce_power_skill;  };
+            void add_reduce_enemy_power_skill(const uint8_t reduce_power_skill) { _reduce_enemy_power_skill += reduce_power_skill; };
+            uint8_t get_reduce_enemy_power_skill() { return _reduce_enemy_power_skill; };
+
+            void set_reduce_enemy_morale(const uint8_t reduce_morale) { _reduce_enemy_morale = reduce_morale;  };
+            void add_reduce_enemy_morale(const uint8_t reduce_morale) { _reduce_enemy_morale += reduce_morale; };
+            uint8_t get_reduce_enemy_morale() { return _reduce_enemy_morale; };
+
+            void set_reduce_enemy_luck(const uint8_t reduce_luck) { _reduce_enemy_luck = reduce_luck;  };
+            void add_reduce_enemy_luck(const uint8_t reduce_luck) { _reduce_enemy_luck += reduce_luck; };
+            uint8_t get_reduce_enemy_luck() { return _reduce_enemy_luck; };
 
             bool get_has_first_aid() { return war_machines._has_first_aid; };
             bool get_has_ammo_cart() { return war_machines._has_ammo_cart; };

@@ -195,11 +195,11 @@ struct Item
             int8_t get_power_bonus()     { return effects._modify_power     * effects._power;     };
             int8_t get_knowledge_bonus() { return effects._modify_knowledge * effects._knowledge; };
 
-            Morale get_morale_bonus() { return static_cast<Morale>( std::min( std::max( effects._modify_morale * effects._morale, 0 ), 3 ) ); };
-            Luck get_luck_bonus()     { return static_cast<Luck>(   std::min( std::max( effects._modify_luck   * effects._luck,   0 ), 3 ) ); };
+            uint8_t get_morale_bonus() { return effects._modify_morale * effects._morale; };
+            uint8_t get_luck_bonus()   { return effects._modify_luck   * effects._luck;   };
 
-            Morale get_decrease_enemy_morale_bonus() { return static_cast<Morale>( std::max( std::min( -effects._modify_morale * effects._decrease_enemy_morale, 0 ), -3 ) ); };
-            Luck get_decrease_enemy_luck_bonus()     { return static_cast<Luck>(   std::max( std::min( -effects._modify_luck   * effects._decrease_enemy_luck,   0 ), -3 ) ); };
+            uint8_t get_decrease_enemy_morale_bonus() { return -effects._modify_morale * effects._decrease_enemy_morale; };
+            uint8_t get_decrease_enemy_luck_bonus()   { return -effects._modify_luck   * effects._decrease_enemy_luck;   };
 
             bool get_disable_positive_morale() { return effects._disable_positive_morale; };
             bool get_disable_positive_luck()   { return effects._disable_positive_luck;   };
@@ -209,6 +209,9 @@ struct Item
 
             bool get_increase_speed_1() { return effects._increase_speed_1; }
             bool get_increase_speed_2() { return effects._increase_speed_2; }
+
+            uint8_t get_decrease_enemy_spell_power_10() { return -effects._decrease_enemy_spell_power_10; };
+            uint8_t get_decrease_enemy_spell_power_25() { return -effects._decrease_enemy_spell_power_25; };
 
             uint16_t get_gold() { return cost._gold; };
 

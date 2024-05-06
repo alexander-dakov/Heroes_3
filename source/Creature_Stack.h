@@ -57,37 +57,6 @@ class Stack
             };
         }battle_stats;
 
-        struct hero_secondary_skills
-        {
-            uint8_t _hero_level = 0;
-            std::string _hero_specialty_name = "";
-            Skill_level _hero_level_of_archery    = Skill_level::None;
-            Skill_level _hero_level_of_offense    = Skill_level::None;
-            Skill_level _hero_level_of_armorer    = Skill_level::None;
-            Skill_level _hero_level_of_resistance = Skill_level::None;
-            Skill_level _hero_level_of_leadership = Skill_level::None;
-            Skill_level _hero_level_of_luck       = Skill_level::None;
-
-            // Constructs a private structure containing data affecting battles.
-            hero_secondary_skills( const uint8_t hero_level = 0,
-                                   const std::string specialty_name = "",
-                                   const Skill_level level_of_archery = Skill_level::None,
-                                   const Skill_level level_of_offense = Skill_level::None,
-                                   const Skill_level level_of_armorer = Skill_level::None,
-                                   const Skill_level level_of_resistance = Skill_level::None,
-                                   const Skill_level level_of_leadership = Skill_level::None,
-                                   const Skill_level level_of_luck = Skill_level::None ) :
-                                   _hero_level(hero_level),
-                                   _hero_specialty_name(specialty_name),
-                                   _hero_level_of_archery(level_of_archery),
-                                   _hero_level_of_offense(level_of_offense),
-                                   _hero_level_of_armorer(level_of_armorer),
-                                   _hero_level_of_resistance(level_of_resistance),
-                                   _hero_level_of_leadership(level_of_leadership),
-                                   _hero_level_of_luck(level_of_luck)
-                                   {};
-        }hero_secondary_skills;
-
         uint32_t _number;
         char _battlefield_symbol = ' ';
         Position _pos = Position(0, 0);
@@ -157,7 +126,7 @@ class Stack
 
         uint8_t get_number_of_casts_left() { return battle_stats._number_of_casts_left; };
 
-        void set_number(const uint32_t number) { _number = number; _has_perished = !number; set_action(Stack_Action::Skip); }; // when receiving damage
+        void set_number(const uint32_t number) { _number = number; _has_perished = !number; set_action(Stack_Action::Skip); }; // when recieving damage
         uint32_t get_number() {return _number; };
 
         void set_battlefield_symbol(const char ch) { _battlefield_symbol = ch; };
@@ -168,6 +137,7 @@ class Stack
         void set_position(const uint8_t x, const uint8_t y) { _pos = {x, y}; };
         Position get_position() { return _pos; };
 
+        void set_distance_traveled(const uint8_t distance_traveled) { _distance_traveled = distance_traveled; };
         uint8_t get_distance_traveled() { return _distance_traveled; };
 
         void set_has_perished(const bool has_perished) { _has_perished = has_perished; }; // when a stack dies
@@ -179,58 +149,11 @@ class Stack
         void set_action(const Stack_Action action) { _action = action; };
         Stack_Action get_action() { return _action; };
 
-        void set_hero_level(const uint8_t level) { hero_secondary_skills._hero_level = level; };
-        uint8_t get_hero_level()                 { return hero_secondary_skills._hero_level; };
-
-        void set_hero_specialty_name(const std::string name) { hero_secondary_skills._hero_specialty_name = name; };
-        std::string get_hero_specialty_name()                { return hero_secondary_skills._hero_specialty_name; };
-
-        void set_hero_level_of_archery(const Skill_level level)    { hero_secondary_skills._hero_level_of_archery = level; };
-        Skill_level get_hero_level_of_archery()                    { return hero_secondary_skills._hero_level_of_archery;  };
-
-        void set_hero_level_of_offense(const Skill_level level)    { hero_secondary_skills._hero_level_of_offense = level; };
-        Skill_level get_hero_level_of_offense()                    { return hero_secondary_skills._hero_level_of_offense;  };
-
-        void set_hero_level_of_armorer(const Skill_level level)    { hero_secondary_skills._hero_level_of_armorer = level; };
-        Skill_level get_hero_level_of_armorer()                    { return hero_secondary_skills._hero_level_of_armorer;  };
-
-        void set_hero_level_of_resistance(const Skill_level level) { hero_secondary_skills._hero_level_of_resistance = level; };
-        Skill_level get_hero_level_of_resistance()                 { return hero_secondary_skills._hero_level_of_resistance;  };
-
         void set_has_acquired_regeneration(const bool regenerates) { _has_acquired_regeneration = regenerates; };
         bool get_has_acquired_regeneration() { return _has_acquired_regeneration; };
 
         // Stack's number and/or remaining health of last units get affected.
         void recieve_damage(const uint32_t damage);
-        
-        // Updates attributes, buffs and debuffs in the beggning of each new turn.
-        void new_turn(); // should be called simultaiously for every creature on the battle field
-
-        // Decides if stack will act upon its turn during battle.
-        bool roll_negative_morale(); // before initial action in turn
-
-        // Decides if stack will act again in the end its turn during battle.
-        bool roll_positive_morale(); // after initial action in turn
-
-        // Returns -1/0/1, refering to the type of attack (unlucky/non-lucky/lucky strike) a stack will perform on its turn.
-        int8_t roll_luck(const bool leprechauns_in_army = false);
-
-        // Skip stack's action and return to it later during the same battle turn.
-        void wait() { set_action(Stack_Action::Wait); };
-
-        // Stack does nothing, but gains bonus defense skill during the battle turn (this bonus is taken into account in attack() ).
-        void defend() { set_action(Stack_Action::Defend); };
-
-        // Reposition stack on the battle field according to stack speed and objects.
-        void move(const uint8_t x, const uint8_t y);
-
-        // Stack attacks another stack (defender), causing the defender to take damage and occasionaly retaliate.
-        void attack(Stack* defender, bool can_shoot = false, bool attack_is_retaliation = false, bool attack_is_second_attack = false, bool hourglass_of_evil_hour_present = false, bool attacker_has_leprechaun = false, bool defender_has_leprechaun = false);
-
-        uint8_t get_distance_to_target(Stack* stack) { return std::abs(stack->get_position().x - get_position().x) + std::abs(stack->get_position().y - get_position().y); };
-        
-        // Returns a unlucky/non-lucky/lucky strike to the initial attacker.
-        void retaliate(Stack* attacker, bool can_shoot = false, bool hourglass_of_evil_hour_present = false, bool has_leprechaun_in_army = false);
 
         // Prints information of the stack during battle = creature forming the stack + hp left + shots left + stack number, stack position, buffs and defbuffs
         void print_battle_info();

@@ -236,19 +236,18 @@ void Hero::add_experience(const uint32_t experience)
 
 }
 
-// this is not accurate representation of the hero movement in the game
-// path to location should be calculated in days
-// each tile across the path should be visited for step-on effects
-// TO DO : fix move()
-void Hero::move(const uint8_t x, const uint8_t y)
+Skill_level Hero::get_secondary_skill_level(const std::string skill_name)
 {
-    uint8_t distance = std::abs(x - _position.x) + std::abs(y - _position.y);
-    while(get_movement_points() < distance)
-    {
-        printf("%s have only %i speed and can't move that far. Pick a new position!", get_name());
-    }
-    _position.x = x;
-    _position.y = y;
+      for( uint8_t i = 0; i < SECONDARY_SKILL_SLOTS; i++)
+      {
+            auto skill = get_secondary_skill(i);
+
+            if( skill != nullptr)
+                  if( skill->get_name() == skill_name )
+                        return skill->get_level();
+      }
+
+      return Skill_level::None;
 }
 
 void Hero::pick_up_item(Item* item)
@@ -344,10 +343,12 @@ void Hero::equip_item(Item* item)
       add_morale( item->get_morale_bonus() );
       add_luck(   item->get_luck_bonus()   );
 
-      // TO DO : implement enemy morale & luck and other bonuses
-
       set_army_hp_bonus(    get_army_hp_bonus()    + 1*item->get_increase_hp_1()    + 2*item->get_increase_hp_2()    );
       set_army_speed_bonus( get_army_speed_bonus() + 1*item->get_increase_speed_1() + 2*item->get_increase_speed_2() );
+
+      add_reduce_enemy_power_skill( 10*item->get_decrease_enemy_spell_power_10() + 25*item->get_decrease_enemy_spell_power_25() );
+      add_reduce_enemy_morale( item->get_decrease_enemy_morale_bonus() );
+      add_reduce_enemy_luck(   item->get_decrease_enemy_luck_bonus()   );
 
       update_army_stats();
 }
@@ -398,13 +399,15 @@ void Hero::unequip_item(Item* item)
       if( item->get_knowledge_bonus() )
             update_mana();
 
-      add_morale( static_cast<Morale>( -static_cast<int8_t>( item->get_morale_bonus() ) ) );
-      add_luck(   static_cast<Luck>(   -static_cast<int8_t>( item->get_luck_bonus()   ) ) );
-
-      // TO DO : implement enemy morale & luck and other bonuses
+      add_morale( -item->get_morale_bonus() );
+      add_luck(   -item->get_luck_bonus()   );
 
       set_army_hp_bonus(    get_army_hp_bonus()    - 1*item->get_increase_hp_1()    - 2*item->get_increase_hp_2()    );
       set_army_speed_bonus( get_army_speed_bonus() - 1*item->get_increase_speed_1() - 2*item->get_increase_speed_2() );
+
+      add_reduce_enemy_power_skill( -10*item->get_decrease_enemy_spell_power_10() - 25*item->get_decrease_enemy_spell_power_25() );
+      add_reduce_enemy_morale( -item->get_decrease_enemy_morale_bonus() );
+      add_reduce_enemy_luck(   -item->get_decrease_enemy_luck_bonus()   );
 
       update_army_stats();
 }
@@ -698,13 +701,6 @@ void Hero::update_army_stats()
                   army[i]->set_luck( static_cast<Luck>( std::min( std::max( static_cast<int8_t>(c->get_luck()) + static_cast<int8_t>(get_luck()), -3), 3) ) );
                   if( c->get_minimum_luck_1() && static_cast<int8_t>(army[i]->get_luck()) < 1 )
                         army[i]->set_luck( Luck::Good );
-
-                  army[i]->set_hero_level( hero_level );
-                  army[i]->set_hero_specialty_name( specialty_name );
-                  army[i]->set_hero_level_of_archery( level_of_archery );
-                  army[i]->set_hero_level_of_offense( level_of_offense );
-                  army[i]->set_hero_level_of_armorer( level_of_armorer );
-                  army[i]->set_hero_level_of_resistance( level_of_resistance );
             }
       }
 }
@@ -729,6 +725,21 @@ std::unique_ptr<Stack> & Hero::get_army_stack_ptr(uint8_t i)
       }
 
       return army[i];
+}
+
+// this is not accurate representation of the hero movement in the game
+// path to location should be calculated in days
+// each tile across the path should be visited for step-on effects
+// TO DO : fix move()
+void Hero::move(const uint8_t x, const uint8_t y)
+{
+    uint8_t distance = std::abs(x - _position.x) + std::abs(y - _position.y);
+    while(get_movement_points() < distance)
+    {
+        printf("%s have only %i speed and can't move that far. Pick a new position!", get_name());
+    }
+    _position.x = x;
+    _position.y = y;
 }
 
 void Hero::print_full_info()

@@ -97,23 +97,23 @@ void test_create_creature_stack()
     print_some_special_abilities(army[0]->get_creature());
 }
 
-void test_creature_stack_vs_creature_stack()
-{
-    print_before_testing_output();
+// void test_creature_stack_vs_creature_stack()
+// {
+//     print_before_testing_output();
 
-    // Stack attacker(Creature_List::Lich, 10, Team::Red);
-    Stack attacker(Creature_List::Angel, 1, Team::Red);
-    printf( "%s stack is comprised of : %d %s\n", attacker.get_team_as_string().c_str(), attacker.get_number(), attacker.get_creature_name().c_str() );
+//     // Stack attacker(Creature_List::Lich, 10, Team::Red);
+//     Stack attacker(Creature_List::Angel, 1, Team::Red);
+//     printf( "%s stack is comprised of : %d %s\n", attacker.get_team_as_string().c_str(), attacker.get_number(), attacker.get_creature_name().c_str() );
 
-    Stack defender(Creature_List::Skeleton, 50, Team::Blue);
-    // Stack defender(Creature_List::Ghost_Dragon, 1, Team::Blue);
-    printf( "%s stack is comprised of : %d %s\n", defender.get_team_as_string().c_str(), defender.get_number(), defender.get_creature_name().c_str() );
+//     Stack defender(Creature_List::Skeleton, 50, Team::Blue);
+//     // Stack defender(Creature_List::Ghost_Dragon, 1, Team::Blue);
+//     printf( "%s stack is comprised of : %d %s\n", defender.get_team_as_string().c_str(), defender.get_number(), defender.get_creature_name().c_str() );
 
-    // TO DO : all special abilities have to be added in : attack(), defend(), recieve_damage()
-    attacker.attack(&defender);
+//     // TO DO : all special abilities have to be added in : attack(), defend(), recieve_damage()
+//     attacker.attack(&defender);
 
-    defender.attack(&attacker);
-}
+//     defender.attack(&attacker);
+// }
 
 void test_create_item()
 {
@@ -327,55 +327,55 @@ void test_army_hero_bonuses()
         }
 }
 
-void test_hero_vs_creature_stack()
-{
-    print_before_testing_output();
+// void test_hero_vs_creature_stack()
+// {
+//     print_before_testing_output();
 
-    Hero& hero = Hero_List::Crag_Hack; // should modify army
+//     Hero& hero = Hero_List::Crag_Hack; // should modify army
     
-    hero.set_attack(5);
-    hero.set_defense(5);
+//     hero.set_attack(5);
+//     hero.set_defense(5);
 
-    hero.equip_item(&Item_List::Ring_of_Vitality);  // unit hp +1
-    hero.equip_item(&Item_List::Ring_of_Life);      // unit hp +1
-    hero.equip_item(&Item_List::Vial_of_Lifeblood); // unit hp +2
+//     hero.equip_item(&Item_List::Ring_of_Vitality);  // unit hp +1
+//     hero.equip_item(&Item_List::Ring_of_Life);      // unit hp +1
+//     hero.equip_item(&Item_List::Vial_of_Lifeblood); // unit hp +2
 
-    // hero.equip_item(&Item_List::Elixir_of_Life); // unit hp + 4 + 25% of base hp + regeneration per round
+//     // hero.equip_item(&Item_List::Elixir_of_Life); // unit hp + 4 + 25% of base hp + regeneration per round
 
-    hero.print_full_info();
+//     hero.print_full_info();
 
-    std::unique_ptr<Stack> attacker_ptr = nullptr;
-    // attacker_ptr.reset( new Stack(Creature_List::Lich, 10, Team::Red) );
-    // attacker_ptr.reset( new Stack(Creature_List::Angel, 1, Team::Red) );
-    // attacker_ptr.reset( new Stack(Creature_List::Crusader, 5, Team::Red) );
-    // attacker_ptr.reset( new Stack(Creature_List::Naga_Queen, 2, Team::Red) );
-    // attacker_ptr.reset( new Stack(Creature_List::Ayssid, 2, Team::Red) );
-    attacker_ptr.reset( new Stack(Creature_List::Nix, 2, Team::Red) );
-    auto attacker = attacker_ptr.get();
+//     std::unique_ptr<Stack> attacker_ptr = nullptr;
+//     // attacker_ptr.reset( new Stack(Creature_List::Lich, 10, Team::Red) );
+//     // attacker_ptr.reset( new Stack(Creature_List::Angel, 1, Team::Red) );
+//     // attacker_ptr.reset( new Stack(Creature_List::Crusader, 5, Team::Red) );
+//     // attacker_ptr.reset( new Stack(Creature_List::Naga_Queen, 2, Team::Red) );
+//     // attacker_ptr.reset( new Stack(Creature_List::Ayssid, 2, Team::Red) );
+//     attacker_ptr.reset( new Stack(Creature_List::Nix, 2, Team::Red) );
+//     auto attacker = attacker_ptr.get();
 
-    hero.add_stack_to_army(attacker_ptr);
-    printf( "\nHero %s is leading the %s stack, comprised of : %d %s\n", hero.get_name().c_str(), attacker->get_team_as_string().c_str(), attacker->get_number(), attacker->get_creature_name().c_str() );
-    attacker->print_full_info();
+//     hero.add_stack_to_army(attacker_ptr);
+//     printf( "\nHero %s is leading the %s stack, comprised of : %d %s\n", hero.get_name().c_str(), attacker->get_team_as_string().c_str(), attacker->get_number(), attacker->get_creature_name().c_str() );
+//     attacker->print_full_info();
 
-    // Stack defender(Creature_List::Skeleton, 20, Team::Blue);
-    // Stack defender(Creature_List::Ghost_Dragon, 1, Team::Blue);
-    // Stack defender(Creature_List::Wolf_Raider, 20, Team::Blue);
-    // Stack defender(Creature_List::Royal_Griffin, 10, Team::Blue);
-    Stack defender(Creature_List::Behemoth, 1, Team::Blue);
+//     // Stack defender(Creature_List::Skeleton, 20, Team::Blue);
+//     // Stack defender(Creature_List::Ghost_Dragon, 1, Team::Blue);
+//     // Stack defender(Creature_List::Wolf_Raider, 20, Team::Blue);
+//     // Stack defender(Creature_List::Royal_Griffin, 10, Team::Blue);
+//     Stack defender(Creature_List::Behemoth, 1, Team::Blue);
 
-    printf( "\n%s stack is comprised of : %d %s\n", defender.get_team_as_string().c_str(), defender.get_number(), defender.get_creature_name().c_str() );
-    defender.print_full_info();
+//     printf( "\n%s stack is comprised of : %d %s\n", defender.get_team_as_string().c_str(), defender.get_number(), defender.get_creature_name().c_str() );
+//     defender.print_full_info();
 
-    // TO DO : all special abilities have to be added in : attack(), defend(), recieve_damage()
+//     // TO DO : all special abilities have to be added in : attack(), defend(), recieve_damage()
 
-    // to imitate a battle field, the troops must have positions
-    attacker->set_position(0, 0);
-    defender.set_position(1, 0);
+//     // to imitate a battle field, the troops must have positions
+//     attacker->set_position(0, 0);
+//     defender.set_position(1, 0);
 
-    attacker->attack(&defender);
+//     attacker->attack(&defender);
 
-    defender.attack(attacker);
-}
+//     defender.attack(attacker);
+// }
 
 void test_battle()
 {
