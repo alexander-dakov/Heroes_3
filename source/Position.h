@@ -20,6 +20,11 @@ struct Position
                      this->y = other.y;
                      return *this;
               }
+
+              bool operator==(const Position& other)
+              {
+                     return x == other.x && y == other.y;
+              }
 };
 
 #endif

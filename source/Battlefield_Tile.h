@@ -25,6 +25,7 @@ enum class Tile
 struct Battlefield_Tile
 {
     private:
+        Stack* stack = nullptr;
         char _symbol = '_';
         Tile _tile = Tile::Normal;
         Team _team = Team::Neutral; // for representation purposes

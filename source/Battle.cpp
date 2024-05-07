@@ -47,8 +47,7 @@ Battle::Battle( Hero& attacker, Hero& defender, const Battle_Format format, cons
             set_up_next_round();
             
             // Iterate through the stacks in the normal turn
-            auto turns = get_turns();
-            for( uint8_t i = 0; i < turns->size(); i++ )
+            for( uint8_t i = 0; i < get_turns()->size(); i++ )
             {
                   auto stack = get_stack_turn(i);
 
@@ -65,7 +64,7 @@ Battle::Battle( Hero& attacker, Hero& defender, const Battle_Format format, cons
             }
             
             // Iterate through stacks which decided to wait
-            auto wait_turns = get_wait_turns();
+            auto const wait_turns = get_wait_turns();
             if( !wait_turns->empty() )
                   for( uint8_t i = 0; i < wait_turns->size(); i++ )
                   {
@@ -126,7 +125,7 @@ bool Battle::get_has_angel_ally(Stack* const stack)
       if( get_angel_present() )
             for( uint8_t i = 0; i < get_turns()->size(); i++ )
             {
-                  auto s = get_stack_turn(i);
+                  auto const s = get_stack_turn(i);
                   if( s->get_team() == stack->get_team() && !s->get_has_perished() )
                         if( s->get_creature()->get_increases_alias_morale_1() ) // Angel & Archangel
                               return true;
@@ -140,7 +139,7 @@ bool Battle::get_has_necro_dragon_enemy(Stack* const stack)
       if( get_necro_dragon_present() )
             for( uint8_t i = 0; i < get_turns()->size(); i++ )
             {
-                  auto s = get_stack_turn(i);
+                  auto const s = get_stack_turn(i);
                   if( s->get_team() != stack->get_team() && !s->get_has_perished() )
                         if( s->get_creature()->get_decreases_enemy_morale_1() ) // Bone Dragon & Ghost Dragon
                               return true;
@@ -154,7 +153,7 @@ bool Battle::get_has_devil_enemy(Stack* const stack)
       if( get_devil_present() )
             for( uint8_t i = 0; i < get_turns()->size(); i++ )
             {
-                  auto s = get_stack_turn(i);
+                  auto const s = get_stack_turn(i);
                   if( s->get_team() != stack->get_team() && !s->get_has_perished() )
                         if( s->get_creature()->get_decreases_enemy_luck_1() ) // Devil
                               return true;
@@ -167,7 +166,7 @@ bool Battle::get_has_archdevil_enemy(Stack* const stack)
       if( get_archdevil_present() )
             for( uint8_t i = 0; i < get_turns()->size(); i++ )
             {
-                  auto s = get_stack_turn(i);
+                  auto const s = get_stack_turn(i);
                   if( s->get_team() != stack->get_team() && !s->get_has_perished() )
                         if( s->get_creature()->get_decreases_enemy_luck_2() ) // Archdevil
                               return true;
@@ -373,7 +372,7 @@ void Battle::print_battlefield(Stack* const current_stack)
       printf( " :\n");
       for( uint8_t i = 0; i < ARMY_SLOTS; i++)
       {
-            auto attacking_stack = get_attacker()->get_army_stack(i);
+            auto const attacking_stack = get_attacker()->get_army_stack(i);
                   if( attacking_stack != nullptr )
                   {
                         print_colored_string(std::to_string(i + 1).c_str(), attacking_stack->get_team() );
@@ -388,7 +387,7 @@ void Battle::print_battlefield(Stack* const current_stack)
       printf( " :\n");
       for( uint8_t i = 0; i < ARMY_SLOTS; i++)
       {
-            auto defending_stack = get_defender()->get_army_stack(i);
+            auto const defending_stack = get_defender()->get_army_stack(i);
                   if( defending_stack != nullptr )
                   {
                         print_colored_string(std::to_string(i + 1).c_str(), defending_stack->get_team() );
@@ -492,25 +491,25 @@ void Battle::set_up_wait_turns()
 
 void Battle::print_turns()
 {     
-      auto turns = get_turns();
+      auto const turns = get_turns();
       if( !turns->empty() )
       {
             printf( "\nStack turns : ");
             for( uint8_t i = 0; i < turns->size(); i++ )
             {
-                  auto stack = get_stack_turn(i);   
+                  auto const stack = get_stack_turn(i);   
                   print_colored_string( stack->get_battlefield_symbol(), stack->get_team() );
                   printf( " -> ");
             }
       }
 
-      auto wait_turns = get_wait_turns();
+      auto const wait_turns = get_wait_turns();
       if( !wait_turns->empty() )
       {
             printf( " Waiting stack turns : ");
             for( uint8_t i = 0; i < wait_turns->size(); i++ )
             {
-                  auto stack = get_stack_wait_turn(i);   
+                  auto const stack = get_stack_wait_turn(i);   
                   print_colored_string( stack->get_battlefield_symbol(), stack->get_team() );
                   printf( " -> ");
             }
@@ -565,7 +564,7 @@ void Battle::on_stack_turn(Stack* stack, bool morale_rolled)
       // TO DO : if( 'Berserk' ) - find the closest REACHABLE (walls may be in the way) stack and attack it
       // else - code below
 
-      std::string action = select_action_for_stack( stack->get_action() != Stack_Action::Wait );
+      const std::string action = select_action_for_stack( stack->get_action() != Stack_Action::Wait );
 
       if(action == "M")
       {
@@ -612,16 +611,16 @@ void Battle::on_stack_turn(Stack* stack, bool morale_rolled)
                   if( target == "P")
                   {
                         Position pos = enter_battlefield_coordinates();
-                        auto adjacent_stacks = adjacent_stacks_to_pos(pos); // intentionally gives the ability to attack its own position
+                        auto const adjacent_stacks = adjacent_stacks_to_pos(pos); // intentionally gives the ability to attack its own position
                         
                         for( auto a : adjacent_stacks )
-                              inflict_damage( stack, a, false);
+                              inflict_damage(stack, a, false);
 
                         return;
                   }
             }
 
-            printf("\nEnter the symbol of the stack to be attacked : \n");
+            printf("\nEnter the symbol of the stack to be attacked : ");
             std::string symbol;
             std::cin >> symbol;
 
@@ -633,7 +632,7 @@ void Battle::on_stack_turn(Stack* stack, bool morale_rolled)
 
                   while( symbol.size() > 1 || enemy_stack == nullptr )
                   {
-                        printf("\nInvalid input! Enter the symbol of the stack to be attacked : \n");
+                        printf("\nInvalid input! Enter the symbol of the stack to be attacked : ");
                         std::cin >> symbol;
 
                         enemy_stack = find_existing_enemy_stack_via_symbol( symbol[0], stack->get_team() );
@@ -641,13 +640,19 @@ void Battle::on_stack_turn(Stack* stack, bool morale_rolled)
                   printf("\n");
 
                   if( !stack_can_shoot(stack, enemy_stack) ) // needs to be checked every time because of 'Force Field'
+                  {
                         if( !enemy_is_reachable(stack, enemy_stack) )
                         {
-                              printf("This enemy stack is not reachable. Please select a different enemy. Symbol = \n");
+                              printf("This enemy stack is not reachable. Please select a different enemy. Symbol = ");
                               std::cin >> symbol;
+                              printf("\n");
+
                         }
                         else
                               break;
+                  }
+                  else
+                        break;
             }   
 
             attack_stack( stack, enemy_stack );
@@ -674,7 +679,7 @@ bool Battle::roll_negative_morale(Stack* const stack)
 {
       uint16_t probability = 0;
 
-      Morale morale = static_cast<Morale>( static_cast<int8_t>(stack->get_morale()) + 1*get_has_angel_ally(stack) + (-1)*get_has_necro_dragon_enemy(stack) ); // should be done every time
+      const Morale morale = static_cast<Morale>( static_cast<int8_t>(stack->get_morale()) + 1*get_has_angel_ally(stack) + (-1)*get_has_necro_dragon_enemy(stack) ); // should be done every time
 
       switch(morale)
       {
@@ -693,7 +698,7 @@ bool Battle::roll_positive_morale(Stack* const stack)
 {
       uint16_t probability = 0;
 
-      Morale morale = static_cast<Morale>( static_cast<int8_t>(stack->get_morale()) + 1*get_has_angel_ally(stack) + (-1)*get_has_necro_dragon_enemy(stack) ); // should be done every time
+      const Morale morale = static_cast<Morale>( static_cast<int8_t>(stack->get_morale()) + 1*get_has_angel_ally(stack) + (-1)*get_has_necro_dragon_enemy(stack) ); // should be done every time
 
       switch(morale)
       {
@@ -715,9 +720,9 @@ int8_t Battle::roll_luck(Stack* const stack)
       uint16_t probability;
       int8_t sign;
 
-      Luck luck = static_cast<Luck>( static_cast<int8_t>(stack->get_luck()) + std::min( (-1)*get_has_devil_enemy(stack), (-2)*get_has_archdevil_enemy(stack) ) ); // should be done every time
+      const Luck luck = static_cast<Luck>( static_cast<int8_t>(stack->get_luck()) + std::min( (-1)*get_has_devil_enemy(stack), (-2)*get_has_archdevil_enemy(stack) ) ); // should be done every time
 
-      bool leprechauns_in_army = get_has_leprechaun_ally(stack);
+      const bool leprechauns_in_army = get_has_leprechaun_ally(stack);
 
       switch(luck)
       {
@@ -739,7 +744,7 @@ std::string Battle::select_action_for_stack(const bool stack_can_wait)
       if( stack_can_wait ) // first time stack can act during this turn
       {
             // Select an action for the stack - Move / Attack / Defend / Wait
-            printf("\nOrder an action to the stack : M (move) / A (attack) / D (defend) / W (wait)\n Action : ");
+            printf("\nOrder an action to the stack : M (move) / A (attack) / D (defend) / W (wait)\nAction : ");
 
             std::cin >> action;
 
@@ -754,7 +759,7 @@ std::string Battle::select_action_for_stack(const bool stack_can_wait)
       else // stack already waited in this round so, now it should act
       {
             // Select an action for the stack - Move / Attack / Defend
-            printf("\nOrder an action to the stack : M (move) / A (attack) / D (defend)\n Action : ");
+            printf("\nOrder an action to the stack : M (move) / A (attack) / D (defend)\nAction : ");
 
             std::cin >> action;
 
@@ -773,9 +778,9 @@ std::string Battle::select_action_for_stack(const bool stack_can_wait)
 void Battle::set_global_buffs_and_debuffs()
 {
       // Update Battle's private fields responsible for global debuffs
-      Slot slot = Slot::Pocket;
-      std::string item_1 = "Spirit of Oppression";
-      std::string item_2 = "Hourglass of the Evil Hour";
+      const Slot slot = Slot::Pocket;
+      const std::string item_1 = "Spirit of Oppression";
+      const std::string item_2 = "Hourglass of the Evil Hour";
 
       _spirit_of_oppression_present   = get_attacker()->check_eqipped_item(item_1, slot) + get_defender()->check_eqipped_item(item_1, slot);
       _hourglass_of_evil_hour_present = get_attacker()->check_eqipped_item(item_2, slot) + get_defender()->check_eqipped_item(item_2, slot);
@@ -803,7 +808,7 @@ void Battle::set_global_buffs_and_debuffs()
       for( auto hero : heroes)
             for( uint8_t i = 0; i < ARMY_SLOTS; i++ )
             {
-                  auto c = hero->get_army_stack(i)->get_creature();
+                  auto const c = hero->get_army_stack(i)->get_creature();
 
                   _angel_present        += c->get_increases_alias_morale_1();
                   _necro_dragon_present += c->get_decreases_enemy_morale_1();
@@ -844,14 +849,14 @@ Position* Battle::select_location_around_enemy_stack(Stack* const stack, Stack* 
       const uint8_t ey = enemy_stack->get_position().y;
 
       std::map< uint8_t, std::unique_ptr<Position> > positions;
-      uint8_t counter = 0;
+      uint8_t counter = 1;
 
       for( int8_t i = std::max(0, ey - 1); i <= std::min(BATTLEFIELD_WIDTH - 1, ey + 1); i++ )
             for( int8_t j = std::max(0, ex - 1); j <= std::min(BATTLEFIELD_LENGTH - 1, ex + 1); j++ )
                   if( tile_is_reachable(j, i, stack) )
                   {
-                        counter++;
                         positions[counter] = std::unique_ptr<Position>(new Position(j, i));
+                        counter++;
                   }
 
       if( positions.size() > 1 )
@@ -874,7 +879,7 @@ Position* Battle::select_location_around_enemy_stack(Stack* const stack, Stack* 
             return positions[location].get();
       }
       else // if no other positions are available
-            return positions[0].get();
+            return positions[1].get(); // counter starts from 1
 }
 
 Stack* Battle::find_existing_enemy_stack_via_symbol(const char ch, const Team team)
@@ -888,11 +893,24 @@ Stack* Battle::find_existing_enemy_stack_via_symbol(const char ch, const Team te
       return nullptr;
 }
 
+Stack* Battle::find_existing_stack_via_position(const Position pos)
+{
+      for( uint8_t i = 0; i < get_turns()->size(); i++ )
+      {
+            auto const stack = get_stack_turn(i);
+            if( !stack->get_has_perished() ) // search only through existing stacks
+                  if( stack->get_position() == pos )
+                        return stack;
+      }
+      
+      return nullptr;
+}
+
 bool Battle::has_adjacent_enemy(Stack* const stack)
 {
       for( uint8_t i = 0; i < get_turns()->size(); i++)
       {
-            auto enemy_stack = get_stack_turn(i);
+            auto const enemy_stack = get_stack_turn(i);
 
             if( enemy_stack->get_team() != stack->get_team() && !enemy_stack->get_has_perished() )
                   if( stacks_are_adjacent(stack, enemy_stack) )
@@ -913,7 +931,7 @@ std::vector<Stack*> Battle::adjacent_stacks_to_pos(Position pos, bool include_po
 
       for( uint8_t i = 0; i < get_turns()->size(); i++)
       {
-            auto enemy_stack = get_stack_turn(i);
+            auto const enemy_stack = get_stack_turn(i);
 
             if( !enemy_stack->get_has_perished() )
                   if( stack_is_adjacent_to_pos(pos, enemy_stack, include_position) )
@@ -1043,21 +1061,21 @@ void Battle::wait_stack(Stack* stack)
 
 void Battle::target_and_inflict_damage(Stack* attacking_stack, Stack* defending_stack, bool const attack_is_retaliation)
 {
-      auto c = attacking_stack->get_creature();
+      auto const c = attacking_stack->get_creature();
 
       if( c->get_has_attack_adjacent_hexes() || c->get_has_attack_adjacent_enemies() )
       {
-            auto stacks = adjacent_stacks(attacking_stack);
+            auto const stacks = adjacent_stacks(attacking_stack);
             for( auto s : stacks )
-                  inflict_damage( attacking_stack, s, s == defending_stack, attack_is_retaliation ); // if attacking_stack can attack only enemies and is not under the influence of 'Berserk' inflict_damage() will be exited
+                  inflict_damage(attacking_stack, s, s == defending_stack, attack_is_retaliation); // if attacking_stack can attack only enemies and is not under the influence of 'Berserk' inflict_damage() will be exited
       }
       else if( c->get_has_3_headed_attack() )
       {
             // A slower approach
-            // auto stacks = adjacent_stacks(attacking_stack);
+            // auto const stacks = adjacent_stacks(attacking_stack);
             // for( auto s : stacks )
             //       if( stack_is_adjacent_to_pos(defending_stack->get_position(), s, true) ) // found stacks are enemy
-            //             inflict_damage( attacking_stack, s, s == defending_stack, attack_is_retaliation );
+            //             inflict_damage(attacking_stack, s, s == defending_stack, attack_is_retaliation);
 
             // A faster approach
             // Coordinates of the attacking stack
@@ -1074,7 +1092,7 @@ void Battle::target_and_inflict_damage(Stack* attacking_stack, Stack* defending_
                         if( battlefield[i][dx].get_tile() == Tile::Army )
                         {
                               auto stack = find_existing_enemy_stack_via_symbol( battlefield[i][dx].get_symbol(), battlefield[i][dx].get_team() );
-                              inflict_damage( attacking_stack, stack, true, attack_is_retaliation);
+                              inflict_damage(attacking_stack, stack, stack == defending_stack, attack_is_retaliation);
                         }
             }
             else if( ay == dy ) // vertically aligned
@@ -1083,7 +1101,7 @@ void Battle::target_and_inflict_damage(Stack* attacking_stack, Stack* defending_
                         if( battlefield[dy][j].get_tile() == Tile::Army )
                         {
                               auto stack = find_existing_enemy_stack_via_symbol( battlefield[dy][j].get_symbol(), battlefield[dy][j].get_team() );
-                              inflict_damage( attacking_stack, stack, true, attack_is_retaliation);
+                              inflict_damage(attacking_stack, stack, stack == defending_stack, attack_is_retaliation);
                         }
             }
             else // diagonally aligned
@@ -1091,26 +1109,28 @@ void Battle::target_and_inflict_damage(Stack* attacking_stack, Stack* defending_
                   if( battlefield[dy][ax].get_tile() == Tile::Army )
                   {
                         auto stack = find_existing_enemy_stack_via_symbol( battlefield[dy][ax].get_symbol(), battlefield[dy][ax].get_team() );
-                        inflict_damage( attacking_stack, stack, true, attack_is_retaliation);
+                        inflict_damage(attacking_stack, stack, false, attack_is_retaliation);
                   }
 
                   if( battlefield[ay][dx].get_tile() == Tile::Army )
                   {
                         auto stack = find_existing_enemy_stack_via_symbol( battlefield[ay][dx].get_symbol(), battlefield[ay][dx].get_team() );
-                        inflict_damage( attacking_stack, stack, true, attack_is_retaliation);
+                        inflict_damage(attacking_stack, stack, false, attack_is_retaliation);
                   }
             }
       }
-      else
-            inflict_damage( attacking_stack, defending_stack, true, attack_is_retaliation);
+      else // only one target
+            inflict_damage(attacking_stack, defending_stack, true, attack_is_retaliation);
 }
-
 
 void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending_stack, bool const defender_is_targeted, bool const attack_is_retaliation, bool const attack_is_second_attack)
 {
       attacking_stack->set_action(Stack_Action::Attack);
 
-      if( attacking_stack->get_team() == defending_stack->get_team() /* && TO DO : not 'Berserk'*/ && !attacking_stack->get_creature()->get_has_attack_adjacent_hexes() )
+      if( attacking_stack->get_team() == defending_stack->get_team() && !attacking_stack->get_creature()->get_has_attack_adjacent_hexes() && !attacking_stack->get_creature()->get_has_breath_attack() /* && TO DO : not 'Berserk'*/ )
+            return;
+
+      if( defending_stack == nullptr ) // check is should not be needed but is here, just in case
             return;
 
       if( defending_stack->get_has_perished() ) // check is should not be needed but is here, just in case
@@ -1123,37 +1143,39 @@ void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending
       float R1(0.f), R2(0.f), R3(0.f), R4(0.f), R5(0.f), R6(0.f), R7(0.f), R8(0.f); // reduce damage
 
       // Get the heroes of the two stack
-      auto attacking_hero = get_hero_of_stack(attacking_stack);
-      auto defending_hero = get_hero_of_stack(defending_stack);
+      auto const attacking_hero = get_hero_of_stack(attacking_stack);
+      auto const defending_hero = get_hero_of_stack(defending_stack);
 
       // attacking_stack's attributes
-      std::string attacking_stack_name      = attacking_stack->get_creature_name();
-      uint32_t    attacking_stack_number    = attacking_stack->get_number();
-      uint8_t     attacking_stack_attack    = attacking_stack->get_att();
-      bool        attacking_stack_is_ranged = attacking_stack->get_creature()->get_is_ranged();
-      uint8_t     attacking_stack_max_dmg   = attacking_stack->get_creature()->get_max_dmg();
-      uint8_t     attacking_stack_min_dmg   = attacking_stack->get_creature()->get_min_dmg();
+      auto const        attacking_creature        = attacking_stack->get_creature();
+      const std::string attacking_stack_name      = attacking_stack->get_creature_name();
+      const uint32_t    attacking_stack_number    = attacking_stack->get_number();
+      uint8_t           attacking_stack_attack    = attacking_stack->get_att();
+      const bool        attacking_stack_is_ranged = attacking_creature->get_is_ranged();
+      const uint8_t     attacking_stack_max_dmg   = attacking_creature->get_max_dmg();
+      const uint8_t     attacking_stack_min_dmg   = attacking_creature->get_min_dmg();
 
-      bool can_shoot = stack_can_shoot(attacking_stack, defending_stack);
+      const bool can_shoot = stack_can_shoot(attacking_stack, defending_stack);
       
       // penalties for shooting attacking_stack
-      bool melee_penalty    = attacking_stack_is_ranged && !can_shoot;
-      bool range_penalty    = attacking_stack_is_ranged && can_shoot && get_distance_between_stacks(attacking_stack, defending_stack) > 10 && !attacking_stack->get_creature()->get_no_range_penalty() /*&& !get_no_range_penalty() - stack method due to artifacts*/;
-      bool obstacle_penalty = attacking_stack_is_ranged && can_shoot && /* there's a wall between attacking_stack and defending_stack &&*/ !attacking_stack->get_creature()->get_no_obstacle_penalty() /*&& !get_no_obstacle_penalty() - stack method due to artifacts*/; // TO DO : implement
+      const bool melee_penalty    = attacking_stack_is_ranged && !can_shoot;
+      const bool range_penalty    = attacking_stack_is_ranged && can_shoot && get_distance_between_stacks(attacking_stack, defending_stack) > 10 && !attacking_creature->get_no_range_penalty() /*&& !get_no_range_penalty() - stack method due to artifacts*/;
+      const bool obstacle_penalty = attacking_stack_is_ranged && can_shoot && /* there's a wall between attacking_stack and defending_stack &&*/ !attacking_creature->get_no_obstacle_penalty() /*&& !get_no_obstacle_penalty() - stack method due to artifacts*/; // TO DO : implement
 
       // defending_stack's attributes
-      std::string defending_stack_name    = defending_stack->get_creature_name();
-      uint8_t     defending_stack_defense = defending_stack->get_def();
+      auto const        defending_creature      = defending_stack->get_creature();
+      const std::string defending_stack_name    = defending_stack->get_creature_name();
+      uint8_t           defending_stack_defense = defending_stack->get_def();
 
       if( defending_stack->get_action() == Stack_Action::Defend ) 
             defending_stack_defense += defending_stack_defense/5;
 
       // special abilities which modify stack attributes
-      if( defending_stack->get_creature()->get_ignore_enemy_attack() )
-            attacking_stack_attack = attacking_stack_attack * (100 - defending_stack->get_creature()->get_ignore_enemy_attack_by_percent() ) / 100;
+      if( defending_creature->get_ignore_enemy_attack() )
+            attacking_stack_attack = attacking_stack_attack * (100 - defending_creature->get_ignore_enemy_attack_by_percent() ) / 100;
 
-      if( attacking_stack->get_creature()->get_ignore_enemy_defense() )
-            defending_stack_defense = defending_stack_defense * (100 - attacking_stack->get_creature()->get_ignore_enemy_defense_by_percent() ) / 100;
+      if( attacking_creature->get_ignore_enemy_defense() )
+            defending_stack_defense = defending_stack_defense * (100 - attacking_creature->get_ignore_enemy_defense_by_percent() ) / 100;
 
       // calculate I1 - Attack > Defense bonus
       if( attacking_stack_attack >= defending_stack_defense )
@@ -1188,21 +1210,21 @@ void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending
       }
 
       // calculate I4 - luck bonus
-      int8_t rolled_luck = roll_luck(attacking_stack);
+      const int8_t rolled_luck = roll_luck(attacking_stack);
       I4 = -0.5*(rolled_luck <  0) + /*  0.0*( rolled_luck == 0) + */  1.0*(rolled_luck >  0) * (1 - get_hourglass_of_evil_hour_present());
 
       // calculate I5 - special ability bonus
       // death blow bonus
-      if( attacking_stack->get_creature()->get_may_cast_death_blow() )
+      if( attacking_creature->get_may_cast_death_blow() )
             I5 = ( (rand() % 100) < CHANCE_TO_CAST_DEATH_BLOW ) * 1.00f;
 
       // hate bonus
-      if     ( attacking_stack->get_creature()->get_hates_efreeti()       && ( defending_stack_name == "Efreet" || defending_stack_name == "Efreet Sultan" ) ) I5 = 0.50f;
-      else if( attacking_stack->get_creature()->get_hates_genies()        && ( defending_stack_name == "Genie"  || defending_stack_name == "Master Genie" )  ) I5 = 0.50f;
-      else if( attacking_stack->get_creature()->get_hates_devils()        && ( defending_stack_name == "Devil"  || defending_stack_name == "Arch Devil" )    ) I5 = 0.50f;
-      else if( attacking_stack->get_creature()->get_hates_angels()        && ( defending_stack_name == "Angel"  || defending_stack_name == "Archangel" )     ) I5 = 0.50f;
-      else if( attacking_stack->get_creature()->get_hates_black_dragons() &&   defending_stack_name == "Black Dragon" ) I5 = 0.50f;
-      else if( attacking_stack->get_creature()->get_hates_titans()        &&   defending_stack_name == "Titan"        ) I5 = 0.50f;
+      if     ( attacking_creature->get_hates_efreeti()       && ( defending_stack_name == "Efreet" || defending_stack_name == "Efreet Sultan" ) ) I5 = 0.50f;
+      else if( attacking_creature->get_hates_genies()        && ( defending_stack_name == "Genie"  || defending_stack_name == "Master Genie" )  ) I5 = 0.50f;
+      else if( attacking_creature->get_hates_devils()        && ( defending_stack_name == "Devil"  || defending_stack_name == "Arch Devil" )    ) I5 = 0.50f;
+      else if( attacking_creature->get_hates_angels()        && ( defending_stack_name == "Angel"  || defending_stack_name == "Archangel" )     ) I5 = 0.50f;
+      else if( attacking_creature->get_hates_black_dragons() &&   defending_stack_name == "Black Dragon" ) I5 = 0.50f;
+      else if( attacking_creature->get_hates_titans()        &&   defending_stack_name == "Titan"        ) I5 = 0.50f;
 
       // elementals bonus
       if     ( ( attacking_stack_name == "Air Elemental"   || attacking_stack_name == "Storm Elemental"  ) && ( defending_stack_name == "Earth Elemental" || defending_stack_name == "Magma Elemental"  ) ) I5 = 1.00f;
@@ -1211,8 +1233,8 @@ void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending
       else if( ( attacking_stack_name == "Earth Elemental" || attacking_stack_name == "Magma Elemental"  ) && ( defending_stack_name == "Air Elemental"   || defending_stack_name == "Storm Elemental"  ) ) I5 = 1.00f;
 
       // jousting bonus
-      if( !defending_stack->get_creature()->get_is_immune_to_jousting() ) 
-            if( attacking_stack->get_creature()->get_has_jousting() ) 
+      if( !defending_creature->get_is_immune_to_jousting() ) 
+            if( attacking_creature->get_has_jousting() ) 
             I5 = 0.05 * attacking_stack->get_distance_traveled();
 
 
@@ -1248,8 +1270,8 @@ void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending
       // TO DO : if retaliation or attack after spell
 
       // calculate R8 - special abilities penalty
-      if     ( attacking_stack_name == "Psychic Elemental" && defending_stack->get_creature()->get_is_immune_to_mind_spells() ) R8 = 0.50f;
-      else if( attacking_stack_name == "Magic Elemental"   && defending_stack->get_creature()->get_is_immune_to_all_spells()  ) R8 = 0.50f;
+      if     ( attacking_stack_name == "Psychic Elemental" && defending_creature->get_is_immune_to_mind_spells() ) R8 = 0.50f;
+      else if( attacking_stack_name == "Magic Elemental"   && defending_creature->get_is_immune_to_all_spells()  ) R8 = 0.50f;
       // TO DO : implement retaliation after Stone Gaze and Paralyzing Venom
 
 
@@ -1257,7 +1279,7 @@ void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending
             base_damage = attacking_stack_min_dmg * attacking_stack_number;
       else
       {
-            uint8_t range = attacking_stack_max_dmg - attacking_stack_min_dmg + 1;
+            const uint8_t range = attacking_stack_max_dmg - attacking_stack_min_dmg + 1;
             
             if( attacking_stack_number <= min_num_for_stack_to_count_as_group_to_calc_rand_dmg )
                   for(int i = 0; i < attacking_stack_number; i++)
@@ -1278,7 +1300,7 @@ void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending
       #endif
 
       final_damage = static_cast<int32_t>( base_damage * (1 + I1 + I2 + I3 + I4 + I5) * (1 - R1) * (1 - R2 - R3) * (1 - R4) * (1 - R5) * (1 - R6) * (1 - R7) * (1 - R8) );
-
+      
       if     ( !attack_is_retaliation && !attack_is_second_attack ) printf( "Stack of %d %s attacks and does %d damage to %s.\n",                   attacking_stack_number, attacking_stack_name.c_str(), final_damage, defending_stack_name.c_str() );
       else if(  attack_is_retaliation && !attack_is_second_attack ) printf( "Stack of %d %s retaliates and does %d damage to %s.\n",                attacking_stack_number, attacking_stack_name.c_str(), final_damage, defending_stack_name.c_str() );
       else if( !attack_is_retaliation &&  attack_is_second_attack ) printf( "Stack of %d %s attacks for a second time and does %d damage to %s.\n", attacking_stack_number, attacking_stack_name.c_str(), final_damage, defending_stack_name.c_str() );
@@ -1290,15 +1312,38 @@ void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending
 
       // TO DO : apply special abilities with hit-on effects
 
+      // If attacking stack has breath attack, an additional stack, situated behind the defending stack will suffer from the attack.
+      if( attacking_creature->get_has_breath_attack() && defender_is_targeted )
+      {
+            // Coordinates of the attacking stack
+            const uint8_t ax = attacking_stack->get_position().x;
+            const uint8_t ay = attacking_stack->get_position().y;
+            
+            // Coordinates of the defending stack
+            const uint8_t dx = defending_stack->get_position().x;
+            const uint8_t dy = defending_stack->get_position().y;
+
+            // Coordinates of field 'behind' defending stack, from attacking stack's point of view.
+            const uint8_t x = std::max<int8_t>( 0, std::min<int8_t>( dx + (dx - ax), BATTLEFIELD_LENGTH ) );
+            const uint8_t y = std::max<int8_t>( 0, std::min<int8_t>( dy + (dy - ay), BATTLEFIELD_WIDTH  ) );
+            
+            if( battlefield[y][x].get_tile() == Tile::Army && battlefield[y][x].get_symbol() != defending_stack->get_battlefield_symbol() )
+            {
+                  auto stack = find_existing_stack_via_position( Position(x, y) );
+                  if( stack != nullptr )
+                        inflict_damage(attacking_stack, stack, false);
+            }
+      }
+      
       // TO DO : if defending_stack is Efreet Sultan or has spell fire shield attacker and attacker is not immuned - attacker should recieve dmg
 
       if( !defending_stack->get_has_perished() )
       {
             if( defender_is_targeted && !attack_is_retaliation && ( get_distance_between_stacks(attacking_stack, defending_stack) == 1 ) )
-                  if( !attacking_stack->get_creature()->get_no_enemy_retaliation() )
+                  if( !attacking_creature->get_no_enemy_retaliation() )
                         retaliate( defending_stack, attacking_stack );
 
-            if( !attack_is_retaliation && ( attacking_stack->get_creature()->get_has_double_attack() || attacking_stack->get_creature()->get_has_ferocity() ) && !attack_is_second_attack )
+            if( !attack_is_retaliation && ( attacking_creature->get_has_double_attack() || attacking_creature->get_has_ferocity() ) && !attack_is_second_attack )
                   inflict_damage( attacking_stack, defending_stack, true, false, true );
       }
 }
@@ -1342,7 +1387,7 @@ Hero* Battle::get_hero_of_stack(Stack* const stack)
 bool Battle::check_battle_finished()
 {
       // First, check to see if any of the armies has perished
-      auto turns = get_turns();
+      auto const turns = get_turns();
       if( turns->size() > 1 ) // at least one stack
       {
             bool has_attacker_stack = false; // shows if there is at least one attacker stack on the battlefield 

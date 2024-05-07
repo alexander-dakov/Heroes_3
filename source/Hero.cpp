@@ -199,7 +199,7 @@ void Hero::add_to_primary_on_level_up(uint8_t probability, const uint8_t* array)
 
 void Hero::add_experience(const uint32_t experience)
 {
-      uint8_t current_level = get_level();
+      const uint8_t current_level = get_level();
 
       if( current_level == 75 )
       {
@@ -207,9 +207,7 @@ void Hero::add_experience(const uint32_t experience)
             return;
       }
 
-      uint8_t new_level = current_level;
-      uint32_t current_experience = get_experience();
-      uint32_t new_experience = current_experience + experience;
+      const uint32_t new_experience = get_experience() + experience;
       uint8_t levels_gained = 0;
 
       if( new_experience > MAX_EXPERIENCE )
@@ -240,7 +238,7 @@ Skill_level Hero::get_secondary_skill_level(const std::string skill_name)
 {
       for( uint8_t i = 0; i < SECONDARY_SKILL_SLOTS; i++)
       {
-            auto skill = get_secondary_skill(i);
+            auto const skill = get_secondary_skill(i);
 
             if( skill != nullptr)
                   if( skill->get_name() == skill_name )
@@ -510,7 +508,7 @@ void Hero::add_stack_to_army(std::unique_ptr<Stack> & stack_ptr)
 
 void Hero::add_stack_to_slot(std::unique_ptr<Stack> & stack_ptr, const uint8_t slot)
 {
-      auto stack = stack_ptr.get();
+      auto const stack = stack_ptr.get();
 
       if( get_team() != stack->get_team() )
       {
@@ -537,7 +535,7 @@ void Hero::add_stack_to_slot(std::unique_ptr<Stack> & stack_ptr, const uint8_t s
 
 void Hero::remove_stack(std::unique_ptr<Stack> & stack_ptr)
 {
-      auto stack = stack_ptr.get();
+      auto const stack = stack_ptr.get();
 
       for( uint8_t i = 0; i < ARMY_SLOTS; i++)
             if( army[i] == stack_ptr )
@@ -647,8 +645,7 @@ void Hero::update_army_stats()
       {
             if( army[i] != nullptr)
             {
-                  auto c = army[i]->get_creature();
-                  switch( c->get_faction() )
+                  switch( army[i]->get_creature()->get_faction() )
                   {
                         case Faction::Neutral    : has_Neutral    = true; break;
                         case Faction::Castle     : has_Castle     = true; break;
@@ -680,7 +677,7 @@ void Hero::update_army_stats()
       {
             if( army[i] != nullptr)
             {
-                  auto c = army[i]->get_creature();
+                  auto const c = army[i]->get_creature();
 
                   army[i]->set_att( c->get_att() + att );
                   army[i]->set_def( c->get_def() + def );
@@ -733,10 +730,10 @@ std::unique_ptr<Stack> & Hero::get_army_stack_ptr(uint8_t i)
 // TO DO : fix move()
 void Hero::move(const uint8_t x, const uint8_t y)
 {
-    uint8_t distance = std::abs(x - _position.x) + std::abs(y - _position.y);
+    const uint8_t distance = std::abs(x - _position.x) + std::abs(y - _position.y);
     while(get_movement_points() < distance)
     {
-        printf("%s have only %i speed and can't move that far. Pick a new position!", get_name());
+        printf("%s only has %d movement points and can't move that far. Pick a new position!", get_name(), get_movement_points());
     }
     _position.x = x;
     _position.y = y;

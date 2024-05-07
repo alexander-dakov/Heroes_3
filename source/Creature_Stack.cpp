@@ -72,7 +72,7 @@ void Stack::add_morale(const Morale morale)
 void Stack::recieve_damage(const uint32_t damage)
 {
     const uint16_t hp = get_hp();              // hp per unit
-    uint16_t hp_last = get_hp_left();          // hp of last unit
+    const uint16_t hp_last = get_hp_left();    // hp of last unit
     const uint32_t initial_num = get_number(); // amount of creatures in stack
 
     uint64_t capacity = hp*(initial_num - 1) + hp_last;
@@ -107,7 +107,7 @@ void Stack::recieve_damage(const uint32_t damage)
 
 void Stack::print_battle_info()
 {
-    auto c = get_creature();
+    auto const c = get_creature();
     printf("Name : %s\n",    c->get_name().c_str());
     printf("Faction : %s\n", c->get_faction_as_string().c_str());
     printf("Level : %d\n",   c->get_level());
@@ -130,7 +130,7 @@ void Stack::print_battle_info()
 
 void Stack::print_full_info()
 {
-    auto c = get_creature();
+    auto const c = get_creature();
     printf( "\n" );
     printf( "Number : %d\n",  get_number() );
     printf( "Name : %s\n",    c->get_name().c_str() );

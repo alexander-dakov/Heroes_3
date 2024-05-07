@@ -64,10 +64,10 @@ class Battle
 
         uint16_t get_round() { return _round; };
 
-        auto get_turns()                       { return &_turns;   };
+        std::vector<Stack*>* get_turns()       { return &_turns;   };
         Stack* get_stack_turn(const uint8_t i) { return _turns[i]; };
 
-        auto get_wait_turns()                       { return &_wait_turns;   };
+        std::vector<Stack*>* get_wait_turns()       { return &_wait_turns;   };
         Stack* get_stack_wait_turn(const uint8_t i) { return _wait_turns[i]; };
 
         bool get_spirit_of_oppression_present()   { return _spirit_of_oppression_present;  };
@@ -160,6 +160,8 @@ class Battle
         Position* select_location_around_enemy_stack(Stack* const stack, Stack* const enemy_stack);
 
         Stack* find_existing_enemy_stack_via_symbol(const char ch, const Team team);
+
+        Stack* find_existing_stack_via_position(const Position pos);
 
         // Checks if there is an adjacent enemy stack.
         bool has_adjacent_enemy(Stack* const stack);

@@ -12,7 +12,7 @@ Battlefield_Tile::~Battlefield_Tile()
 
 bool Battlefield_Tile::is_reachable()
 {
-      auto t = get_tile();
+      auto const t = get_tile();
       return (t == Tile::Normal) + (t == Tile::Fortification) + (t == Tile::Land_Mine) + (t == Tile::Quicksand);
 }
 
