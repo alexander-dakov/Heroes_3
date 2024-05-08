@@ -1340,23 +1340,23 @@ void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending
       if( !defending_stack->get_has_perished() )
       {
             if( defender_is_targeted && !attack_is_retaliation && ( get_distance_between_stacks(attacking_stack, defending_stack) == 1 ) )
-                  if( !attacking_creature->get_no_enemy_retaliation() )
-                        retaliate( defending_stack, attacking_stack );
+                  retaliate(defending_stack, attacking_stack);
 
             if( !attack_is_retaliation && ( attacking_creature->get_has_double_attack() || attacking_creature->get_has_ferocity() ) && !attack_is_second_attack )
-                  inflict_damage( attacking_stack, defending_stack, true, false, true );
+                  inflict_damage(attacking_stack, defending_stack, true, false, true);
       }
 }
 
 void Battle::retaliate(Stack* attacking_stack, Stack* defending_stack)
 {
-    if( attacking_stack->get_retaliations_left() || attacking_stack->get_creature()->get_has_unlimited_retaliations() )
-        {
-            if( !attacking_stack->get_creature()->get_has_unlimited_retaliations() )
-                attacking_stack->set_retaliations_left( attacking_stack->get_retaliations_left() - 1 );
-            
-            target_and_inflict_damage(attacking_stack, defending_stack, true);
-        }
+      if( !defending_stack->get_no_enemy_retaliation() )
+            if( attacking_stack->get_retaliations_left() || attacking_stack->get_creature()->get_has_unlimited_retaliations() )
+            {
+                  if( !attacking_stack->get_creature()->get_has_unlimited_retaliations() )
+                        attacking_stack->set_retaliations_left( attacking_stack->get_retaliations_left() - 1 );
+                  
+                  target_and_inflict_damage(attacking_stack, defending_stack, true);
+            }
 }
 
 
