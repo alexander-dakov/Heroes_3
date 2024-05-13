@@ -282,6 +282,9 @@ struct Creature
             // Destructor
             ~Creature();
 
+            // It would be quicker to compare creatures by their faction, level and upgrade, rather than by their names (string).
+            bool operator==(Creature other) { return ( get_faction() == other.get_faction() ) && ( get_level() == other.get_level() ) && ( get_upgrade() == other.get_upgrade() ); };
+
             // Straight-forward logical limits that need to be set when constructing.
             void logical_limitations();
 

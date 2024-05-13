@@ -395,7 +395,7 @@ void test_battle()
     red_army[3].reset( new Stack( Creature_List::Ogre_Mage,       10, red_hero.get_team() ) );
     red_army[4].reset( new Stack( Creature_List::Thunderbird,      5, red_hero.get_team() ) );
     red_army[5].reset( new Stack( Creature_List::Cyclops_King,     2, red_hero.get_team() ) );
-    red_army[6].reset( new Stack( Creature_List::Black_Dragon, 1, red_hero.get_team() ) );
+    red_army[6].reset( new Stack( Creature_List::Ancient_Behemoth, 1, red_hero.get_team() ) );
 
     // Assign the army to the first hero
     for(int i = 0; i < ARMY_SLOTS; i++)

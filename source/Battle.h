@@ -176,6 +176,9 @@ class Battle
         // Returns 'true' if the stacks are adjacent to the given position and 'false', if not.
         bool stack_is_adjacent_to_pos(Position pos, Stack* const enemy_stack, bool include_position = true); // used for projectile attacks to positions - Magogs and Power Liches.
 
+        // Checks if the attacking stack will suffer obstacle penalty when shooting at the defending stack.
+        bool stack_has_obstacle_penalty(Stack* const attacking_stack, Stack* const defending_stack, const bool attacker_has_ranged_penalty);
+
         // Moves stack according to type of traveling (walking, flying, teleporting) and updates the battlefield.
         void move_stack(Stack* stack, const uint8_t x, const uint8_t y);
 

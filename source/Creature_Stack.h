@@ -6,6 +6,7 @@
 #include "Team.h"
 #include "Creature.h"
 #include "Position.h"
+#include "Creature_List.cpp"
 
 // TO DO :
 // get hero's special abilities form creature and place in creature_stack

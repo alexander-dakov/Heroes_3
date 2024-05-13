@@ -964,6 +964,18 @@ bool Battle::stack_is_adjacent_to_pos(Position pos, Stack* const enemy_stack, bo
       return ( std::abs(pos.x - ex) <= 1 ) && ( std::abs(pos.y - ey) <= 1 );
 }
 
+bool Battle::stack_has_obstacle_penalty(Stack* const attacking_stack, Stack* const defending_stack, const bool attacker_has_ranged_penalty)
+{
+      if( !attacker_has_ranged_penalty )
+            return false;
+      
+      if( get_battle_format() != Battle_Format::Siege)
+            return false;
+
+      //TO DO : implement - only for shooters on the left of the wall, suffering from ranged penalty
+      return false;
+}
+
 void Battle::move_stack(Stack* stack, const uint8_t x, const uint8_t y)
 {
       stack->set_action(Stack_Action::Attack);
@@ -1160,7 +1172,7 @@ void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending
       // penalties for shooting attacking_stack
       const bool melee_penalty    = attacking_stack_is_ranged && !can_shoot;
       const bool range_penalty    = attacking_stack_is_ranged && can_shoot && get_distance_between_stacks(attacking_stack, defending_stack) > 10 && !attacking_creature->get_no_range_penalty() /*&& !get_no_range_penalty() - stack method due to artifacts*/;
-      const bool obstacle_penalty = attacking_stack_is_ranged && can_shoot && /* there's a wall between attacking_stack and defending_stack &&*/ !attacking_creature->get_no_obstacle_penalty() /*&& !get_no_obstacle_penalty() - stack method due to artifacts*/; // TO DO : implement
+      const bool obstacle_penalty = attacking_stack_is_ranged && can_shoot && stack_has_obstacle_penalty(attacking_stack, defending_stack, range_penalty) && !attacking_creature->get_no_obstacle_penalty() /*&& !get_no_obstacle_penalty() - stack method due to artifacts*/; // TO DO : implement
 
       // defending_stack's attributes
       auto const        defending_creature      = defending_stack->get_creature();
@@ -1219,18 +1231,18 @@ void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending
             I5 = ( (rand() % 100) < CHANCE_TO_CAST_DEATH_BLOW ) * 1.00f;
 
       // hate bonus
-      if     ( attacking_creature->get_hates_efreeti()       && ( defending_stack_name == "Efreet" || defending_stack_name == "Efreet Sultan" ) ) I5 = 0.50f;
-      else if( attacking_creature->get_hates_genies()        && ( defending_stack_name == "Genie"  || defending_stack_name == "Master Genie" )  ) I5 = 0.50f;
-      else if( attacking_creature->get_hates_devils()        && ( defending_stack_name == "Devil"  || defending_stack_name == "Arch Devil" )    ) I5 = 0.50f;
-      else if( attacking_creature->get_hates_angels()        && ( defending_stack_name == "Angel"  || defending_stack_name == "Archangel" )     ) I5 = 0.50f;
-      else if( attacking_creature->get_hates_black_dragons() &&   defending_stack_name == "Black Dragon" ) I5 = 0.50f;
-      else if( attacking_creature->get_hates_titans()        &&   defending_stack_name == "Titan"        ) I5 = 0.50f;
+      if     ( attacking_creature->get_hates_efreeti()       && ( *defending_creature == Creature_List::Efreet || *defending_creature == Creature_List::Efreet_Sultan ) ) I5 = 0.50f;
+      else if( attacking_creature->get_hates_genies()        && ( *defending_creature == Creature_List::Genie  || *defending_creature == Creature_List::Master_Genie )  ) I5 = 0.50f;
+      else if( attacking_creature->get_hates_devils()        && ( *defending_creature == Creature_List::Devil  || *defending_creature == Creature_List::Arch_Devil )    ) I5 = 0.50f;
+      else if( attacking_creature->get_hates_angels()        && ( *defending_creature == Creature_List::Angel  || *defending_creature == Creature_List::Archangel )     ) I5 = 0.50f;
+      else if( attacking_creature->get_hates_black_dragons() &&   *defending_creature == Creature_List::Black_Dragon ) I5 = 0.50f;
+      else if( attacking_creature->get_hates_titans()        &&   *defending_creature == Creature_List::Titan        ) I5 = 0.50f;
 
       // elementals bonus
-      if     ( ( attacking_stack_name == "Air Elemental"   || attacking_stack_name == "Storm Elemental"  ) && ( defending_stack_name == "Earth Elemental" || defending_stack_name == "Magma Elemental"  ) ) I5 = 1.00f;
-      else if( ( attacking_stack_name == "Water Elemental" || attacking_stack_name == "Ice Elemental"    ) && ( defending_stack_name == "Fire Elemental"  || defending_stack_name == "Energy Elemental" ) ) I5 = 1.00f;
-      else if( ( attacking_stack_name == "Fire Elemental"  || attacking_stack_name == "Energy Elemental" ) && ( defending_stack_name == "Water Elemental" || defending_stack_name == "Ice Elemental"    ) ) I5 = 1.00f;
-      else if( ( attacking_stack_name == "Earth Elemental" || attacking_stack_name == "Magma Elemental"  ) && ( defending_stack_name == "Air Elemental"   || defending_stack_name == "Storm Elemental"  ) ) I5 = 1.00f;
+      if     ( ( *attacking_creature == Creature_List::Air_Elemental   || *attacking_creature == Creature_List::Storm_Elemental  ) && ( *defending_creature == Creature_List::Earth_Elemental || *defending_creature == Creature_List::Magma_Elemental  ) ) I5 = 1.00f;
+      else if( ( *attacking_creature == Creature_List::Water_Elemental || *attacking_creature == Creature_List::Ice_Elemental    ) && ( *defending_creature == Creature_List::Fire_Elemental  || *defending_creature == Creature_List::Energy_Elemental ) ) I5 = 1.00f;
+      else if( ( *attacking_creature == Creature_List::Fire_Elemental  || *attacking_creature == Creature_List::Energy_Elemental ) && ( *defending_creature == Creature_List::Water_Elemental || *defending_creature == Creature_List::Ice_Elemental    ) ) I5 = 1.00f;
+      else if( ( *attacking_creature == Creature_List::Earth_Elemental || *attacking_creature == Creature_List::Magma_Elemental  ) && ( *defending_creature == Creature_List::Air_Elemental   || *defending_creature == Creature_List::Storm_Elemental  ) ) I5 = 1.00f;
 
       // jousting bonus
       if( !defending_creature->get_is_immune_to_jousting() ) 
@@ -1270,8 +1282,8 @@ void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending
       // TO DO : if retaliation or attack after spell
 
       // calculate R8 - special abilities penalty
-      if     ( attacking_stack_name == "Psychic Elemental" && defending_creature->get_is_immune_to_mind_spells() ) R8 = 0.50f;
-      else if( attacking_stack_name == "Magic Elemental"   && defending_creature->get_is_immune_to_all_spells()  ) R8 = 0.50f;
+      if     ( *attacking_creature == Creature_List::Psychic_Elemental && defending_creature->get_is_immune_to_mind_spells() ) R8 = 0.50f;
+      else if( *attacking_creature == Creature_List::Magic_Elemental   && defending_creature->get_is_immune_to_all_spells()  ) R8 = 0.50f;
       // TO DO : implement retaliation after Stone Gaze and Paralyzing Venom
 
 
