@@ -1339,7 +1339,7 @@ void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending
 
       if( !defending_stack->get_has_perished() )
       {
-            if( defender_is_targeted && !attack_is_retaliation && ( get_distance_between_stacks(attacking_stack, defending_stack) == 1 ) )
+            if( defender_is_targeted && !attack_is_retaliation && stacks_are_adjacent(attacking_stack, defending_stack) )
                   retaliate(defending_stack, attacking_stack);
 
             if( !attack_is_retaliation && ( attacking_creature->get_has_double_attack() || attacking_creature->get_has_ferocity() ) && !attack_is_second_attack )

@@ -62,7 +62,7 @@ class Stack
         Position _pos = Position(0, 0);
         uint8_t _distance_traveled = 0;
         bool _has_perished = false;
-        uint8_t _retaliations_left = 1; // not applicable for special ability 'unlimited retaliations'
+        uint8_t _retaliations_left = 1; // can be 0,1,2. Not applicable for special ability 'Unlimited retaliations'.
         Stack_Action _action = Stack_Action::Attack;
 
         // Each creature can hold up to 3 spell effects at the same time.
