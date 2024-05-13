@@ -1349,7 +1349,7 @@ void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending
 
 void Battle::retaliate(Stack* attacking_stack, Stack* defending_stack)
 {
-      if( !defending_stack->get_no_enemy_retaliation() )
+      if( !defending_stack->get_creature()->get_no_enemy_retaliation() )
             if( attacking_stack->get_retaliations_left() || attacking_stack->get_creature()->get_has_unlimited_retaliations() )
             {
                   if( !attacking_stack->get_creature()->get_has_unlimited_retaliations() )
