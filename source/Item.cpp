@@ -28,12 +28,12 @@ Item::Item( Spell& spellscroll, const Resources resources ) :
             else
                   switch(spellscroll.get_spell_level())
                         {
-                              case Spell_level::None   : _ai_value =     0; break;
-                              case Spell_level::First  : _ai_value =   500; break;
-                              case Spell_level::Second : _ai_value =  2000; break;
-                              case Spell_level::Third  : _ai_value =  3000; break;
-                              case Spell_level::Fourth : _ai_value =  8000; break;
-                              case Spell_level::Fifth  : _ai_value = 10000; break;
+                              case Spell::Level::None   : _ai_value =     0; break;
+                              case Spell::Level::First  : _ai_value =   500; break;
+                              case Spell::Level::Second : _ai_value =  2000; break;
+                              case Spell::Level::Third  : _ai_value =  3000; break;
+                              case Spell::Level::Fourth : _ai_value =  8000; break;
+                              case Spell::Level::Fifth  : _ai_value = 10000; break;
                         }
       }
       else

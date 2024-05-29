@@ -83,7 +83,7 @@ void Stack::recieve_damage(const uint32_t damage)
         set_has_perished(true);
         printf( "The whole %s stack has perished!\n", get_creature_name().c_str() );
 
-        set_action(Stack_Action::Skip);
+        set_action(Action::Skip);
         return;
     }
     else

@@ -11,30 +11,32 @@
 
 constexpr uint8_t MAX_NUM_OF_EFFECTS = 10; // used to catch inaccuracies when constructing objects in Item_List.cpp
 
-enum Slot
-{
-      Helmet = 1, // 1 = crown, hat
-      Cape,       // 2
-      Necklace,   // 3
-      Weapon,     // 4 = mace, trident, club
-      Shield,     // 5
-      Armor,      // 6
-      Hand,       // 7 = ring, gloves
-      Boots,      // 8
-      Pocket      // 9 = orbs, tomes, figurines, badges and others
-};
-
-enum class Type
-{
-      None, // 0 = spell scrolls
-      Treasure,
-      Minor,
-      Major,
-      Relic
-};
 
 struct Item
 {
+      public:
+            enum Slot
+            {
+                  Helmet = 1, // 1 = crown, hat
+                  Cape,       // 2
+                  Necklace,   // 3
+                  Weapon,     // 4 = mace, trident, club
+                  Shield,     // 5
+                  Armor,      // 6
+                  Hand,       // 7 = ring, gloves
+                  Boots,      // 8
+                  Pocket      // 9 = orbs, tomes, figurines, badges and others
+            };
+
+            enum Type
+            {
+                  None, // 0 = spell scrolls
+                  Treasure,
+                  Minor,
+                  Major,
+                  Relic
+            };
+
       private:
             std::string _name;
             Slot _slot;

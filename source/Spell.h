@@ -5,37 +5,39 @@
 #include "../utilities/types.h"
 #include "Skill_level.h"
 
-enum class School_of_magic
-{
-      Air = 1, // 1
-      Water,   // 2
-      Earth,   // 3
-      Fire     // 4
-};
-
-enum class Spell_level
-{
-      None,   // 0 - for coding purposes
-      First,  // 1
-      Second, // 2
-      Third,  // 3
-      Fourth, // 4
-      Fifth   // 5
-};
-
-enum Effect
-{
-      Defensive = 1, // 1
-      Offensive,     // 2
-      Deal_damage    // 3
-};
 
 class Spell
 {
+      public:
+            enum School_of_magic
+            {
+                  Air = 1, // 1
+                  Water,   // 2
+                  Earth,   // 3
+                  Fire     // 4
+            };
+
+            enum Level
+            {
+                  None,   // 0 - for coding purposes
+                  First,  // 1
+                  Second, // 2
+                  Third,  // 3
+                  Fourth, // 4
+                  Fifth   // 5
+            };
+
+            enum Effect
+            {
+                  Defensive = 1, // 1
+                  Offensive,     // 2
+                  Deal_damage    // 3
+            };
+
       private:
             std::string _name;
             School_of_magic _school_of_magic;
-            Spell_level _spell_level;
+            Level _spell_level;
             Skill_level _skill_level;
             std::string _mana_cost;
             Effect _effect;
@@ -51,7 +53,7 @@ class Spell
 
             School_of_magic get_school_of_magic() { return _school_of_magic; };
 
-            Spell_level get_spell_level() { return _spell_level; };
+            Level get_spell_level() { return _spell_level; };
 
             Skill_level get_skill_level() { return _skill_level; };
 

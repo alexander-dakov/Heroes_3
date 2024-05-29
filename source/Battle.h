@@ -12,27 +12,26 @@
 #include "Creature_Stack.h"
 #include "Hero.h"
 
-constexpr uint8_t BATTLEFIELD_LENGTH = 15;
-constexpr uint8_t BATTLEFIELD_WIDTH  = 11;
-
-enum class Battle_Format
-{
-    Normal,
-    Siege,      // like 'Normal' but builds a wall if the town has it
-    Surrounded, // Creature bank
-    Ships
-};
 
 class Battle
 {
+    public:
+        enum Format
+        {
+            Normal,
+            Siege,      // like 'Normal' but builds a wall if the town has it
+            Surrounded, // Creature bank
+            Ships
+        };
+
     private:
         Hero& _attacker; // left side
         Hero& _defender; // right side
         
         // Defender may not have a hero. A possible solution is to create a new instance of a dummy/fake hero which will have no army bonuses. He will be there simply to 'carry' the army.
 
-        Battlefield_Tile battlefield[BATTLEFIELD_WIDTH][BATTLEFIELD_LENGTH];
-        Battle_Format _format;
+        Battlefield_Tile battlefield[Battlefield::WIDTH][Battlefield::LENGTH];
+        Format _format;
         Terrain _terrain;
 
         uint16_t _round = 0;
@@ -52,14 +51,14 @@ class Battle
 
     public:
         // no default or copy constructors allowed
-        Battle(Hero& attacker, Hero& defender, const Battle_Format format, const Terrain terrain); // constructing the battlefield, managing the event and then destroying the constructed objects 
+        Battle(Hero& attacker, Hero& defender, const Format format, const Terrain terrain); // constructing the battlefield, managing the event and then destroying the constructed objects 
 
         ~Battle();
 
         Hero* get_attacker() { return &_attacker;}
         Hero* get_defender() { return &_defender;}
 
-        Battle_Format get_battle_format() { return _format;  };
+        Format get_format() { return _format;  };
         Terrain get_terrain()             { return _terrain; };
 
         uint16_t get_round() { return _round; };
@@ -89,10 +88,10 @@ class Battle
         
         void check_valid_battlefield_pos(const uint8_t x, const uint8_t y);
 
-        void set_battlefield_pos(const uint8_t x, const uint8_t y, const Tile tile = Tile::Normal, const Team team = Team::Neutral, const char ch = ARMY_CHAR);
+        void set_battlefield_pos(const uint8_t x, const uint8_t y, const Battlefield_Tile::Tile tile = Battlefield_Tile::Tile::Normal, const Team team = Team::Neutral, const char ch = Battlefield::ARMY_CHAR);
         char get_battlefield_pos(const uint8_t x, const uint8_t y);
 
-        void set_battlefield_pos(const Position pos, const Tile tile = Tile::Normal, const Team team = Team::Neutral, const char ch = ARMY_CHAR);
+        void set_battlefield_pos(const Position pos, const Battlefield_Tile::Tile tile = Battlefield_Tile::Tile::Normal, const Team team = Team::Neutral, const char ch = Battlefield::ARMY_CHAR);
         char get_battlefield_pos(const Position pos);
         
         // Places a stack on the battlefield if the tile is free and reachable and changes the tile's team.

@@ -18,16 +18,18 @@
 
 constexpr uint8_t min_num_for_stack_to_count_as_group_to_calc_rand_dmg = 10;
 
-enum Stack_Action // Used on every turn of a stack during battle
-{
-    Attack, // normal state in which the stack is going to move or attacks
-    Defend,
-    Wait,
-    Skip // perished / negative morale rolled / blinded
-};
 
 class Stack
 {
+    public:
+        enum Action // Used on every turn of a stack during battle
+        {
+            Attack, // normal state in which the stack is going to move or attacks
+            Defend,
+            Wait,
+            Skip // perished / negative morale rolled / blinded
+        };
+        
     private:
         Team _team = Team::Neutral;
         Creature _creature;
@@ -64,7 +66,7 @@ class Stack
         uint8_t _distance_traveled = 0;
         bool _has_perished = false;
         uint8_t _retaliations_left = 1; // can be 0,1,2. Not applicable for special ability 'Unlimited retaliations'.
-        Stack_Action _action = Stack_Action::Attack;
+        Action _action = Action::Attack;
 
         // Each creature can hold up to 3 spell effects at the same time.
         // std::array< Spell - duration , 3 > _spell_slots; // Should work as LIFO but also be able to have spells removed regardless of the order - thus normal container with fixed length.
@@ -127,7 +129,7 @@ class Stack
 
         uint8_t get_number_of_casts_left() { return battle_stats._number_of_casts_left; };
 
-        void set_number(const uint32_t number) { _number = number; _has_perished = !number; set_action(Stack_Action::Skip); }; // when recieving damage
+        void set_number(const uint32_t number) { _number = number; _has_perished = !number; set_action(Action::Skip); }; // when recieving damage
         uint32_t get_number() {return _number; };
 
         void set_battlefield_symbol(const char ch) { _battlefield_symbol = ch; };
@@ -147,8 +149,8 @@ class Stack
         void set_retaliations_left(const uint8_t retaliations) { _retaliations_left = retaliations; };
         uint8_t get_retaliations_left() { return _retaliations_left; };
 
-        void set_action(const Stack_Action action) { _action = action; };
-        Stack_Action get_action() { return _action; };
+        void set_action(const Action action) { _action = action; };
+        Action get_action() { return _action; };
 
         void set_has_acquired_regeneration(const bool regenerates) { _has_acquired_regeneration = regenerates; };
         bool get_has_acquired_regeneration() { return _has_acquired_regeneration; };

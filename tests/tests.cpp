@@ -33,7 +33,7 @@ void test_create_creature()
     std::string name = "Skellies";
     Faction faction = Faction::Necropolis;
     uint8_t level = 1;
-    Upgrade_level upgrade = Upgrade_level::None;
+    auto upgrade = Creature::Upgrade_level::None;
     uint8_t growth = 12;
     bool needs_2_tiles_in_battle = false;
     uint8_t att = 5;
@@ -85,9 +85,9 @@ void test_create_creature_stack()
 {
     print_before_testing_output();
 
-    std::unique_ptr<Stack> army[ARMY_SLOTS] = {nullptr};
+    std::unique_ptr<Stack> army[Hero_slots::ARMY] = {nullptr};
 
-    for(int i = 0; i < ARMY_SLOTS; i++)
+    for(int i = 0; i < Hero_slots::ARMY; i++)
     {
         army[i] = std::unique_ptr<Stack>( new Stack(Creature_List::Master_Genie, 50 + i) );
         printf( "Stack %d is comprised of : %d %s\n", i + 1, army[i]->get_number(), army[i]->get_creature()->get_name().c_str() );
@@ -120,8 +120,8 @@ void test_create_item()
     print_before_testing_output();
 
     std::string name = "BFG";
-    Slot slot = Slot::Weapon;
-    Type item_type = Type::Relic;
+    auto slot = Item::Slot::Weapon;
+    auto item_type = Item::Type::Relic;
     uint32_t gold = 10000;
     uint32_t mercury = 0;
     uint32_t sulfur = 0; 
@@ -140,8 +140,8 @@ void test_create_hero()
     print_before_testing_output();
 
     std::string name = "Orrinman";
-    Gender gender = Gender::Male;
-    Role hero_role = Role::Might;
+    auto gender = Hero::Gender::Male;
+    auto hero_role = Hero::Role::Might;
     Faction faction = Faction::Castle;
     Team team = Team::Red;
     uint8_t level = 1;
@@ -270,7 +270,7 @@ void test_army_hero_bonuses()
     second_hero.print_full_info();
 
     // fill an army
-    std::array<std::unique_ptr<Stack>, ARMY_SLOTS> army;
+    std::array<std::unique_ptr<Stack>, Hero_slots::ARMY> army;
     army[0].reset( new Stack(Creature_List::Master_Gremlin, 1) );
     army[1].reset( new Stack(Creature_List::Stone_Gargoyle, 1) );
     army[2].reset( new Stack(Creature_List::Dwarf, 1) );
@@ -279,12 +279,12 @@ void test_army_hero_bonuses()
     army[5].reset( new Stack(Creature_List::Skeleton, 1) );
     army[6].reset( new Stack(Creature_List::Magma_Elemental, 1) );
 
-    for(int i = 0; i < ARMY_SLOTS; i++)
+    for(int i = 0; i < Hero_slots::ARMY; i++)
         if( army[i] != nullptr )
             printf( "Stack %d is comprised of : %d %s\n", i + 1, army[i]->get_number(), army[i]->get_creature_name().c_str() );
     // Print stats of the army
     printf( "\nArmy without hero :\n" );
-    for(int i = 0; i < ARMY_SLOTS; i++)
+    for(int i = 0; i < Hero_slots::ARMY; i++)
         if( army[i] != nullptr )
         {
             army[i]->print_battle_info();
@@ -292,12 +292,12 @@ void test_army_hero_bonuses()
         }
 
     // Assign the army to the second hero
-    for(int i = 0; i < ARMY_SLOTS; i++)
+    for(int i = 0; i < Hero_slots::ARMY; i++)
         if( army[i] != nullptr )
             second_hero.add_stack_to_slot(army[i], i);
     // Print stats of the army
     printf( "\nArmy lead by hero %s :\n", second_hero.get_name().c_str() );
-    for(int i = 0; i < ARMY_SLOTS; i++)
+    for(int i = 0; i < Hero_slots::ARMY; i++)
         if( second_hero.get_army_stack(i) != nullptr )
         {
             second_hero.get_army_stack(i)->print_battle_info();
@@ -308,7 +308,7 @@ void test_army_hero_bonuses()
     second_hero.equip_item_from_chest(&Item_List::Helm_of_Heavenly_Enlightenment);    // primary +6
     // Print stats of the army
     printf( "\nArmy lead by hero %s :\n", second_hero.get_name().c_str() );
-    for(int i = 0; i < ARMY_SLOTS; i++)
+    for(int i = 0; i < Hero_slots::ARMY; i++)
         if( second_hero.get_army_stack(i) != nullptr )
         {
             second_hero.get_army_stack(i)->print_battle_info();
@@ -319,7 +319,7 @@ void test_army_hero_bonuses()
     first_hero.swap_entire_armies(second_hero);
     // Print stats of the army
     printf( "\nArmy lead by hero %s :\n", first_hero.get_name().c_str() );
-    for(int i = 0; i < ARMY_SLOTS; i++)
+    for(int i = 0; i < Hero_slots::ARMY; i++)
         if( first_hero.get_army_stack(i) != nullptr )
         {
             first_hero.get_army_stack(i)->print_battle_info();
@@ -388,7 +388,7 @@ void test_battle()
     tan_hero.print_full_info();
 
     // fill an army
-    std::array<std::unique_ptr<Stack>, ARMY_SLOTS> red_army;
+    std::array<std::unique_ptr<Stack>, Hero_slots::ARMY> red_army;
     red_army[0].reset( new Stack( Creature_List::Hobgoblin,      100, red_hero.get_team() ) );
     red_army[1].reset( new Stack( Creature_List::Wolf_Raider,     50, red_hero.get_team() ) );
     red_army[2].reset( new Stack( Creature_List::Orc_Chieftain,   25, red_hero.get_team() ) );
@@ -398,12 +398,12 @@ void test_battle()
     red_army[6].reset( new Stack( Creature_List::Ancient_Behemoth, 1, red_hero.get_team() ) );
 
     // Assign the army to the first hero
-    for(int i = 0; i < ARMY_SLOTS; i++)
+    for(int i = 0; i < Hero_slots::ARMY; i++)
         if( red_army[i] != nullptr )
             red_hero.add_stack_to_slot(red_army[i], i);
 
     // fill an army
-    std::array<std::unique_ptr<Stack>, ARMY_SLOTS> tan_army;
+    std::array<std::unique_ptr<Stack>, Hero_slots::ARMY> tan_army;
     tan_army[0].reset( new Stack( Creature_List::Gnoll_Marauder,  100, tan_hero.get_team() ) );
     tan_army[1].reset( new Stack( Creature_List::Lizard_Warrior,   50, tan_hero.get_team() ) );
     tan_army[2].reset( new Stack( Creature_List::Dragon_Fly,       25, tan_hero.get_team() ) );
@@ -413,9 +413,9 @@ void test_battle()
     tan_army[6].reset( new Stack( Creature_List::Chaos_Hydra,       1, tan_hero.get_team() ) );
 
     // Assign the army to the second hero
-    for(int i = 0; i < ARMY_SLOTS; i++)
+    for(int i = 0; i < Hero_slots::ARMY; i++)
         if( tan_army[i] != nullptr )
             tan_hero.add_stack_to_slot(tan_army[i], i);
 
-    Battle(red_hero, tan_hero, Battle_Format::Normal, Terrain::Grass);
+    Battle(red_hero, tan_hero, Battle::Format::Normal, Terrain::Grass);
 }

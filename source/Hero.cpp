@@ -142,7 +142,7 @@ void Hero::add_level(const uint8_t level)
       set_level( get_level() + level );
 
       // leveling up brings experience of the hero to the min experience for the level
-      set_experience( level_experience.at( get_level() ) );
+      set_experience( Level_Experience::lvl_to_exp.at( get_level() ) );
 
       uint8_t probability = rand() % 100;
 
@@ -210,9 +210,9 @@ void Hero::add_experience(const uint32_t experience)
       const uint32_t new_experience = get_experience() + experience;
       uint8_t levels_gained = 0;
 
-      if( new_experience > MAX_EXPERIENCE )
+      if( new_experience > Level_Experience::MAX_EXPERIENCE )
       {
-            set_experience( MAX_EXPERIENCE );
+            set_experience( Level_Experience::MAX_EXPERIENCE );
             levels_gained = 75 - current_level;
             printf( "\n%s has reached max experience!\n", get_name() );
       }
@@ -220,11 +220,11 @@ void Hero::add_experience(const uint32_t experience)
       {
             set_experience( new_experience );
 
-            if( new_experience >= level_experience.at(current_level + 1) )
-                  for( auto lev_exp : level_experience )
-                        if( new_experience < lev_exp.second )
+            if( new_experience >= Level_Experience::lvl_to_exp.at(current_level + 1) )
+                  for( auto lvl_exp : Level_Experience::lvl_to_exp )
+                        if( new_experience < lvl_exp.second )
                         {
-                              levels_gained = lev_exp.first - 1 - current_level;
+                              levels_gained = lvl_exp.first - 1 - current_level;
                               break;
                         }
       }
@@ -236,7 +236,7 @@ void Hero::add_experience(const uint32_t experience)
 
 Skill_level Hero::get_secondary_skill_level(const std::string skill_name)
 {
-      for( uint8_t i = 0; i < SECONDARY_SKILL_SLOTS; i++)
+      for( uint8_t i = 0; i < Hero_slots::SECONDARY_SKILL; i++)
       {
             auto const skill = get_secondary_skill(i);
 
@@ -252,34 +252,34 @@ void Hero::pick_up_item(Item* item)
 {
       switch( item->get_slot() )
       {
-            case Slot::Helmet   : if( items.helmet   != nullptr ) { add_item_to_chest( item ); } else { equip_item( item ); } break;
-            case Slot::Cape     : if( items.cape     != nullptr ) { add_item_to_chest( item ); } else { equip_item( item ); } break;
-            case Slot::Necklace : if( items.necklace != nullptr ) { add_item_to_chest( item ); } else { equip_item( item ); } break;
-            case Slot::Weapon   : if( items.weapon   != nullptr ) { add_item_to_chest( item ); } else { equip_item( item ); } break;
-            case Slot::Shield   : if( items.shield   != nullptr ) { add_item_to_chest( item ); } else { equip_item( item ); } break;
-            case Slot::Armor    : if( items.armor    != nullptr ) { add_item_to_chest( item ); } else { equip_item( item ); } break;
-            case Slot::Boots    : if( items.boots    != nullptr ) { add_item_to_chest( item ); } else { equip_item( item ); } break;
-            case Slot::Hand     : for( uint8_t i = 0; i < HAND_SLOTS;   i++ ) { if( items.hand[i]   == nullptr ) { equip_item( item ); return; } } add_item_to_chest( item );  break;
-            case Slot::Pocket   : for( uint8_t i = 0; i < POCKET_SLOTS; i++ ) { if( items.pocket[i] == nullptr ) { equip_item( item ); return; } } add_item_to_chest( item );  break;
+            case Item::Slot::Helmet   : if( items.helmet   != nullptr ) { add_item_to_chest( item ); } else { equip_item( item ); } break;
+            case Item::Slot::Cape     : if( items.cape     != nullptr ) { add_item_to_chest( item ); } else { equip_item( item ); } break;
+            case Item::Slot::Necklace : if( items.necklace != nullptr ) { add_item_to_chest( item ); } else { equip_item( item ); } break;
+            case Item::Slot::Weapon   : if( items.weapon   != nullptr ) { add_item_to_chest( item ); } else { equip_item( item ); } break;
+            case Item::Slot::Shield   : if( items.shield   != nullptr ) { add_item_to_chest( item ); } else { equip_item( item ); } break;
+            case Item::Slot::Armor    : if( items.armor    != nullptr ) { add_item_to_chest( item ); } else { equip_item( item ); } break;
+            case Item::Slot::Boots    : if( items.boots    != nullptr ) { add_item_to_chest( item ); } else { equip_item( item ); } break;
+            case Item::Slot::Hand     : for( uint8_t i = 0; i < Hero_slots::HAND;   i++ ) { if( items.hand[i]   == nullptr ) { equip_item( item ); return; } } add_item_to_chest( item );  break;
+            case Item::Slot::Pocket   : for( uint8_t i = 0; i < Hero_slots::POCKET; i++ ) { if( items.pocket[i] == nullptr ) { equip_item( item ); return; } } add_item_to_chest( item );  break;
       }
 }
 
 void Hero::equip_item_from_chest(Item* item)
 {
-      for( uint8_t i = 0; i < CHEST_SLOTS; i++ )
+      for( uint8_t i = 0; i < Hero_slots::CHEST; i++ )
             if( chest[i] == item )
             {
                   switch( item->get_slot() )
                   {
-                        case Slot::Helmet   : if( items.helmet   != nullptr ) { unequip_item( items.helmet   ); } equip_item( item ); break;
-                        case Slot::Cape     : if( items.cape     != nullptr ) { unequip_item( items.cape     ); } equip_item( item ); break;
-                        case Slot::Necklace : if( items.necklace != nullptr ) { unequip_item( items.necklace ); } equip_item( item ); break;
-                        case Slot::Weapon   : if( items.weapon   != nullptr ) { unequip_item( items.weapon   ); } equip_item( item ); break;
-                        case Slot::Shield   : if( items.shield   != nullptr ) { unequip_item( items.shield   ); } equip_item( item ); break;
-                        case Slot::Armor    : if( items.armor    != nullptr ) { unequip_item( items.armor    ); } equip_item( item ); break;
-                        case Slot::Boots    : if( items.boots    != nullptr ) { unequip_item( items.boots    ); } equip_item( item ); break;
-                        case Slot::Hand     : for( uint8_t i = 0; i < HAND_SLOTS;   i++ ) { if( items.hand[i]   == nullptr ) { equip_item( item ); return; } } unequip_item( items.hand[0]  ); equip_item( item ); break;
-                        case Slot::Pocket   : for( uint8_t i = 0; i < POCKET_SLOTS; i++ ) { if( items.pocket[i] == nullptr ) { equip_item( item ); return; } } unequip_item( items.pocket[0]); equip_item( item ); break;
+                        case Item::Slot::Helmet   : if( items.helmet   != nullptr ) { unequip_item( items.helmet   ); } equip_item( item ); break;
+                        case Item::Slot::Cape     : if( items.cape     != nullptr ) { unequip_item( items.cape     ); } equip_item( item ); break;
+                        case Item::Slot::Necklace : if( items.necklace != nullptr ) { unequip_item( items.necklace ); } equip_item( item ); break;
+                        case Item::Slot::Weapon   : if( items.weapon   != nullptr ) { unequip_item( items.weapon   ); } equip_item( item ); break;
+                        case Item::Slot::Shield   : if( items.shield   != nullptr ) { unequip_item( items.shield   ); } equip_item( item ); break;
+                        case Item::Slot::Armor    : if( items.armor    != nullptr ) { unequip_item( items.armor    ); } equip_item( item ); break;
+                        case Item::Slot::Boots    : if( items.boots    != nullptr ) { unequip_item( items.boots    ); } equip_item( item ); break;
+                        case Item::Slot::Hand     : for( uint8_t i = 0; i < Hero_slots::HAND;   i++ ) { if( items.hand[i]   == nullptr ) { equip_item( item ); return; } } unequip_item( items.hand[0]  ); equip_item( item ); break;
+                        case Item::Slot::Pocket   : for( uint8_t i = 0; i < Hero_slots::POCKET; i++ ) { if( items.pocket[i] == nullptr ) { equip_item( item ); return; } } unequip_item( items.pocket[0]); equip_item( item ); break;
                   }
                   return;
             }
@@ -290,22 +290,22 @@ void Hero::equip_item(Item* item)
 {
       switch( item->get_slot() )
       {
-            case Slot::Helmet   : items.helmet   = item; break;
-            case Slot::Cape     : items.cape     = item; break;
-            case Slot::Necklace : items.necklace = item; break;
-            case Slot::Weapon   : items.weapon   = item; break;
-            case Slot::Shield   : items.shield   = item; break;
-            case Slot::Armor    : items.armor    = item; break;
-            case Slot::Boots    : items.boots    = item; break;
-            case Slot::Hand     : for( uint8_t i = 0; i < HAND_SLOTS;   i++ ) { if( items.hand[i]   == nullptr ) { items.hand[i]   = item; break; } } break;
-            case Slot::Pocket   : for( uint8_t i = 0; i < POCKET_SLOTS; i++ ) { if( items.pocket[i] == nullptr ) { items.pocket[i] = item; break; } } break;
+            case Item::Slot::Helmet   : items.helmet   = item; break;
+            case Item::Slot::Cape     : items.cape     = item; break;
+            case Item::Slot::Necklace : items.necklace = item; break;
+            case Item::Slot::Weapon   : items.weapon   = item; break;
+            case Item::Slot::Shield   : items.shield   = item; break;
+            case Item::Slot::Armor    : items.armor    = item; break;
+            case Item::Slot::Boots    : items.boots    = item; break;
+            case Item::Slot::Hand     : for( uint8_t i = 0; i < Hero_slots::HAND;   i++ ) { if( items.hand[i]   == nullptr ) { items.hand[i]   = item; break; } } break;
+            case Item::Slot::Pocket   : for( uint8_t i = 0; i < Hero_slots::POCKET; i++ ) { if( items.pocket[i] == nullptr ) { items.pocket[i] = item; break; } } break;
       }
       
       // Check if same item is equipped in hand slot (not concerning 'Quiet Eye of the Dragon' an resource generating items )
-      if( item->get_slot() == Slot::Hand )
+      if( item->get_slot() == Item::Slot::Hand )
             if( item->get_name() != "Quiet Eye of the Dragon" || item->get_effect().find("Resource") == std::string::npos )
-                  for( uint8_t i = 0; i < HAND_SLOTS - 1; i++)
-                        for( uint8_t j = i + 1; j < HAND_SLOTS ; j++)
+                  for( uint8_t i = 0; i < Hero_slots::HAND - 1; i++)
+                        for( uint8_t j = i + 1; j < Hero_slots::HAND ; j++)
                               if( items.hand[i] != nullptr && items.hand[j] != nullptr )
                                     if( item->get_name() == items.hand[i]->get_name() && items.hand[i]->get_name() == items.hand[j]->get_name() )
                                     {
@@ -314,10 +314,10 @@ void Hero::equip_item(Item* item)
                                     }
 
       // Check if same item is equipped in pocket slot (not concerning resource generating items )
-      if( item->get_slot() == Slot::Pocket )
+      if( item->get_slot() == Item::Slot::Pocket )
             if( item->get_effect().find("Gold") != std::string::npos && item->get_effect().find("Resource") != std::string::npos ) // items may generate gold or resources, but never both
-                  for( uint8_t i = 0; i < POCKET_SLOTS - 1; i++)
-                        for( uint8_t j = i + 1; j < POCKET_SLOTS ; j++)
+                  for( uint8_t i = 0; i < Hero_slots::POCKET - 1; i++)
+                        for( uint8_t j = i + 1; j < Hero_slots::POCKET ; j++)
                               if( items.pocket[i] != nullptr && items.pocket[j] != nullptr )
                                     if( item->get_name() == items.pocket[i]->get_name() && items.pocket[i]->get_name() == items.pocket[j]->get_name() )
                                     {
@@ -355,19 +355,19 @@ void Hero::unequip_item(Item* item)
 {
       switch( item->get_slot() )
       {
-            case Slot::Helmet   : if( items.helmet   == item ) { if( add_item_to_chest( item ) ) { items.helmet   = nullptr; } else { return; } } else { printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return; }; break;
-            case Slot::Cape     : if( items.cape     == item ) { if( add_item_to_chest( item ) ) { items.cape     = nullptr; } else { return; } } else { printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return; }; break;
-            case Slot::Necklace : if( items.necklace == item ) { if( add_item_to_chest( item ) ) { items.necklace = nullptr; } else { return; } } else { printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return; }; break;
-            case Slot::Weapon   : if( items.weapon   == item ) { if( add_item_to_chest( item ) ) { items.weapon   = nullptr; } else { return; } } else { printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return; }; break;
-            case Slot::Shield   : if( items.shield   == item ) { if( add_item_to_chest( item ) ) { items.shield   = nullptr; } else { return; } } else { printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return; }; break;
-            case Slot::Armor    : if( items.armor    == item ) { if( add_item_to_chest( item ) ) { items.armor    = nullptr; } else { return; } } else { printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return; }; break;
-            case Slot::Boots    : if( items.boots    == item ) { if( add_item_to_chest( item ) ) { items.boots    = nullptr; } else { return; } } else { printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return; }; break;
-            case Slot::Hand     : for( uint8_t i = 0; i < HAND_SLOTS;   i++ ) { if( items.hand[i]   == item ) { if( add_item_to_chest( item ) ) { items.hand[i]   = nullptr; break; } else { return; } } } printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return; 
-            case Slot::Pocket   : for( uint8_t i = 0; i < POCKET_SLOTS; i++ ) { if( items.pocket[i] == item ) { if( add_item_to_chest( item ) ) { items.pocket[i] = nullptr; break; } else { return; } } } printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return;
+            case Item::Slot::Helmet   : if( items.helmet   == item ) { if( add_item_to_chest( item ) ) { items.helmet   = nullptr; } else { return; } } else { printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return; }; break;
+            case Item::Slot::Cape     : if( items.cape     == item ) { if( add_item_to_chest( item ) ) { items.cape     = nullptr; } else { return; } } else { printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return; }; break;
+            case Item::Slot::Necklace : if( items.necklace == item ) { if( add_item_to_chest( item ) ) { items.necklace = nullptr; } else { return; } } else { printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return; }; break;
+            case Item::Slot::Weapon   : if( items.weapon   == item ) { if( add_item_to_chest( item ) ) { items.weapon   = nullptr; } else { return; } } else { printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return; }; break;
+            case Item::Slot::Shield   : if( items.shield   == item ) { if( add_item_to_chest( item ) ) { items.shield   = nullptr; } else { return; } } else { printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return; }; break;
+            case Item::Slot::Armor    : if( items.armor    == item ) { if( add_item_to_chest( item ) ) { items.armor    = nullptr; } else { return; } } else { printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return; }; break;
+            case Item::Slot::Boots    : if( items.boots    == item ) { if( add_item_to_chest( item ) ) { items.boots    = nullptr; } else { return; } } else { printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return; }; break;
+            case Item::Slot::Hand     : for( uint8_t i = 0; i < Hero_slots::HAND;   i++ ) { if( items.hand[i]   == item ) { if( add_item_to_chest( item ) ) { items.hand[i]   = nullptr; break; } else { return; } } } printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return; 
+            case Item::Slot::Pocket   : for( uint8_t i = 0; i < Hero_slots::POCKET; i++ ) { if( items.pocket[i] == item ) { if( add_item_to_chest( item ) ) { items.pocket[i] = nullptr; break; } else { return; } } } printf( "\nItem '%s' is not equiped!\n", item->get_name().c_str() ); return;
       }
 
       // Check if same item is equipped in hand slot (not concerning 'Quiet Eye of the Dragon' an resource generating items )
-      if( item->get_slot() == Slot::Hand )
+      if( item->get_slot() == Item::Slot::Hand )
             if( items.hand[0]->get_name() == items.hand[1]->get_name() )
                   if( item->get_name() != "Quiet Eye of the Dragon" || item->get_effect().find("Resource") == std::string::npos )
                   {
@@ -376,10 +376,10 @@ void Hero::unequip_item(Item* item)
                   }
 
       // Check if same item is equipped in pocket slot (not concerning resource generating items )
-      if( item->get_slot() == Slot::Pocket )
+      if( item->get_slot() == Item::Slot::Pocket )
             if( item->get_effect().find("Gold") != std::string::npos && item->get_effect().find("Resource") != std::string::npos ) // items may generate gold or resources, but never both
-                  for( uint8_t i = 0; i < POCKET_SLOTS - 1; i++)
-                        for( uint8_t j = i + 1; j < POCKET_SLOTS ; j++)
+                  for( uint8_t i = 0; i < Hero_slots::POCKET - 1; i++)
+                        for( uint8_t j = i + 1; j < Hero_slots::POCKET ; j++)
                               if( item->get_name() == items.pocket[i]->get_name() && items.pocket[i]->get_name() == items.pocket[j]->get_name() )
                               {
                                     printf( "\n%s unequips item '%s', but does not lose effects, because the same item is already equipped and its bonuses cannot be multiplied.\n", get_name().c_str(), item->get_name().c_str() );
@@ -412,7 +412,7 @@ void Hero::unequip_item(Item* item)
 
 bool Hero::add_item_to_chest(Item* item)
 {
-      for( uint8_t i = 0; i < CHEST_SLOTS; i++ )
+      for( uint8_t i = 0; i < Hero_slots::CHEST; i++ )
             if( chest[i] == nullptr )
             {
                   chest[i] = item;
@@ -423,24 +423,24 @@ bool Hero::add_item_to_chest(Item* item)
       return false;
 }
 
-bool Hero::check_eqipped_item(std::string item_name, Slot slot)
+bool Hero::check_eqipped_item(std::string item_name, Item::Slot slot)
 {
-      std::map<Slot, Item*> items_map;
-      items_map[Slot::Helmet]   = items.helmet;
-      items_map[Slot::Cape]     = items.cape;
-      items_map[Slot::Necklace] = items.necklace;
-      items_map[Slot::Weapon]   = items.weapon;
-      items_map[Slot::Shield]   = items.shield;
-      items_map[Slot::Armor]    = items.armor;
-      items_map[Slot::Boots]    = items.boots;
+      std::map<Item::Slot, Item*> items_map;
+      items_map[Item::Slot::Helmet]   = items.helmet;
+      items_map[Item::Slot::Cape]     = items.cape;
+      items_map[Item::Slot::Necklace] = items.necklace;
+      items_map[Item::Slot::Weapon]   = items.weapon;
+      items_map[Item::Slot::Shield]   = items.shield;
+      items_map[Item::Slot::Armor]    = items.armor;
+      items_map[Item::Slot::Boots]    = items.boots;
 
-      if(slot == Slot::Hand)
-            for( uint8_t i = 0; i < HAND_SLOTS; i++)
+      if(slot == Item::Slot::Hand)
+            for( uint8_t i = 0; i < Hero_slots::HAND; i++)
                   if( items.hand[i] != nullptr )
                         if( items.hand[i] ->get_name() == item_name )
                               return true;
-      else if(slot == Slot::Pocket)
-            for( uint8_t i = 0; i < POCKET_SLOTS; i++)
+      else if(slot == Item::Slot::Pocket)
+            for( uint8_t i = 0; i < Hero_slots::POCKET; i++)
                   if( items.pocket[i] != nullptr )
                         if( items.pocket[i]->get_name() == item_name )
                               return true;
@@ -454,23 +454,23 @@ bool Hero::check_eqipped_item(std::string item_name, Slot slot)
 
 void Hero::print_equipped_items()
 {
-      std::map<Slot, Item*> items_map;
-      items_map[Slot::Helmet]   = items.helmet;
-      items_map[Slot::Cape]     = items.cape;
-      items_map[Slot::Necklace] = items.necklace;
-      items_map[Slot::Weapon]   = items.weapon;
-      items_map[Slot::Shield]   = items.shield;
-      items_map[Slot::Armor]    = items.armor;
-      items_map[Slot::Boots]    = items.boots;
+      std::map<Item::Slot, Item*> items_map;
+      items_map[Item::Slot::Helmet]   = items.helmet;
+      items_map[Item::Slot::Cape]     = items.cape;
+      items_map[Item::Slot::Necklace] = items.necklace;
+      items_map[Item::Slot::Weapon]   = items.weapon;
+      items_map[Item::Slot::Shield]   = items.shield;
+      items_map[Item::Slot::Armor]    = items.armor;
+      items_map[Item::Slot::Boots]    = items.boots;
 
       printf( "\n%s has equipped : \n", get_name().c_str() );
       for(auto & item : items_map)
             if( item.second != nullptr )        printf( "\tSlot %s - %s : %s\n",    item.second->get_slot_as_string().c_str(),            item.second->get_name().c_str(),    item.second->get_effect().c_str()      );
 
-      for( uint8_t i = 0; i < HAND_SLOTS; i++)
+      for( uint8_t i = 0; i < Hero_slots::HAND; i++)
             if( items.hand[i] != nullptr )      printf( "\tSlot %s %d - %s : %s\n", items.hand[i]->get_slot_as_string().c_str(), i + 1,   items.hand[i]->get_name().c_str(),   items.hand[i]->get_effect().c_str()   );
       
-      for( uint8_t i = 0; i < POCKET_SLOTS; i++)
+      for( uint8_t i = 0; i < Hero_slots::POCKET; i++)
             if( items.pocket[i] != nullptr )    printf( "\tSlot %s %d - %s : %s\n", items.pocket[i]->get_slot_as_string().c_str(), i + 1, items.pocket[i]->get_name().c_str(), items.pocket[i]->get_effect().c_str() );
 }
 
@@ -479,7 +479,7 @@ void Hero::print_unequipped_items()
       bool chest_has_items = false;
       printf( "\n%s's treasure chest has : \n", get_name().c_str() );
 
-      for( uint8_t i = 0; i < CHEST_SLOTS; i++ )
+      for( uint8_t i = 0; i < Hero_slots::CHEST; i++ )
             if( chest[i] != nullptr )
             {
                   chest_has_items = true;
@@ -492,7 +492,7 @@ void Hero::print_unequipped_items()
 
 void Hero::add_stack_to_army(std::unique_ptr<Stack> & stack_ptr)
 {
-      for( uint8_t i = 0; i < ARMY_SLOTS; i++ )
+      for( uint8_t i = 0; i < Hero_slots::ARMY; i++ )
             if( army[i] == nullptr )
             {
                   army[i].swap(stack_ptr); // swaps the nullptr with the stack
@@ -537,7 +537,7 @@ void Hero::remove_stack(std::unique_ptr<Stack> & stack_ptr)
 {
       auto const stack = stack_ptr.get();
 
-      for( uint8_t i = 0; i < ARMY_SLOTS; i++)
+      for( uint8_t i = 0; i < Hero_slots::ARMY; i++)
             if( army[i] == stack_ptr )
             {
                   printf( "\nStack of %d %s removed from %s's army.\n", stack->get_number(), stack->get_creature_name().c_str(), get_name().c_str() );
@@ -569,15 +569,15 @@ void Hero::remove_stack_from_position(const uint8_t slot)
 
 void Hero::swap_stack_positions(uint8_t i, uint8_t j)
 {
-      if( i < 0 || i > ARMY_SLOTS - 1 )
+      if( i < 0 || i > Hero_slots::ARMY - 1 )
       {
-            std::cerr << "Slot positions must be in the range [0;" << ARMY_SLOTS - 1 << "]!" << std::endl;
+            std::cerr << "Slot positions must be in the range [0;" << Hero_slots::ARMY - 1 << "]!" << std::endl;
             abort();
       }
 
-      if( j < 0 || j > ARMY_SLOTS - 1 )
+      if( j < 0 || j > Hero_slots::ARMY - 1 )
       {
-            std::cerr << "Slot positions must be in the range [0;" << ARMY_SLOTS - 1 << "]!" << std::endl;
+            std::cerr << "Slot positions must be in the range [0;" << Hero_slots::ARMY - 1 << "]!" << std::endl;
             abort();
       }
 
@@ -593,7 +593,7 @@ void Hero::swap_entire_armies(Hero& hero)
             return;
       }
 
-      for(uint8_t i = 0; i < ARMY_SLOTS; i++)
+      for(uint8_t i = 0; i < Hero_slots::ARMY; i++)
             army[i].swap( hero.get_army_stack_ptr(i) );
       
       update_army_stats();
@@ -617,7 +617,7 @@ void Hero::update_army_stats()
       Skill_level level_of_armorer    = Skill_level::None;
       Skill_level level_of_resistance = Skill_level::None;
 
-      for(uint8_t i = 0; i < SECONDARY_SKILL_SLOTS; i++)
+      for(uint8_t i = 0; i < Hero_slots::SECONDARY_SKILL; i++)
       {
             if( get_secondary_skill(i) != nullptr )
             {
@@ -641,7 +641,7 @@ void Hero::update_army_stats()
       bool has_Conflux    = false;
       bool has_Cove       = false;
 
-      for(uint8_t i = 0; i < ARMY_SLOTS; i++)
+      for(uint8_t i = 0; i < Hero_slots::ARMY; i++)
       {
             if( army[i] != nullptr)
             {
@@ -673,7 +673,7 @@ void Hero::update_army_stats()
             default : morale_penalty = Morale::Terrible; break;
       }
 
-      for(uint8_t i = 0; i < ARMY_SLOTS; i++)
+      for(uint8_t i = 0; i < Hero_slots::ARMY; i++)
       {
             if( army[i] != nullptr)
             {
@@ -704,7 +704,7 @@ void Hero::update_army_stats()
 
 Stack* Hero::get_army_stack(uint8_t i)
 {
-      if( i > ARMY_SLOTS )
+      if( i > Hero_slots::ARMY )
       {
             std::cerr << i << "is invalid army position!" << std::endl;
             abort();
@@ -715,7 +715,7 @@ Stack* Hero::get_army_stack(uint8_t i)
 
 std::unique_ptr<Stack> & Hero::get_army_stack_ptr(uint8_t i)
 {
-      if( i > ARMY_SLOTS )
+      if( i > Hero_slots::ARMY )
       {
             std::cerr << i << "is invalid army position!" << std::endl;
             abort();

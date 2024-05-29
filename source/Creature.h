@@ -11,31 +11,38 @@
 #include "Resources.h"
 #include "Skill_level.h"
 
-constexpr uint8_t MAX_NUM_OF_SPECIAL_ABILITIES = 6; // used to catch inaccuracies when constructing objects in Creature_List.cpp
-
-// Special abilities that might cast a spell per attack have a fixed chance.
-constexpr uint8_t CHANCE_TO_CAST_DISEASE          = 20;
-constexpr uint8_t CHANCE_TO_CAST_CURSE            = 25;
-constexpr uint8_t CHANCE_TO_CAST_AGING            = 20;
-constexpr uint8_t CHANCE_TO_CAST_POISON           = 30;
-constexpr uint8_t CHANCE_TO_CAST_PARALYZING_VENOM = 20;
-constexpr uint8_t CHANCE_TO_CAST_FEAR             = 20;
-constexpr uint8_t CHANCE_TO_CAST_PETRIFY          = 20;
-constexpr uint8_t CHANCE_TO_CAST_BLIND            = 20;
-constexpr uint8_t CHANCE_TO_CAST_LIGHTNING_STRIKE = 20;
-constexpr uint8_t CHANCE_TO_CAST_DEATH_BLOW       = 20;
-constexpr uint8_t CHANCE_TO_CAST_DEATH_STARE      = 10;
-constexpr uint8_t CHANCE_TO_CAST_ACCURATE_SHOT    = 10;
-constexpr uint8_t CHANCE_TO_CAST_ACID_BREATH      = 20;
-
-enum class Upgrade_level
+namespace Special_abilities
 {
-      None = 0,
-      First,
-      Second
+      constexpr uint8_t MAX_NUMBER = 6; // used to catch inaccuracies when constructing objects in Creature_List.cpp
+
+      namespace Chance_to_cast // Special abilities that might cast a spell per attack have a fixed chance.
+      {
+            constexpr uint8_t DISEASE          = 20;
+            constexpr uint8_t CURSE            = 25;
+            constexpr uint8_t AGING            = 20;
+            constexpr uint8_t POISON           = 30;
+            constexpr uint8_t PARALYZING_VENOM = 20;
+            constexpr uint8_t FEAR             = 20;
+            constexpr uint8_t PETRIFY          = 20;
+            constexpr uint8_t BLIND            = 20;
+            constexpr uint8_t LIGHTNING_STRIKE = 20;
+            constexpr uint8_t DEATH_BLOW       = 20;
+            constexpr uint8_t DEATH_STARE      = 10;
+            constexpr uint8_t ACCURATE_SHOT    = 10;
+            constexpr uint8_t ACID_BREATH      = 20;
+      };
 };
+
 struct Creature
 {
+      public:
+            enum Upgrade_level
+            {
+                  None = 0,
+                  First,
+                  Second
+            };
+
       private:
             struct unit_info
             {

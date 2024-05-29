@@ -17,53 +17,57 @@
 #include "Level_Experience.h"
 #include "Skills_Probability.h"
 
-constexpr uint8_t SECONDARY_SKILL_SLOTS = 10;
-
-constexpr uint8_t ARMY_SLOTS = 7;
-
-constexpr uint8_t HAND_SLOTS = 2;    // one slot on each hand for rings and gloves
-constexpr uint8_t POCKET_SLOTS = 5;  // for orbs, tomes, figurines, badges and others 
-constexpr uint8_t CHEST_SLOTS = 100; // for storing unequipped items
-
-
-enum Gender
+namespace Hero_slots
 {
-      Male,  // 0
-      Female // 1
+      constexpr uint8_t SECONDARY_SKILL = 10;
+
+      constexpr uint8_t ARMY = 7;
+
+      constexpr uint8_t HAND   = 2;    // one slot on each hand for rings and gloves
+      constexpr uint8_t POCKET = 5;  // for orbs, tomes, figurines, badges and others 
+      constexpr uint8_t CHEST  = 100; // for storing unequipped items
 };
 
-enum Role
-{
-      Might, // 0
-      Magic  // 1
-};
-
-enum Class
-{
-      Knight,       // Castle
-      Cleric,       // Castle
-      Ranger,       // Rampart
-      Druid,        // Rampart
-      Alchemist,    // Tower
-      Wizard,       // Tower      
-      Demoniac,     // Inferno
-      Heretic,      // Inferno
-      Death_Knight, // Necropolis
-      Necromancer,  // Necropolis
-      Overlord,     // Dungeon
-      Warlock,      // Dungeon
-      Barbarian,    // Stronghold
-      Battle_Mage,  // Stronghold     
-      Beastmaster,  // Fortress
-      Witch,        // Fortress
-      Planeswalker, // Conflux
-      Elementalist, // Conflux
-      Captain,      // Cove
-      Navigator     // Cove
-};
 
 class Hero
 {
+      public:
+            enum Gender
+            {
+                  Male,  // 0
+                  Female // 1
+            };
+
+            enum Role
+            {
+                  Might, // 0
+                  Magic  // 1
+            };
+
+            enum Class
+            {
+                  Knight,       // Castle
+                  Cleric,       // Castle
+                  Ranger,       // Rampart
+                  Druid,        // Rampart
+                  Alchemist,    // Tower
+                  Wizard,       // Tower
+                  Demoniac,     // Inferno
+                  Heretic,      // Inferno
+                  Death_Knight, // Necropolis
+                  Necromancer,  // Necropolis
+                  Overlord,     // Dungeon
+                  Warlock,      // Dungeon
+                  Barbarian,    // Stronghold
+                  Battle_Mage,  // Stronghold
+                  Beastmaster,  // Fortress
+                  Witch,        // Fortress
+                  Planeswalker, // Conflux
+                  Elementalist, // Conflux
+                  Captain,      // Cove
+                  Navigator     // Cove
+            };
+
       private:
             std::string _name;
             Gender _gender;
@@ -88,7 +92,7 @@ class Hero
 
             Specialty _specialty;
 
-            Secondary_Skill* _secondary_skills[SECONDARY_SKILL_SLOTS] = {nullptr}; // TO DO : add to constructors
+            Secondary_Skill* _secondary_skills[Hero_slots::SECONDARY_SKILL] = {nullptr}; // TO DO : add to constructors
 
             Morale _morale;
             Luck _luck;
@@ -115,7 +119,7 @@ class Hero
 
                   war_machines( const bool has_first_aid = false, const bool has_ammo_cart = false, const bool has_ballista = false, const bool has_catapult = true ) :
                                 _has_first_aid(has_first_aid), _has_ammo_cart(has_ammo_cart), _has_ballista(has_ballista), _has_catapult(has_catapult)
-                                {};    
+                                {};
             }war_machines;
 
             bool _has_spellbook;
@@ -128,17 +132,17 @@ class Hero
                   Item* weapon   = nullptr;
                   Item* shield   = nullptr;
                   Item* armor    = nullptr;
-                  Item* hand[HAND_SLOTS] = {nullptr};
+                  Item* hand[Hero_slots::HAND] = {nullptr};
                   Item* boots = nullptr;
-                  Item* pocket[POCKET_SLOTS] = {nullptr};
+                  Item* pocket[Hero_slots::POCKET] = {nullptr};
             }items;
 
-            Item* chest[CHEST_SLOTS] = {nullptr};
+            Item* chest[Hero_slots::CHEST] = {nullptr};
 
             // items - implement a structure with flags for possible effects from items, analogical to special abilities
             bool _has_equipped_elixir_of_life = false;
 
-            std::array<std::unique_ptr<Stack>, ARMY_SLOTS> army = {nullptr};
+            std::array<std::unique_ptr<Stack>, Hero_slots::ARMY> army = {nullptr};
 
             Position _position = Position(0, 0);
 
@@ -274,7 +278,7 @@ class Hero
             void print_unequipped_items();
             
             // Returns true or false based on whether the item is equipped by the hero on the given slot.
-            bool check_eqipped_item(std::string item_name, Slot slot);
+            bool check_eqipped_item(std::string item_name, Item::Slot slot);
 
             // Adds a stack to the first empty slot in army.
             void add_stack_to_army(std::unique_ptr<Stack> & stack_ptr); // unique_ptr because this functionality in the game will be used in dynamic state

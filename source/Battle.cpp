@@ -1,6 +1,6 @@
 #include "Battle.h"
 
-Battle::Battle( Hero& attacker, Hero& defender, const Battle_Format format, const Terrain terrain ) : _attacker(attacker), _defender(defender), _format(format), _terrain(terrain)
+Battle::Battle( Hero& attacker, Hero& defender, const Format format, const Terrain terrain ) : _attacker(attacker), _defender(defender), _format(format), _terrain(terrain)
 {
       if( get_attacker()->get_team() == get_defender()->get_team() )
       {
@@ -17,7 +17,7 @@ Battle::Battle( Hero& attacker, Hero& defender, const Battle_Format format, cons
             // TO DO : implement invisible quicksands on battlefield
       }
       else
-            for( uint8_t i = 0; i < ARMY_SLOTS; i++ )
+            for( uint8_t i = 0; i < Hero_slots::ARMY; i++ )
             {
                   if( _attacker.get_army_stack(i) != nullptr )
                         apply_terrain_bonuses_to_stack( _attacker.get_army_stack(i) );
@@ -101,7 +101,7 @@ Battle::~Battle()
       defender->update_army_stats();
 
       // Reset battle symbols of the stacks of the battle winner (whoever it is)
-      for( uint8_t i = 0; i < ARMY_SLOTS; i++ )
+      for( uint8_t i = 0; i < Hero_slots::ARMY; i++ )
       {
             if(get_attacker()->get_army_stack(i) != nullptr)
                   get_attacker()->get_army_stack(i)->reset_battlefield_symbol();
@@ -111,8 +111,8 @@ Battle::~Battle()
       }
 
       // Destroy the battlefield tile by tile
-      for( uint8_t i = 0; i < BATTLEFIELD_WIDTH; i++ )
-            for( uint8_t j = 0; j < BATTLEFIELD_LENGTH; j++ )
+      for( uint8_t i = 0; i < Battlefield::WIDTH; i++ )
+            for( uint8_t j = 0; j < Battlefield::LENGTH; j++ )
                   battlefield[i][j].~Battlefield_Tile();
 
       printf( "The battlefield was destroyed!\n" );
@@ -189,16 +189,16 @@ Position Battle::enter_battlefield_coordinates()
 {
       uint16_t x, y; // uint16_t instead of uint8_t, because otherwise it gets read as char (ascii code)
 
-      while ( ( printf("\nx = ") ) && ( !( std::cin >> x ) || x < 0 || x > BATTLEFIELD_LENGTH - 1) )
+      while ( ( printf("\nx = ") ) && ( !( std::cin >> x ) || x < 0 || x > Battlefield::LENGTH - 1) )
       {
-            printf("\nCoordinate 'x' must be in the range [0;%d]!", BATTLEFIELD_LENGTH - 1);
+            printf("\nCoordinate 'x' must be in the range [0;%d]!", Battlefield::LENGTH - 1);
             std::cin.clear(); // clear bad input flag
             std::cin.ignore( std::numeric_limits<std::streamsize>::max(), '\n' ); // discard bad input
       }
 
-      while ( ( printf("y = ") ) && ( !( std::cin >> y ) || y < 0 || y > BATTLEFIELD_WIDTH - 1 ) )
+      while ( ( printf("y = ") ) && ( !( std::cin >> y ) || y < 0 || y > Battlefield::WIDTH - 1 ) )
       {
-            printf("\nCoordinate 'y' must be in the range [0;%d]!", BATTLEFIELD_WIDTH - 1);
+            printf("\nCoordinate 'y' must be in the range [0;%d]!", Battlefield::WIDTH - 1);
             std::cin.clear(); // clear bad input flag
             std::cin.ignore( std::numeric_limits<std::streamsize>::max(), '\n' ); // discard bad input
       }
@@ -208,20 +208,20 @@ Position Battle::enter_battlefield_coordinates()
 
 void Battle::check_valid_battlefield_pos(const uint8_t x, const uint8_t y)
 {
-      if( x >= BATTLEFIELD_LENGTH )
+      if( x >= Battlefield::LENGTH )
       {
-            std::cerr << "Coordinate "<< x << " must be in the range [0;"<< BATTLEFIELD_LENGTH - 1 << "]!" << std::endl;
+            std::cerr << "Coordinate "<< x << " must be in the range [0;"<< Battlefield::LENGTH - 1 << "]!" << std::endl;
             abort();
       }
 
-      if( y >= BATTLEFIELD_WIDTH )
+      if( y >= Battlefield::WIDTH )
       {
-            std::cerr << "Coordinate "<< y << " must be in the range [0;"<< BATTLEFIELD_WIDTH - 1 << "]!" << std::endl;
+            std::cerr << "Coordinate "<< y << " must be in the range [0;"<< Battlefield::WIDTH - 1 << "]!" << std::endl;
             abort();
       }
 }
 
-void Battle::set_battlefield_pos(const uint8_t x, const uint8_t y, const Tile tile, const Team team, const char ch)
+void Battle::set_battlefield_pos(const uint8_t x, const uint8_t y, const Battlefield_Tile::Tile tile, const Team team, const char ch)
 {
       check_valid_battlefield_pos(x, y);
       battlefield[y][x].setup_tile(tile, team, ch);
@@ -233,7 +233,7 @@ char Battle::get_battlefield_pos(const uint8_t x, const uint8_t y)
       return battlefield[y][x].get_symbol();
 }
 
-void Battle::set_battlefield_pos(const Position pos, const Tile tile, const Team team, const char ch)
+void Battle::set_battlefield_pos(const Position pos, const Battlefield_Tile::Tile tile, const Team team, const char ch)
 {
       check_valid_battlefield_pos(pos.x, pos.y);
       battlefield[pos.y][pos.x].setup_tile(tile, team, ch);
@@ -255,29 +255,29 @@ void Battle::place_stack_on_battlefield(Stack* stack, const char ch)
             std::cerr << "Position on battlefield with coordinates [" << pos.x << ";" << pos.y <<"] is unreachable!"<< std::endl;
             abort();
       }
-      set_battlefield_pos(stack->get_position(), Tile::Army, stack->get_team(), ch);
+      set_battlefield_pos(stack->get_position(), Battlefield_Tile::Battlefield_Tile::Tile::Army, stack->get_team(), ch);
 }
 
 void Battle::position_armies()
 {
-      if( ARMY_SLOTS != 7 ) 
+      if( Hero_slots::ARMY != 7 ) 
       { 
             std::cerr << "Positioning is made for 7 slots in a hero's army! If you'd like to use different number of slots you need to change the positioning and the battle map width and length." << std::endl;
             abort(); 
       }
 
-      if( get_battle_format() == Battle_Format::Surrounded)
+      if( get_format() == Format::Surrounded)
       {
             // TO DO : implement
       }
       else // Normal, Siege, Ships
       {
             // TO DO: implement Tactics and different gathered/scattered army setting
-            for( uint8_t i = 0; i < ARMY_SLOTS; i++)
+            for( uint8_t i = 0; i < Hero_slots::ARMY; i++)
             {
                   uint8_t y_pos = 0;
                   if     ( i < 3  ) { y_pos = 2*i; }
-                  else if( i == 3 ) { y_pos = (BATTLEFIELD_WIDTH - 1) / 2; }
+                  else if( i == 3 ) { y_pos = (Battlefield::WIDTH - 1) / 2; }
                   else if( i > 3  ) { y_pos = 2*(i - 1); }
 
                   auto attacking_stack = get_attacker()->get_army_stack(i);
@@ -305,12 +305,12 @@ void Battle::position_armies()
                         #if ENABLE_DOUBLE_TILE_STACKS == 1
                         if( defending_stack->get_creature()->get_needs_2_tiles_in_battle() )
                         {
-                              defending_stack->set_position( BATTLEFIELD_LENGTH - 2, y_pos ); // defender on the right
+                              defending_stack->set_position( Battlefield::LENGTH - 2, y_pos ); // defender on the right
                               place_stack_on_battlefield( defending_stack, defending_stack->get_battlefield_symbol() ); // represent each attacking stack by a number
                         }
                         #endif
 
-                        defending_stack->set_position( BATTLEFIELD_LENGTH - 1, y_pos ); // defender on the right
+                        defending_stack->set_position( Battlefield::LENGTH - 1, y_pos ); // defender on the right
                         place_stack_on_battlefield( defending_stack, defending_stack->get_battlefield_symbol() ); // represent each attacking stack by a number
                   }
             }
@@ -321,19 +321,19 @@ void Battle::set_up_battlefield()
 {
       // Populate the battlefield
       {
-            for( uint8_t i = 0; i < BATTLEFIELD_WIDTH; i++ )
-                  for( uint8_t j = 0; j < BATTLEFIELD_LENGTH; j++ )
+            for( uint8_t i = 0; i < Battlefield::WIDTH; i++ )
+                  for( uint8_t j = 0; j < Battlefield::LENGTH; j++ )
                         battlefield[i][j] = Battlefield_Tile();
       }
       
       // Set up the unreachable spots
-      if( get_battle_format() == Battle_Format::Ships )
+      if( get_format() == Format::Ships )
       {
             // TO DO : implement unreachable spots
       }
       else
       {
-            if( get_battle_format() == Battle_Format::Siege )
+            if( get_format() == Format::Siege )
             {
                   // TO DO : implement town walls
             }
@@ -349,10 +349,10 @@ void Battle::print_battlefield(Stack* const current_stack)
       printf("\n________________________________________\n");
       printf(  "|                                      |\n");
 
-      for( uint8_t i = 0; i < BATTLEFIELD_WIDTH; i++ )
+      for( uint8_t i = 0; i < Battlefield::WIDTH; i++ )
       {
             printf("|    ");
-            for( uint8_t j = 0; j < BATTLEFIELD_LENGTH; j++ )
+            for( uint8_t j = 0; j < Battlefield::LENGTH; j++ )
             {
                   if( tile_is_reachable(j, i, current_stack) ) // ensure the tile is free and is within stack's reach
                               print_colored_string( battlefield[i][j].get_symbol(), current_stack->get_team() );
@@ -370,7 +370,7 @@ void Battle::print_battlefield(Stack* const current_stack)
       printf( "The army led by ");
       print_colored_string( get_attacker()->get_name().c_str(), get_attacker()->get_team() );
       printf( " :\n");
-      for( uint8_t i = 0; i < ARMY_SLOTS; i++)
+      for( uint8_t i = 0; i < Hero_slots::ARMY; i++)
       {
             auto const attacking_stack = get_attacker()->get_army_stack(i);
                   if( attacking_stack != nullptr )
@@ -385,7 +385,7 @@ void Battle::print_battlefield(Stack* const current_stack)
       printf( "The army led by ");
       print_colored_string( get_defender()->get_name().c_str(), get_defender()->get_team() );
       printf( " :\n");
-      for( uint8_t i = 0; i < ARMY_SLOTS; i++)
+      for( uint8_t i = 0; i < Hero_slots::ARMY; i++)
       {
             auto const defending_stack = get_defender()->get_army_stack(i);
                   if( defending_stack != nullptr )
@@ -460,7 +460,7 @@ void Battle::set_up_initial_turns()
       get_wait_turns()->clear(); // ensure an empty vector
 
       // Fill the vector of normal turns
-      for( uint8_t i = 0; i < ARMY_SLOTS; i++ )
+      for( uint8_t i = 0; i < Hero_slots::ARMY; i++ )
       {
             if( _attacker.get_army_stack(i) != nullptr )
                   turns->push_back( _attacker.get_army_stack(i) );
@@ -526,14 +526,14 @@ void Battle::new_turn()
 
             if( stack->get_has_perished() )
             {
-                  stack->set_action(Stack_Action::Skip);
+                  stack->set_action(Stack::Action::Skip);
                   return;
             }
 
             if( true ) // if stack is not blinded its status should be returned to the default value (Attack)
-                  stack->set_action(Stack_Action::Attack); // default value for normal turns
+                  stack->set_action(Stack::Action::Attack); // default value for normal turns
             else
-                  stack->set_action(Stack_Action::Skip);
+                  stack->set_action(Stack::Action::Skip);
 
             // reduce the duration of spells acting on the stack
       }
@@ -543,7 +543,7 @@ void Battle::new_turn()
 void Battle::on_stack_turn(Stack* stack, bool morale_rolled)
 {
       // Check if stack is able to act = not perished / not blinded
-      if( stack->get_action() == Stack_Action::Skip)
+      if( stack->get_action() == Stack::Action::Skip)
             return;
 
       // Roll for negative morale - to see if an action will be taken
@@ -554,7 +554,7 @@ void Battle::on_stack_turn(Stack* stack, bool morale_rolled)
                   print_colored_string(stack->get_battlefield_symbol(), stack->get_team());
                   printf(" rolled negative morale and takes no action this turn.\n");
 
-                  stack->set_action(Stack_Action::Skip);
+                  stack->set_action(Stack::Action::Skip);
                   return;
             }
 
@@ -564,7 +564,7 @@ void Battle::on_stack_turn(Stack* stack, bool morale_rolled)
       // TO DO : if( 'Berserk' ) - find the closest REACHABLE (walls may be in the way) stack and attack it
       // else - code below
 
-      const std::string action = select_action_for_stack( stack->get_action() != Stack_Action::Wait );
+      const std::string action = select_action_for_stack( stack->get_action() != Stack::Action::Wait );
 
       if(action == "M")
       {
@@ -663,7 +663,7 @@ void Battle::on_stack_turn(Stack* stack, bool morale_rolled)
             wait_stack(stack);
 
       // Roll for positive morale - to act again
-      if( stack->get_action() != Stack_Action::Defend && !morale_rolled )
+      if( stack->get_action() != Stack::Action::Defend && !morale_rolled )
             if( !get_spirit_of_oppression_present() )
                   if( roll_positive_morale(stack) )
                   {
@@ -778,7 +778,7 @@ std::string Battle::select_action_for_stack(const bool stack_can_wait)
 void Battle::set_global_buffs_and_debuffs()
 {
       // Update Battle's private fields responsible for global debuffs
-      const Slot slot = Slot::Pocket;
+      const auto slot = Item::Slot::Pocket;
       const std::string item_1 = "Spirit of Oppression";
       const std::string item_2 = "Hourglass of the Evil Hour";
 
@@ -806,7 +806,7 @@ void Battle::set_global_buffs_and_debuffs()
       // Set up conditions for bonuses according to creatures' special abilities
       std::array<Hero*, 2> heroes = { attacker, defender };
       for( auto hero : heroes)
-            for( uint8_t i = 0; i < ARMY_SLOTS; i++ )
+            for( uint8_t i = 0; i < Hero_slots::ARMY; i++ )
             {
                   auto const c = hero->get_army_stack(i)->get_creature();
 
@@ -829,8 +829,8 @@ bool Battle::enemy_is_reachable(Stack* const stack, Stack* const enemy_stack)
       const uint8_t ex = enemy_stack->get_position().x;
       const uint8_t ey = enemy_stack->get_position().y;
 
-      for( int8_t i = std::max(0, ey - 1); i <= std::min(BATTLEFIELD_WIDTH - 1, ey + 1); i++ )
-            for( int8_t j = std::max(0, ex - 1); j <= std::min(BATTLEFIELD_LENGTH - 1, ex + 1); j++ )
+      for( int8_t i = std::max(0, ey - 1); i <= std::min(Battlefield::WIDTH - 1, ey + 1); i++ )
+            for( int8_t j = std::max(0, ex - 1); j <= std::min(Battlefield::LENGTH - 1, ex + 1); j++ )
                   if( tile_is_reachable(j, i, stack) )
                         return true;
       
@@ -851,8 +851,8 @@ Position* Battle::select_location_around_enemy_stack(Stack* const stack, Stack* 
       std::map< uint8_t, std::unique_ptr<Position> > positions;
       uint8_t counter = 1;
 
-      for( int8_t i = std::max(0, ey - 1); i <= std::min(BATTLEFIELD_WIDTH - 1, ey + 1); i++ )
-            for( int8_t j = std::max(0, ex - 1); j <= std::min(BATTLEFIELD_LENGTH - 1, ex + 1); j++ )
+      for( int8_t i = std::max(0, ey - 1); i <= std::min(Battlefield::WIDTH - 1, ey + 1); i++ )
+            for( int8_t j = std::max(0, ex - 1); j <= std::min(Battlefield::LENGTH - 1, ex + 1); j++ )
                   if( tile_is_reachable(j, i, stack) )
                   {
                         positions[counter] = std::unique_ptr<Position>(new Position(j, i));
@@ -969,7 +969,7 @@ bool Battle::stack_has_obstacle_penalty(Stack* const attacking_stack, Stack* con
       if( !attacker_has_ranged_penalty )
             return false;
       
-      if( get_battle_format() != Battle_Format::Siege)
+      if( get_format() != Format::Siege)
             return false;
 
       //TO DO : implement - only for shooters on the left of the wall, suffering from ranged penalty
@@ -978,7 +978,7 @@ bool Battle::stack_has_obstacle_penalty(Stack* const attacking_stack, Stack* con
 
 void Battle::move_stack(Stack* stack, const uint8_t x, const uint8_t y)
 {
-      stack->set_action(Stack_Action::Attack);
+      stack->set_action(Stack::Action::Attack);
 
       Position pos = stack->get_position(); // get current position
 
@@ -1003,7 +1003,7 @@ void Battle::move_stack(Stack* stack, const uint8_t x, const uint8_t y)
             while( distance )
             {  
                   // TO DO : implement movement patterns - current_x and current_y change step by step according to the patterns
-                  if( battlefield[current_y][current_x].get_tile() != Tile::Quicksand ) // TO DO : implement team immunity to quicksands
+                  if( battlefield[current_y][current_x].get_tile() != Battlefield_Tile::Tile::Quicksand ) // TO DO : implement team immunity to quicksands
                   {
                         distance_traveled++;
                         distance--;
@@ -1019,12 +1019,12 @@ void Battle::move_stack(Stack* stack, const uint8_t x, const uint8_t y)
 
       pos = stack->get_position(); // get the new location - might be different from desired if the stack stumbled upon a quicksand
 
-      battlefield[pos.y][pos.x].setup_tile( Tile::Army, stack->get_team(), stack->get_battlefield_symbol() );
+      battlefield[pos.y][pos.x].setup_tile( Battlefield_Tile::Tile::Army, stack->get_team(), stack->get_battlefield_symbol() );
       #if ENABLE_DOUBLE_TILE_STACKS == 1
       if( stack->get_team() == get_attacker()->get_team() )
-            battlefield[pos.y][pos.x + 1].setup_tile( Tile::Army, stack->get_team(), stack->get_battlefield_symbol() );
+            battlefield[pos.y][pos.x + 1].setup_tile( Battlefield_Tile::Tile::Army, stack->get_team(), stack->get_battlefield_symbol() );
       else
-            battlefield[pos.y][pos.x - 1].setup_tile( Tile::Army, stack->get_team(), stack->get_battlefield_symbol() );
+            battlefield[pos.y][pos.x - 1].setup_tile( Battlefield_Tile::Tile::Army, stack->get_team(), stack->get_battlefield_symbol() );
       #endif
 }
 
@@ -1062,12 +1062,12 @@ void Battle::attack_stack(Stack* attacking_stack, Stack* defending_stack)
 
 void Battle::defend_stack(Stack* stack)
 { 
-      stack->set_action(Stack_Action::Defend); 
+      stack->set_action(Stack::Action::Defend); 
 }
 
 void Battle::wait_stack(Stack* stack)
 { 
-      stack->set_action(Stack_Action::Wait); 
+      stack->set_action(Stack::Action::Wait); 
       get_wait_turns()->push_back(stack); 
 }
 
@@ -1100,8 +1100,8 @@ void Battle::target_and_inflict_damage(Stack* attacking_stack, Stack* defending_
 
             if( ax == dx ) // horizontally aligned
             {
-                  for( int8_t i = std::max(0, dy - 1); i <= std::min(BATTLEFIELD_WIDTH - 1, dy + 1); i++ )
-                        if( battlefield[i][dx].get_tile() == Tile::Army )
+                  for( int8_t i = std::max(0, dy - 1); i <= std::min(Battlefield::WIDTH - 1, dy + 1); i++ )
+                        if( battlefield[i][dx].get_tile() == Battlefield_Tile::Tile::Army )
                         {
                               auto stack = find_existing_enemy_stack_via_symbol( battlefield[i][dx].get_symbol(), battlefield[i][dx].get_team() );
                               inflict_damage(attacking_stack, stack, stack == defending_stack, attack_is_retaliation);
@@ -1109,8 +1109,8 @@ void Battle::target_and_inflict_damage(Stack* attacking_stack, Stack* defending_
             }
             else if( ay == dy ) // vertically aligned
             {
-                  for( int8_t j = std::max(0, dx - 1); j <= std::min(BATTLEFIELD_LENGTH - 1, dx + 1); j++ )
-                        if( battlefield[dy][j].get_tile() == Tile::Army )
+                  for( int8_t j = std::max(0, dx - 1); j <= std::min(Battlefield::LENGTH - 1, dx + 1); j++ )
+                        if( battlefield[dy][j].get_tile() == Battlefield_Tile::Tile::Army )
                         {
                               auto stack = find_existing_enemy_stack_via_symbol( battlefield[dy][j].get_symbol(), battlefield[dy][j].get_team() );
                               inflict_damage(attacking_stack, stack, stack == defending_stack, attack_is_retaliation);
@@ -1118,13 +1118,13 @@ void Battle::target_and_inflict_damage(Stack* attacking_stack, Stack* defending_
             }
             else // diagonally aligned
             {
-                  if( battlefield[dy][ax].get_tile() == Tile::Army )
+                  if( battlefield[dy][ax].get_tile() == Battlefield_Tile::Tile::Army )
                   {
                         auto stack = find_existing_enemy_stack_via_symbol( battlefield[dy][ax].get_symbol(), battlefield[dy][ax].get_team() );
                         inflict_damage(attacking_stack, stack, false, attack_is_retaliation);
                   }
 
-                  if( battlefield[ay][dx].get_tile() == Tile::Army )
+                  if( battlefield[ay][dx].get_tile() == Battlefield_Tile::Tile::Army )
                   {
                         auto stack = find_existing_enemy_stack_via_symbol( battlefield[ay][dx].get_symbol(), battlefield[ay][dx].get_team() );
                         inflict_damage(attacking_stack, stack, false, attack_is_retaliation);
@@ -1137,7 +1137,7 @@ void Battle::target_and_inflict_damage(Stack* attacking_stack, Stack* defending_
 
 void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending_stack, bool const defender_is_targeted, bool const attack_is_retaliation, bool const attack_is_second_attack)
 {
-      attacking_stack->set_action(Stack_Action::Attack);
+      attacking_stack->set_action(Stack::Action::Attack);
 
       if( attacking_stack->get_team() == defending_stack->get_team() && !attacking_stack->get_creature()->get_has_attack_adjacent_hexes() && !attacking_stack->get_creature()->get_has_breath_attack() /* && TO DO : not 'Berserk'*/ )
             return;
@@ -1179,7 +1179,7 @@ void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending
       const std::string defending_stack_name    = defending_stack->get_creature_name();
       uint8_t           defending_stack_defense = defending_stack->get_def();
 
-      if( defending_stack->get_action() == Stack_Action::Defend ) 
+      if( defending_stack->get_action() == Stack::Action::Defend ) 
             defending_stack_defense += defending_stack_defense/5;
 
       // special abilities which modify stack attributes
@@ -1228,7 +1228,7 @@ void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending
       // calculate I5 - special ability bonus
       // death blow bonus
       if( attacking_creature->get_may_cast_death_blow() )
-            I5 = ( (rand() % 100) < CHANCE_TO_CAST_DEATH_BLOW ) * 1.00f;
+            I5 = ( (rand() % 100) < Special_abilities::Chance_to_cast::DEATH_BLOW ) * 1.00f;
 
       // hate bonus
       if     ( attacking_creature->get_hates_efreeti()       && ( *defending_creature == Creature_List::Efreet || *defending_creature == Creature_List::Efreet_Sultan ) ) I5 = 0.50f;
@@ -1336,10 +1336,10 @@ void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending
             const uint8_t dy = defending_stack->get_position().y;
 
             // Coordinates of field 'behind' defending stack, from attacking stack's point of view.
-            const uint8_t x = std::max<int8_t>( 0, std::min<int8_t>( dx + (dx - ax), BATTLEFIELD_LENGTH ) );
-            const uint8_t y = std::max<int8_t>( 0, std::min<int8_t>( dy + (dy - ay), BATTLEFIELD_WIDTH  ) );
+            const uint8_t x = std::max<int8_t>( 0, std::min<int8_t>( dx + (dx - ax), Battlefield::LENGTH ) );
+            const uint8_t y = std::max<int8_t>( 0, std::min<int8_t>( dy + (dy - ay), Battlefield::WIDTH  ) );
             
-            if( battlefield[y][x].get_tile() == Tile::Army && battlefield[y][x].get_symbol() != defending_stack->get_battlefield_symbol() )
+            if( battlefield[y][x].get_tile() == Battlefield_Tile::Tile::Army && battlefield[y][x].get_symbol() != defending_stack->get_battlefield_symbol() )
             {
                   auto stack = find_existing_stack_via_position( Position(x, y) );
                   if( stack != nullptr )

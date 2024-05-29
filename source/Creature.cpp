@@ -302,7 +302,7 @@ void Creature::special_abilities::fill_special_abilities()
       while( helper.length() > 1) // no need to enter helper when an empty space remains
       {
             counter ++;
-            if( counter > MAX_NUM_OF_SPECIAL_ABILITIES )
+            if( counter > Special_abilities::MAX_NUMBER )
             {
                   std::cerr << "A creature's special ability is not recognized by the algorithm. Make sure that the string in create_map_of_all_abilities() is the same as in Creature_List." << std::endl;
                   std::cerr << "Problematic string : " << helper << std::endl;
