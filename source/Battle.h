@@ -37,6 +37,9 @@ class Battle
         uint16_t _round = 0;
         std::vector<Stack*> _turns;
         std::vector<Stack*> _wait_turns;
+        
+        // A vector of pointers to stacks, to keep the corpses of perished stacks, so they could be resurrected.
+        std::vector<Stack*> _corpses = {nullptr};
 
         // Boolean variable for items which affect the battle
         bool _spirit_of_oppression_present = false;
@@ -68,6 +71,8 @@ class Battle
 
         std::vector<Stack*>* get_wait_turns()       { return &_wait_turns;   };
         Stack* get_stack_wait_turn(const uint8_t i) { return _wait_turns[i]; };
+
+        std::vector<Stack*>* get_corpses() { return &_corpses; };
 
         bool get_spirit_of_oppression_present()   { return _spirit_of_oppression_present;  };
         bool get_hourglass_of_evil_hour_present() { return _hourglass_of_evil_hour_present; };
@@ -198,6 +203,9 @@ class Battle
 
         // Calls inflict_damage() if stack can retaliate.
         void retaliate(Stack* const attacking_stack, Stack* defending_stack);
+        
+        // Adds the stack to the corpses vector and removes it from the battlefield.
+        void upon_stack_death(Stack* stack);
 
         // Checks if a ranged stack can shoot = has ammo + if stack has no melee penalty when there is adjacent enemy.
         bool stack_can_shoot(Stack* const attacking_stack, Stack* const defending_stack = nullptr);

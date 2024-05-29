@@ -28,7 +28,7 @@ void Battlefield_Tile::update_symbol(const Team team, const char ch)
             case Tile::Obstacle      : _symbol = 'O'; _team = Team::Neutral; break;
             case Tile::Land_Mine     : _symbol = 'M'; _team = team;          break;
             case Tile::Quicksand     : _symbol = 'Q'; _team = team;          break;
-            case Tile::Army          : _symbol = ch;  _team = team;          break;
+            case Tile::Army          : _symbol =  ch; _team = team;          break;
       }
 }
 

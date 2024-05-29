@@ -463,9 +463,9 @@ void Battle::set_up_initial_turns()
       for( uint8_t i = 0; i < Hero_slots::ARMY; i++ )
       {
             if( _attacker.get_army_stack(i) != nullptr )
-                  turns->push_back( _attacker.get_army_stack(i) );
+                  turns->emplace_back( _attacker.get_army_stack(i) );
             if( _defender.get_army_stack(i) != nullptr )
-                  turns->push_back( _defender.get_army_stack(i) );
+                  turns->emplace_back( _defender.get_army_stack(i) );
       }
 
       set_up_normal_turns();
@@ -543,8 +543,17 @@ void Battle::new_turn()
 void Battle::on_stack_turn(Stack* stack, bool morale_rolled)
 {
       // Check if stack is able to act = not perished / not blinded
-      if( stack->get_action() == Stack::Action::Skip)
+      if( stack->get_action() == Stack::Action::Skip )
+      {
+            if( !stack->get_has_perished() )
+            {                  
+                  printf("\nStack ");
+                  print_colored_string(stack->get_battlefield_symbol(), stack->get_team());
+                  printf(" is unable to act during this turn.\n");
+            }
+            
             return;
+      }
 
       // Roll for negative morale - to see if an action will be taken
       if( !morale_rolled )
@@ -941,7 +950,7 @@ std::vector<Stack*> Battle::adjacent_stacks_to_pos(Position pos, bool include_po
                               if( a == enemy_stack )
                                     break;
                   #endif
-                        adjacents.push_back(enemy_stack);
+                        adjacents.emplace_back(enemy_stack);
                   }
       }
 
@@ -1068,7 +1077,7 @@ void Battle::defend_stack(Stack* stack)
 void Battle::wait_stack(Stack* stack)
 { 
       stack->set_action(Stack::Action::Wait); 
-      get_wait_turns()->push_back(stack); 
+      get_wait_turns()->emplace_back(stack);
 }
 
 void Battle::target_and_inflict_damage(Stack* attacking_stack, Stack* defending_stack, bool const attack_is_retaliation)
@@ -1348,8 +1357,9 @@ void Battle::inflict_damage(Stack* const attacking_stack, Stack* const defending
       }
       
       // TO DO : if defending_stack is Efreet Sultan or has spell fire shield attacker and attacker is not immuned - attacker should recieve dmg
-
-      if( !defending_stack->get_has_perished() )
+      if( defending_stack->get_has_perished() )
+            upon_stack_death(defending_stack);
+      else
       {
             if( defender_is_targeted && !attack_is_retaliation && stacks_are_adjacent(attacking_stack, defending_stack) )
                   retaliate(defending_stack, attacking_stack);
@@ -1371,6 +1381,15 @@ void Battle::retaliate(Stack* attacking_stack, Stack* defending_stack)
             }
 }
 
+void Battle::upon_stack_death(Stack* stack)
+{
+      get_corpses()->emplace_back(stack);
+
+      stack->set_action(Stack::Action::Skip);
+
+      auto pos = stack->get_position();
+      battlefield[pos.y][pos.x].reset_tile();
+}
 
 bool Battle::stack_can_shoot(Stack* const attacking_stack, Stack* const defending_stack)
 {
